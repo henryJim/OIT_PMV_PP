@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-5">
+    <section class="card card-body shadow-sm p-4">
+        <h2 class="text-center mb-4">Panel del Instructor</h2>
+
+        <!-- NavPills -->
+        <ul class="nav nav-tabs mb-4 nav-fill" id="instructorTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="portfolioFicha-tab" data-bs-toggle="pill" href="#portfolioFicha" role="tab" aria-controls="portfolioFicha" aria-selected="true">Portafolio Ficha</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="portfolioAprendices-tab" data-bs-toggle="pill" href="#portfolioAprendices" role="tab" aria-controls="portfolioAprendices" aria-selected="false">Portafolio Aprendices</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="calificaciones-tab" data-bs-toggle="pill" href="#calificaciones" role="tab" aria-controls="calificaciones" aria-selected="false">Calificaciones</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="aprendices-tab" data-bs-toggle="pill" href="#aprendicespes" role="tab" aria-controls="aprendices" aria-selected="false">Aprendices</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="reportes-tab" data-bs-toggle="pill" href="#reportes" role="tab" aria-controls="reportes" aria-selected="false">Reportes</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="cronograma-tab" data-bs-toggle="pill" href="#cronograma" role="tab" aria-controls="cronograma" aria-selected="false">Cronograma</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="inasistencias-tab" data-bs-toggle="pill" href="#inasistencias" role="tab" aria-controls="inasistencias" aria-selected="false">Inasistencias</a>
+            </li>
+        </ul>
+
+        <!-- Contenido de las Pills -->
+        <div class="tab-content" id="instructorTabContent">
+            <!-- Portafolio Ficha -->
+            <div class="tab-pane fade show active" id="portfolioFicha" role="tabpanel" aria-labelledby="portfolioFicha-tab">
+                <h4>Portafolio Ficha</h4>
+                <p>Aquí podrás gestionar el portafolio de las fichas de los cursos.</p>
+                <div class="tab-pane fade show active" id="pills-portafolio-ficha" role="tabpanel" aria-labelledby="pills-portafolio-ficha-tab">
+                    <h2>Portafolio Ficha - Gestión Documental</h2>
+                
+                    <!-- Plan de Trabajo -->
+                    <div class="folder">
+                        <h3>Plan de Trabajo</h3>
+                        <div class="folder-content">
+                            <!-- Fase 1 -->
+                            <div class="subfolder">
+                                <h4>Fase 1</h4>
+                                <ul>
+                                    <li><a href="#" class="btn btn-link">Documento 1</a></li>
+                                    <li><a href="#" class="btn btn-link">Documento 2</a></li>
+                                    <li><a href="#" class="btn btn-link">Documento 3</a></li>
+                                    <li><a href="#" class="btn btn-link">Documento 4</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Plan de Trabajo por Fases -->
+                    <div class="folder">
+                        <h3>Plan de Trabajo por Fases</h3>
+                        <div class="folder-content">
+                            <!-- Fase 1 -->
+                            <div class="subfolder">
+                                <h4>Fase 1</h4>
+                                <ul>
+                                    <li><a href="#" class="btn btn-link">Guías de la fase</a></li>
+                                    <li><a href="#" class="btn btn-link">Instrumentos de evaluación</a></li>
+                                </ul>
+                            </div>
+                            <!-- Fase 2 -->
+                            <div class="subfolder">
+                                <h4>Fase 2</h4>
+                                <ul>
+                                    <li><a href="#" class="btn btn-link">Guías de la fase</a></li>
+                                    <li><a href="#" class="btn btn-link">Instrumentos de evaluación</a></li>
+                                </ul>
+                            </div>
+                            <!-- Fase 3 -->
+                            <div class="subfolder">
+                                <h4>Fase 3</h4>
+                                <ul>
+                                    <li><a href="#" class="btn btn-link">Guías de la fase</a></li>
+                                    <li><a href="#" class="btn btn-link">Instrumentos de evaluación</a></li>
+                                </ul>
+                            </div>
+                            <!-- Fase 4 -->
+                            <div class="subfolder">
+                                <h4>Fase 4</h4>
+                                <ul>
+                                    <li><a href="#" class="btn btn-link">Guías de la fase</a></li>
+                                    <li><a href="#" class="btn btn-link">Instrumentos de evaluación</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Actas -->
+                    <div class="folder">
+                        <h3>Actas</h3>
+                        <ul>
+                            <li><a href="#" class="btn btn-link">Acta Documento</a></li>
+                        </ul>
+                    </div>
+                
+                    <!-- Planeación Etapa Productiva -->
+                    <div class="folder">
+                        <h3>Planeación Etapa Productiva</h3>
+                        <ul>
+                            <li><a href="#" class="btn btn-link">Documento Planeación</a></li>
+                        </ul>
+                    </div>
+                
+                    <!-- Inasistencias -->
+                    <div class="folder">
+                        <h3>Inasistencias</h3>
+                        <ul>
+                            <li><a href="#" class="btn btn-link">Inasistencias Registradas</a></li>
+                        </ul>
+                    </div>
+                
+                    <!-- Cargar Documento -->
+                    <div class="mb-3">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">Cargar Documento</button>
+                    </div>
+                
+                    <!-- Modal de carga de documentos -->
+                    <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="uploadModalLabel">Subir Documento</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="documentName" class="form-label">Nombre del Documento</label>
+                                            <input type="text" class="form-control" id="documentName" placeholder="Nombre del documento">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="documentFile" class="form-label">Seleccionar archivo</label>
+                                            <input type="file" class="form-control" id="documentFile">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Subir</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- Portafolio Aprendices -->
+            <div class="tab-pane fade" id="portfolioAprendices" role="tabpanel" aria-labelledby="portfolioAprendices-tab">
+                <h4>Portafolio Aprendices</h4>
+                <p>Aquí podrás gestionar el portafolio de los aprendices y su progreso.</p>
+            </div>
+
+            <!-- Calificaciones -->
+            <div class="tab-pane fade" id="calificaciones" role="tabpanel" aria-labelledby="calificaciones-tab">
+                <h4>Calificaciones</h4>
+                <p>Aquí podrás ingresar y revisar las calificaciones de los aprendices.</p>
+            </div>
+
+            <!-- Aprendices -->
+            <div class="tab-pane fade" id="aprendicespes" role="tabpanel" aria-labelledby="aprendices-tab">
+                <h4>Aprendices</h4>
+                <p>Aquí podrás ver y gestionar la lista de aprendices asignados al curso.</p>
+
+            </div>
+
+            <!-- Reportes -->
+            <div class="tab-pane fade" id="reportes" role="tabpanel" aria-labelledby="reportes-tab">
+                <h4>Reportes</h4>
+                <p>Aquí podrás generar reportes sobre el desempeño de los aprendices.</p>
+            </div>
+
+            <!-- Cronograma -->
+            <div class="tab-pane fade" id="cronograma" role="tabpanel" aria-labelledby="cronograma-tab">
+                <h4>Cronograma</h4>
+                <p>Aquí podrás consultar y gestionar el cronograma de actividades.</p>
+            </div>
+
+            <!-- Inasistencias -->
+            <div class="tab-pane fade" id="inasistencias" role="tabpanel" aria-labelledby="inasistencias-tab">
+                <h4>Inasistencias</h4>
+                <p>Aquí podrás registrar y revisar las inasistencias de los aprendices.</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock %}

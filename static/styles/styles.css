@@ -1,0 +1,28 @@
+.navbar {
+    background-color: #1E2DBE !important;
+  }
+
+.btn-primary {
+    background-color: #1E2DBE !important;
+    border-color: #1E2DBE !important;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #1536A2 !important;
+    border-color: #1536A2 !important; 
+    color: white; 
+}
+
+.btn-primary:focus, .btn-primary:active {
+    background-color: #1E2DBE !important;
+    border-color: #1E2DBE !important;
+    box-shadow: 0 0 0 0.25rem rgba(30, 45, 190, 0.5); 
+    color: white;
+}
+
+.btn-primary:disabled {
+    background-color: #C0C8D0 !important;
+    border-color: #C0C8D0 !important; 
+    color: #6C757D !important; 
+}
