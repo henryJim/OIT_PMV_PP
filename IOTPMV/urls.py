@@ -41,9 +41,11 @@ urlpatterns = [
     path('panel_instructor/', formacion_views.panel_instructor, name='panel_instructor'),
     path('panel_aprendiz/', formacion_views.panel_aprendiz, name='panel_aprendiz'),
     path('gestion_instructor/', gestion_instructores_views.gestion_instructor, name='gestion_instructor'),
+    path('obtener_detalles/<int:instructor_id>/', usuarios_views.instructor_detalle_tabla, name='obtener_detalles'),
     
     # Aprendices
     path('aprendices/', usuarios_views.aprendices, name='aprendices'),
+
     # Novedades
     path('novedades/', usuarios_views.novedades, name='novedades'),
 
