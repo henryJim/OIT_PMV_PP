@@ -98,8 +98,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'oit_senatic',
-        'USER': 'andresSR',
-        'PASSWORD': 'AnSa1224%$',
+        'USER': 'oit_app',
+        'PASSWORD': 'N7t5kecjWs55FT1',
         'HOST': 'localhost',
         'PORT': '3306', 
     }
