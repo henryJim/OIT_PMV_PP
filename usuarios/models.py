@@ -82,4 +82,3 @@ class T_lider(models.Model):
 
     def __str__(self):
         return f"{self.perfil.nombre} {self.perfil.apelli} - Area/equipo: {self.area}"
-    
