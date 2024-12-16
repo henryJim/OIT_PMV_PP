@@ -67,3 +67,24 @@ $(document).ready(function () {
         }
     });
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    const tree = new Wunderbaum({
+        id: "tree",
+        source: {
+            url: "{% url 'get_tree_instructor' %}",
+        },
+        lazyLoad: function(event, ctx) {
+            // Opcional: Para cargar nodos hijos dinámicamente
+            ctx.result = fetch(`/get-child-nodes/?id=${ctx.node.data.id}`)
+                .then(response => response.json());
+        },
+        dnd: {
+            // Opcional: Configura arrastrar y soltar
+            dragStart: (e, ctx) => true,
+            drop: (e, ctx) => {
+                console.log("Nodo movido:", ctx.otherNode.title, "a", ctx.node.title);
+            }
+        }
+    });
+});

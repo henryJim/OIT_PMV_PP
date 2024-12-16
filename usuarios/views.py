@@ -175,8 +175,6 @@ def instructor_detalle_tabla(request, instructor_id):
     except T_instructor.DoesNotExist:
         return JsonResponse({'error': 'Registro no encontrado'}, status=404)
 
-
-
 @login_required
 def aprendices(request):
     aprendices = T_aprendiz.objects.select_related('perfil__user').all()

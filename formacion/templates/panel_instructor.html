@@ -34,123 +34,72 @@
         <div class="tab-content" id="instructorTabContent">
             <!-- Portafolio Ficha -->
             <div class="tab-pane fade show active" id="portfolioFicha" role="tabpanel" aria-labelledby="portfolioFicha-tab">
-                <h4>Portafolio Ficha</h4>
-                <p>Aquí podrás gestionar el portafolio de las fichas de los cursos.</p>
-                <div class="tab-pane fade show active" id="pills-portafolio-ficha" role="tabpanel" aria-labelledby="pills-portafolio-ficha-tab">
-                    <h2>Portafolio Ficha - Gestión Documental</h2>
+                <h4>Portafolio Ficha XX</h4>
+                <p>Info adicional.</p>
                 
-                    <!-- Plan de Trabajo -->
-                    <div class="folder">
-                        <h3>Plan de Trabajo</h3>
-                        <div class="folder-content">
-                            <!-- Fase 1 -->
-                            <div class="subfolder">
-                                <h4>Fase 1</h4>
-                                <ul>
-                                    <li><a href="#" class="btn btn-link">Documento 1</a></li>
-                                    <li><a href="#" class="btn btn-link">Documento 2</a></li>
-                                    <li><a href="#" class="btn btn-link">Documento 3</a></li>
-                                    <li><a href="#" class="btn btn-link">Documento 4</a></li>
-                                </ul>
+                <script>
+                    document.addEventListener("DOMContentLoaded", (event) => {
+    const tree = new mar10.Wunderbaum({
+        element: document.getElementById("demo-tree"),
+        source: {
+              url: "{% url 'get_tree_instructor' %}",
+          },
+    });
+});
+
+                </script>
+                <div class="row">
+                    <!-- Sección para cargar documentos -->
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Portafolio</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="demo-tree"></div>
+
+                            </div>
+                        </div>
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5>Cargar Documentos</h5>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="uploadFile" class="form-label">Seleccionar archivo</label>
+                                        <input type="file" class="form-control" id="uploadFile">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Subir</button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                
-                    <!-- Plan de Trabajo por Fases -->
-                    <div class="folder">
-                        <h3>Plan de Trabajo por Fases</h3>
-                        <div class="folder-content">
-                            <!-- Fase 1 -->
-                            <div class="subfolder">
-                                <h4>Fase 1</h4>
-                                <ul>
-                                    <li><a href="#" class="btn btn-link">Guías de la fase</a></li>
-                                    <li><a href="#" class="btn btn-link">Instrumentos de evaluación</a></li>
-                                </ul>
+            
+                    <!-- Sección para descargar documentos -->
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Descargar Documentos</h5>
                             </div>
-                            <!-- Fase 2 -->
-                            <div class="subfolder">
-                                <h4>Fase 2</h4>
-                                <ul>
-                                    <li><a href="#" class="btn btn-link">Guías de la fase</a></li>
-                                    <li><a href="#" class="btn btn-link">Instrumentos de evaluación</a></li>
+                            <div class="card-body">
+                                <ul class="list-group">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Documento 1
+                                        <a href="#" class="btn btn-sm btn-secondary">Descargar</a>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Documento 2
+                                        <a href="#" class="btn btn-sm btn-secondary">Descargar</a>
+                                    </li>
+                                    <!-- Agrega más elementos según sea necesario -->
                                 </ul>
-                            </div>
-                            <!-- Fase 3 -->
-                            <div class="subfolder">
-                                <h4>Fase 3</h4>
-                                <ul>
-                                    <li><a href="#" class="btn btn-link">Guías de la fase</a></li>
-                                    <li><a href="#" class="btn btn-link">Instrumentos de evaluación</a></li>
-                                </ul>
-                            </div>
-                            <!-- Fase 4 -->
-                            <div class="subfolder">
-                                <h4>Fase 4</h4>
-                                <ul>
-                                    <li><a href="#" class="btn btn-link">Guías de la fase</a></li>
-                                    <li><a href="#" class="btn btn-link">Instrumentos de evaluación</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                
-                    <!-- Actas -->
-                    <div class="folder">
-                        <h3>Actas</h3>
-                        <ul>
-                            <li><a href="#" class="btn btn-link">Acta Documento</a></li>
-                        </ul>
-                    </div>
-                
-                    <!-- Planeación Etapa Productiva -->
-                    <div class="folder">
-                        <h3>Planeación Etapa Productiva</h3>
-                        <ul>
-                            <li><a href="#" class="btn btn-link">Documento Planeación</a></li>
-                        </ul>
-                    </div>
-                
-                    <!-- Inasistencias -->
-                    <div class="folder">
-                        <h3>Inasistencias</h3>
-                        <ul>
-                            <li><a href="#" class="btn btn-link">Inasistencias Registradas</a></li>
-                        </ul>
-                    </div>
-                
-                    <!-- Cargar Documento -->
-                    <div class="mb-3">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">Cargar Documento</button>
-                    </div>
-                
-                    <!-- Modal de carga de documentos -->
-                    <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="uploadModalLabel">Subir Documento</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <div class="mb-3">
-                                            <label for="documentName" class="form-label">Nombre del Documento</label>
-                                            <input type="text" class="form-control" id="documentName" placeholder="Nombre del documento">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="documentFile" class="form-label">Seleccionar archivo</label>
-                                            <input type="file" class="form-control" id="documentFile">
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Subir</button>
-                                    </form>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
             </div>
+            
 
             <!-- Portafolio Aprendices -->
             <div class="tab-pane fade" id="portfolioAprendices" role="tabpanel" aria-labelledby="portfolioAprendices-tab">
