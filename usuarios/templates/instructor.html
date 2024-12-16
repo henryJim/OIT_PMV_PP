@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load icons %}
+
+{% block content %}
+<main class="container-fluid py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center display-4 pb-4">Gestión de Instructores</h1>
+
+            <!-- Botón de creación con margen -->
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/instructores/crear" class="btn btn-success btn-lg">
+                    <i class="bi bi-person-plus"></i> Crear Instructor
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table id="instructores" class="table table-hover table-bordered align-middle">
+                    <thead class="table-primary text-center">
+                    <tr>
+                        <th>Acciones</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Telefono</th>
+                        <th>Direccion</th>
+                        <th>Mail</th>
+                        <th>Fecha nacimiento</th>
+                        <th># Contrato</th>
+                        <th>Fecha inicio</th>
+                        <th>Fecha fin</th>
+                        <th>Estado</th>
+                        <th>Profesion</th>
+                        <th>Vinculacion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instructor in instructores %}
+                    <tr>
+                        <td><a href="{% url 'instructor_detalle' instructor.id %}" class="btn btn-primary btn-sm ">
+                            {% icon 'edit' %}
+    
+                        </a>
+                        <td>{{ instructor.perfil.nombre}}</td>
+                        <td>{{ instructor.perfil.apelli}}</td>
+                        <td>{{ instructor.perfil.tele}}</td>
+                        <td>{{ instructor.perfil.dire}}</td>
+                        <td>{{ instructor.perfil.mail}}</td>
+                        <td>{{ instructor.perfil.fecha_naci}}</td>
+                        <td>{{ instructor.contra}}</td>
+                        <td>{{ instructor.fecha_ini}}</td>
+                        <td>{{ instructor.fecha_fin}}</td>
+                        <td>{{ instructor.esta}}</td>
+                        <td>{{ instructor.profe}}</td>
+                        <td>{{ instructor.tipo_vincu}}</td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

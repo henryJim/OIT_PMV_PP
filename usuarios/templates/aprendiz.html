@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load icons %}
+
+{% block content %}
+<main class="container-fluid py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center display-4 pb-4">Gestión de Aprendices</h1>
+
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/instructores/crear" class="btn btn-success btn-lg">
+                    <i class="bi bi-person-plus"></i> Crear Aprendiz
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table id="aprendices" class="table table-hover table-bordered align-middle">
+                    <thead class="table-primary text-center">
+                    <tr>
+                        <th>Acciones</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Telefono</th>
+                        <th>Direccion</th>
+                        <th>Mail</th>
+                        <th>Fecha nacimiento</th>
+                        <th>Codigo</th>
+                        <th>Estado</th>
+                        <th>Ficha</th>
+                        <th>Instituto</th>
+                        <th>Representante</th>
+                        <th>DNI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for aprendiz in aprendices %}
+                    <tr>
+                        <td><a href="/" class="btn btn-primary btn-sm ">
+                            {% icon 'edit' %}
+    
+                        </a>
+                        <td>{{ aprendiz.perfil.nombre}}</td>
+                        <td>{{ aprendiz.perfil.apelli}}</td>
+                        <td>{{ aprendiz.perfil.tele}}</td>
+                        <td>{{ aprendiz.perfil.dire}}</td>
+                        <td>{{ aprendiz.perfil.mail}}</td>
+                        <td>{{ aprendiz.perfil.fecha_naci}}</td>
+                        <td>{{ aprendiz.cod}}</td>
+                        <td>{{ aprendiz.esta}}</td>
+                        <td>{{ aprendiz.ficha}}</td>
+                        <td>{{ aprendiz.insti}}</td>
+                        <td>{{ aprendiz.repre_legal}}</td>
+                        <td>{{ aprendiz.perfil.dni}}</td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

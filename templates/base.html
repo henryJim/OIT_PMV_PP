@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OIT PMV</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/oit_logo.ico' %}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
+    <script defer src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+    <script defer src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.js"></script>
+    <script defer src="{% static './js/scripts.js' %}"></script>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg" data-bs-theme="dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">OIT PMV</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        {% if perfil %}
+                            {% if perfil.rol == 'admin' %}
+                                <!-- Contenido específico de admin -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Formación</a>
+                                    <ul class="dropdown-menu">
+                                      <li><a class="dropdown-item" href="{% url 'panel_aprendiz' %}">Panel aprendiz</a></li>
+                                      <li><a class="dropdown-item" href="{% url 'panel_instructor' %}">Panel instructor</a></li>
+                                    </ul>
+                                  </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/">Administración</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'novedades' %}">Novedades</a>
+                                </li>
+                            {% elif perfil.rol == 'instructor' %}
+                                <!-- Contenido específico de instructor -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'panel_instructor' %}">Formación</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'gestion_instructor' %}">Administración</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'novedades' %}">Novedades</a>
+                                </li>
+                            {% elif perfil.rol == 'aprendiz' %}
+                                <!-- Contenido específico de aprendiz -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/">Documentación</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'panel_aprendiz' %}">Portafolio</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'novedades' %}">Novedades</a>
+                                </li>
+                            {% elif perfil.rol == 'lider' %}
+                                <!-- Contenido específico de líder -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/">Aprobaciones</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/">Programa Curricular</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'novedades' %}">Novedades</a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">Salir</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/signup">Registrarse</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/signin">Login</a>
+                        <!-- </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'tasks' %}">Tareas pendientes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'tasks_completed' %}">Tareas completadas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/tasks/create">Crear tarea</a>
+                        </li> -->
+                    {% endif %}
+                </ul>
+            </div>
+            
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+</body>
+
+</html>

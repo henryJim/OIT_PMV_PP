@@ -1,0 +1,11 @@
+# Archivos de base de datos local
+db.sqlite3
+
+# Archivos compilados de Python
+__pycache__/
+*.pyc
+
+# Archivos temporales de desarrollo
+*.log
+*.bak
+*.swp
