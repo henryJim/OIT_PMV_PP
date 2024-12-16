@@ -26,3 +26,7 @@
     border-color: #C0C8D0 !important; 
     color: #6C757D !important; 
 }
+
+td.details-control {
+    cursor: pointer;
+}
