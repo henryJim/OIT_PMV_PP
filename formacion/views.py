@@ -12,9 +12,32 @@ def panel_aprendiz(request):
 
 def tree_detalle(request):
     data = [
-        {"title": "Raíz", "id": "1", "children": [
-            {"title": "Hijo 1", "id": "2"},
-            {"title": "Hijo 2", "id": "3"}
-        ]}
+    {
+        "title": "PLAN DE TRABAJO CONCERTADO CON SUS DESCRIPTORES",
+        "id": "1",
+        "children": [
+            {"title": "Fase Analisis", "id": "1"},
+            {"title": "Fase Planeacion", "id": "2"},
+            {"title": "Fase Ejecucion", "id": "3"},
+            {"title": "Fase Evaluacion", "id": "4"}
+        ]
+    },
+    {
+        "title": "GFPI F 135 GUIA DE APRENDIZAJE",
+        "id": "2",
+        "children": [
+            {
+                "title": "Fase Analisis",
+                "id": "1",
+                "children": [
+                    {"title": "Guia de la fase", "id": "1"},
+                    {"title": "Instrumentos de evaluacion", "id": "2"}
+                ]
+            },
+            {"title": "Fase Planeacion", "id": "2"},
+            {"title": "Fase Ejecucion", "id": "3"},
+            {"title": "Fase Evaluacion", "id": "4"}
+        ]
+    }
     ]
     return JsonResponse(data, safe=False)
