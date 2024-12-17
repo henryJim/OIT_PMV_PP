@@ -22,28 +22,46 @@ from formacion import views as formacion_views
 from gestion_instructores import views as gestion_instructores_views
 
 urlpatterns = [
+    # Ruta Admin
     path('admin/', admin.site.urls),
+    
+    # Ruta default
     path('', usuarios_views.home, name='home'),
+    
+    # Registro usuarios
     path('signup/', usuarios_views.signup, name='signup'),
+    
+    # Log out
+    path('logout/', usuarios_views.signout, name='logout'),
+    
+    #Log In
+    path('signin/', usuarios_views.signin, name='signin'),
+    
+    # CRUD base TASKS:
     path('tasks/', tasks_views.tasksView, name='tasks'),
     path('tasks_completed/', tasks_views.tasks_completed, name='tasks_completed'),
     path('tasks/create/', tasks_views.create_task, name='create_task'),
     path('tasks/<int:task_id>/', tasks_views.task_detail, name='task_detail'),
     path('tasks/<int:task_id>/complete/', tasks_views.complete_task, name='complete_task'),
     path('tasks/<int:task_id>/delete/', tasks_views.delete_task, name='delete_task'),
-    path('logout/', usuarios_views.signout, name='logout'),
-    path('signin/', usuarios_views.signin, name='signin'),
+    
+    # ROL Admin
     path('admin_dashboard/', usuarios_views.dashboard_admin, name='admin_dashboard'),
-    # Instructores
+    path('aprendices/', usuarios_views.aprendices, name='aprendices'),
     path('instructores/', usuarios_views.instructores, name='instructores'),
     path('instructores/crear/', usuarios_views.crear_instructor, name='crear_instructor'),
     path('instructores/<int:instructor_id>/', usuarios_views.instructor_detalle, name='instructor_detalle'),
+    path('obtener_detalles/<int:instructor_id>/', usuarios_views.instructor_detalle_tabla, name='obtener_detalles'),
+
+    # ROL Instructores
     path('panel_instructor/', formacion_views.panel_instructor, name='panel_instructor'),
-    path('panel_aprendiz/', formacion_views.panel_aprendiz, name='panel_aprendiz'),
     path('gestion_instructor/', gestion_instructores_views.gestion_instructor, name='gestion_instructor'),
+    path('get_tree_instructor/', formacion_views.tree_detalle, name='get_tree_instructor'),
     
-    # Aprendices
-    path('aprendices/', usuarios_views.aprendices, name='aprendices'),
+
+    # ROL Aprendices
+    path('panel_aprendiz/', formacion_views.panel_aprendiz, name='panel_aprendiz'),
+
     # Novedades
     path('novedades/', usuarios_views.novedades, name='novedades'),
 

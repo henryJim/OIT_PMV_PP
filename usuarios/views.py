@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from .models import T_instructor, T_aprendiz, T_admin, T_lider
 from .forms import InstructorForm, UserForm, PerfilForm
 from django.db import IntegrityError
+from django.http import JsonResponse
+from django.forms.models import model_to_dict
 
 # Create your views here.
 
@@ -148,6 +150,30 @@ def instructor_detalle(request, instructor_id):
                 'perfil_form': perfil_form,
                 'instructor_form': instructor_form,
                 'error': "Error al actualizar el instructor. Verifique los datos."})
+
+def instructor_detalle_tabla(request, instructor_id):
+    try:
+        instructor = get_object_or_404(T_instructor, pk=instructor_id)
+        instructor_data = model_to_dict(instructor)
+        
+         # Incluimos datos relacionados del perfil
+        if hasattr(instructor, 'perfil'):
+            perfil_data = model_to_dict(instructor.perfil)
+
+            # Si el perfil tiene una relación con Usuario, la agregamos
+            if hasattr(instructor.perfil, 'user'):
+                perfil_data['user'] = {
+                    'username': instructor.perfil.user.username,
+                    'email': instructor.perfil.user.email,
+                    'first_name': instructor.perfil.user.first_name,
+                    'last_name': instructor.perfil.user.last_name,
+                }
+            
+        instructor_data['perfil'] = perfil_data
+
+        return JsonResponse({'info_adicional': instructor_data})
+    except T_instructor.DoesNotExist:
+        return JsonResponse({'error': 'Registro no encontrado'}, status=404)
 
 @login_required
 def aprendices(request):
