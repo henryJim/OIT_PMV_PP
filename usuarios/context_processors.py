@@ -1,4 +1,4 @@
-from .models import T_perfil
+from commons.models import T_perfil
 from datetime import datetime
 from django.utils.timezone import now
 

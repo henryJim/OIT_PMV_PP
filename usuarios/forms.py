@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import T_instructor, T_perfil
+from commons.models import T_instructor, T_perfil
 
 
 class UserForm(forms.ModelForm):
