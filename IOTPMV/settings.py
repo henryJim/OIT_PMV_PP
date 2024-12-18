@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'tasks',
     'usuarios',
     'formacion',
-    'gestion_instructores'
+    'gestion_instructores',
+    'commons'
 ]
 
 MIDDLEWARE = [

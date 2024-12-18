@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import T_instructor, T_aprendiz, T_admin, T_lider
+from commons.models import T_instructor, T_aprendiz, T_admin, T_lider
 from .forms import InstructorForm, UserForm, PerfilForm
 from django.db import IntegrityError
 from django.http import JsonResponse
