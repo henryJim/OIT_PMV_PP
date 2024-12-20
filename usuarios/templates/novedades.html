@@ -1,5 +1,51 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load icons %}
 
 {% block content %}
-<h1>Gestion de alertas!</h1>
+<main class="container py-5">
+    <section class="card card-body shadow-sm p-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center display-4 pb-4">Gestión de novedades</h1>
+    
+                <!-- Botón de creación con margen -->
+                <div class="d-flex justify-content-end mb-3">
+                    <a href="/novedades/crear" class="btn btn-success btn-lg">
+                        <i class="bi bi-person-plus"></i> Crear Novedad
+                    </a>
+                </div>
+                <div class="table-responsive">
+                    <table id="novedades" class="table table-hover table-bordered align-middle">
+                        <thead class="table-primary text-center">
+                        <tr>
+                            <th>Acciones</th>
+                            <th>Nombre</th>
+                            <th>Decripcion</th>
+                            <th>Estado</th>
+                            <th>tipo</th>
+                            <th>Sub Tipo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for novedad in novedades %}
+                        <tr data-id="{{ novedad.id }}">
+                            <td class="text-center"><a href="/" class="btn btn-primary btn-sm">
+                                {% icon 'plus' %}
+        
+                            </a></td>
+                            <td>{{ novedad.nom}}</td>
+                            <td>{{ novedad.descri}}</td>
+                            <td>{{ novedad.estado}}</td>
+                            <td>{{ novedad.tipo.nom}}</td>
+                            <td>{{ novedad.sub_tipo.nom}}</td>    
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+    </section>
+</main>
 {% endblock %}

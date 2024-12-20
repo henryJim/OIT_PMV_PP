@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from commons.models import T_instructor, T_perfil
+from commons.models import T_instru, T_perfil, T_nove
 
 
 class UserForm(forms.ModelForm):
@@ -27,7 +27,7 @@ class PerfilForm(forms.ModelForm):
         model = T_perfil
         exclude = ['user', 'rol', 'mail']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}),
+            'nom': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}),
             'apelli': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apellido'}),
             'tipo_dni': forms.Select(attrs={'class': 'form-select'}),
             'dni': forms.NumberInput(attrs={'class': 'form-control'}),
@@ -37,7 +37,7 @@ class PerfilForm(forms.ModelForm):
             'fecha_naci': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
         labels = {
-            'nombre': 'Nombres',
+            'nom': 'Nombres',
             'apelli': 'Apellidos',
             'tipo_dni': 'Tipo de documento',
             'dni': 'Numero de documento',
@@ -49,7 +49,7 @@ class PerfilForm(forms.ModelForm):
 
 class InstructorForm(forms.ModelForm):
     class Meta:
-        model = T_instructor
+        model = T_instru
         exclude = ['perfil']  # El perfil se asignará automáticamente
         widgets = {
             'contra': forms.TextInput(attrs={'class': 'form-control'}),
@@ -66,4 +66,21 @@ class InstructorForm(forms.ModelForm):
             'esta': 'Estado',
             'profe': 'Profesion',
             'tipo_vincu': 'Tipo de vinculacion'
+        }
+
+class NovedadForm(forms.ModelForm):
+    class Meta:
+        model = T_nove
+        exclude = ['estado'] # El estado se asignara automaticamente
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'descri': forms.TextInput(attrs={'class': 'form-control'}),
+            'tipo': forms.Select(attrs={'class': 'form-select'}),
+            'sub_tipo': forms.Select(attrs={'class': 'form-select'})
+        }
+        labels = {
+            'nombre': 'Nombre',
+            'descri': 'Descripcion',
+            'tipo': 'Tipo',
+            'sub_tipo': 'Sub Tipo'
         }

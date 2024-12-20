@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load icons %}
+
+{% block content %}
+<main class="container-fluid py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center display-4 pb-4">Gestión de programas</h1>
+
+            <!-- Botón de creación con margen -->
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/programas/crear" class="btn btn-success btn-lg">
+                    <i class="bi bi-person-plus"></i> Crear programa
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table id="instructores" class="table table-hover table-bordered align-middle">
+                    <thead class="table-primary text-center">
+                    <tr>
+                        <th></th>
+                        <th>Acciones</th>
+                        <th>Nombre</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for programa in programas %}
+                    <tr data-id="{{ programa.id }}">
+                        <td class="details-control">    <i class="bi bi-chevron-right"></i>
+                        </td>
+                        <td><a href="/" class="btn btn-primary btn-sm ">
+                            {% icon 'edit' %}
+    
+                        </a></td>
+                        <td>{{ programa.nom}}</td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

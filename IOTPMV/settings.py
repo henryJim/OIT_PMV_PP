@@ -86,6 +86,7 @@ TEMPLATES = [
 DJANGO_ICONS = {
     "ICONS": {
         "edit": {"name": "bi bi-pencil"},
+        "plus": {"name": "bi bi-plus-lg"},
     },
 }
 
@@ -129,7 +130,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
+
+USE_L10N = True
 
 TIME_ZONE = 'America/Bogota'
 
@@ -146,6 +149,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+# Carpeta para almacenar archivos subidos
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_URL = '/signin/'
 

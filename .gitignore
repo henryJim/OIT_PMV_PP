@@ -6,9 +6,22 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
 # Archivos temporales de desarrollo
 *.log
 *.bak
 *.swp
 
+# Entorno virtual
 venv/
+
+# Archivos de configuración de IDEs
+.vscode/
+.idea/
+
+# Archivos generados por el sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos guardados por la app
+media/

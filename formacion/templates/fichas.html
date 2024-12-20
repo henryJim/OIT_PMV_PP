@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if mensaje %}
+<div class="alert alert-danger" role="alert">
+{{mensaje}}
+{% endif %}
+<div class="container my-4">
+  <h1 class="mb-4">Mis fichas</h1>
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <!-- Tarjeta 1 -->
+    {% for ficha in fichas %}
+
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+              <a href="{% url 'panel_ficha' ficha.id %}">
+
+                <h5 class="card-title">Ficha {{ ficha.num }}</h5>
+              </a>
+
+                <p class="card-text">PROGRAMA {{ ficha.progra }}</p>
+                <p class="card-text">Matriculados: {{ ficha.num_matri }}</p>
+                <p class="card-text">Finalización: {{ ficha.fecha_cierre|date:"d \d\e F \d\e Y"}}</p>
+            </div>
+        </div>
+
+    </div>
+
+    {% endfor %}
+</div>
+
+</div>
+
+
+{% endblock %}

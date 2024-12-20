@@ -3,8 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from commons.models import T_instructor, T_aprendiz, T_admin, T_lider
-from .forms import InstructorForm, UserForm, PerfilForm
+from commons.models import T_instru, T_apre, T_admin, T_lider, T_nove
+from .forms import InstructorForm, UserForm, PerfilForm, NovedadForm
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
@@ -28,7 +28,7 @@ def signin(request):
             })    
         else:
             login(request, user)
-            return redirect('home')
+            return redirect('novedades')
 
 def signup(request):
     if request.method == 'GET':
@@ -64,10 +64,11 @@ def dashboard_admin(request):
 
 @login_required
 def instructores(request):
-    instructores = T_instructor.objects.select_related('perfil').all()
+    instructores = T_instru.objects.select_related('perfil').all()
     return render(request, 'instructor.html',{
         'instructores': instructores
     })
+
 
 @login_required
 def crear_instructor(request):
@@ -117,7 +118,7 @@ def crear_instructor(request):
 
 @login_required
 def instructor_detalle(request, instructor_id):
-    instructor = get_object_or_404(T_instructor, pk=instructor_id)
+    instructor = get_object_or_404(T_instru, pk=instructor_id)
     perfil = instructor.perfil
     user = perfil.user
 
@@ -151,9 +152,10 @@ def instructor_detalle(request, instructor_id):
                 'instructor_form': instructor_form,
                 'error': "Error al actualizar el instructor. Verifique los datos."})
 
+@login_required
 def instructor_detalle_tabla(request, instructor_id):
     try:
-        instructor = get_object_or_404(T_instructor, pk=instructor_id)
+        instructor = get_object_or_404(T_instru, pk=instructor_id)
         instructor_data = model_to_dict(instructor)
         
          # Incluimos datos relacionados del perfil
@@ -172,16 +174,46 @@ def instructor_detalle_tabla(request, instructor_id):
         instructor_data['perfil'] = perfil_data
 
         return JsonResponse({'info_adicional': instructor_data})
-    except T_instructor.DoesNotExist:
+    except T_instru.DoesNotExist:
         return JsonResponse({'error': 'Registro no encontrado'}, status=404)
 
 @login_required
 def aprendices(request):
-    aprendices = T_aprendiz.objects.select_related('perfil__user').all()
+    aprendices = T_apre.objects.select_related('perfil__user').all()
     return render(request, 'aprendiz.html',{
         'aprendices': aprendices
     })
 
 @login_required
 def novedades(request):
-    return render(request, 'novedades.html')
+    novedades = T_nove.objects.all()
+    return render(request, 'novedades.html',{
+        'novedades': novedades
+    })
+
+
+@login_required
+def crear_novedad(request):
+
+    if request.method == 'GET':
+
+        novedad_form = NovedadForm()
+
+        return render(request, 'novedad_crear.html', {
+            'novedad_form': novedad_form
+        })
+    else:
+        try:
+            novedad_form = NovedadForm(request.POST)
+            if novedad_form.is_valid():
+                #Creacion de la novedad
+                new_novedad = novedad_form.save(commit=False)
+                new_novedad.estado = 'creado'
+                new_novedad.save()
+                return redirect('novedades')
+
+        except ValueError as e:
+            return render(request, 'novedad_crear.html', {
+            'novedad_form': novedad_form,
+            'error': f'Ocurrió un error: {str(e)}'
+        })

@@ -20,6 +20,8 @@ from tasks import views as tasks_views
 from usuarios import views as usuarios_views
 from formacion import views as formacion_views
 from gestion_instructores import views as gestion_instructores_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     # Ruta Admin
@@ -54,15 +56,36 @@ urlpatterns = [
     path('obtener_detalles/<int:instructor_id>/', usuarios_views.instructor_detalle_tabla, name='obtener_detalles'),
 
     # ROL Instructores
-    path('panel_instructor/', formacion_views.panel_instructor, name='panel_instructor'),
     path('gestion_instructor/', gestion_instructores_views.gestion_instructor, name='gestion_instructor'),
     path('get_tree_instructor/', formacion_views.tree_detalle, name='get_tree_instructor'),
     
+    # Panel instructor
+    path('fichas/', formacion_views.listar_fichas, name='listar_fichas'),
+    path('fichas/<int:ficha_id>/', formacion_views.panel_ficha, name='panel_ficha'),
+    path('fichas/<int:ficha_id>/crear_actividad/', formacion_views.crear_actividad, name='crear_actividad'),
+
 
     # ROL Aprendices
     path('panel_aprendiz/', formacion_views.panel_aprendiz, name='panel_aprendiz'),
 
     # Novedades
     path('novedades/', usuarios_views.novedades, name='novedades'),
+    path('novedades/crear/', usuarios_views.crear_novedad , name='crear_novedad'),
+
+    # Programas
+    path('programas/', formacion_views.listar_programas, name='programas'),
+    path('programas/crear/', formacion_views.crear_programa, name='crear_programas'),
+
+    # Competencias
+    path('competencias/', formacion_views.listar_competencias, name = 'competencias'),
+    path('competencias/crear/', formacion_views.crear_competencias, name= 'crear_competencias'),
+
+    # Raps
+    path('raps/', formacion_views.listar_raps, name = 'raps'),
+    path('raps/crear/', formacion_views.crear_raps, name='crear_raps')
+
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

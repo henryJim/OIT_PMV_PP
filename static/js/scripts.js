@@ -2,7 +2,12 @@ $(document).ready(function () {
     new DataTable('#tasks');
     new DataTable('#aprendices', {
         language: {
-            url: '//cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
+            url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
+        }
+    });
+    new DataTable('#novedades', {
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
         }
     });
 });
@@ -11,7 +16,7 @@ $(document).ready(function () {
     // Inicializa DataTables
     var table = $('#instructores').DataTable({
         language: {
-            url: '//cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
+            url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
         },
     });
 
@@ -29,7 +34,7 @@ $(document).ready(function () {
             success: function (data) {
                 contenido = `
                     <div>
-                    <p><strong>Nombre:</strong> ${data.info_adicional.perfil.nombre}</p>
+                    <p><strong>Nombre:</strong> ${data.info_adicional.perfil.nom}</p>
                     <p><strong>Apellido:</strong> ${data.info_adicional.perfil.apelli}</p>
                     <p><strong>Direccion:</strong> ${data.info_adicional.perfil.dire}</p>
                     <p><strong>Telefono:</strong> ${data.info_adicional.perfil.tele}</p>
@@ -64,27 +69,6 @@ $(document).ready(function () {
             tr.addClass('shown');
             icon.removeClass('bi-chevron-right').addClass('bi-chevron-down');
 
-        }
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-    const tree = new Wunderbaum({
-        id: "tree",
-        source: {
-            url: "{% url 'get_tree_instructor' %}",
-        },
-        lazyLoad: function(event, ctx) {
-            // Opcional: Para cargar nodos hijos dinámicamente
-            ctx.result = fetch(`/get-child-nodes/?id=${ctx.node.data.id}`)
-                .then(response => response.json());
-        },
-        dnd: {
-            // Opcional: Configura arrastrar y soltar
-            dragStart: (e, ctx) => true,
-            drop: (e, ctx) => {
-                console.log("Nodo movido:", ctx.otherNode.title, "a", ctx.node.title);
-            }
         }
     });
 });
