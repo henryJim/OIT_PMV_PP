@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from commons.models import T_instru, T_perfil, T_nove
+from commons.models import T_instru, T_perfil, T_nove, T_admin
 
 
 class UserForm(forms.ModelForm):
@@ -21,6 +21,7 @@ class UserForm(forms.ModelForm):
             'password': None,
             'username': None
         }
+
 
 class PerfilForm(forms.ModelForm):
     class Meta:
@@ -47,6 +48,7 @@ class PerfilForm(forms.ModelForm):
             'fecha_naci': 'Fecha de nacimiento'
         }
 
+
 class InstructorForm(forms.ModelForm):
     class Meta:
         model = T_instru
@@ -68,10 +70,11 @@ class InstructorForm(forms.ModelForm):
             'tipo_vincu': 'Tipo de vinculacion'
         }
 
+
 class NovedadForm(forms.ModelForm):
     class Meta:
         model = T_nove
-        exclude = ['estado'] # El estado se asignara automaticamente
+        exclude = ['estado']  # El estado se asignara automaticamente
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'descri': forms.TextInput(attrs={'class': 'form-control'}),
@@ -83,4 +86,19 @@ class NovedadForm(forms.ModelForm):
             'descri': 'Descripcion',
             'tipo': 'Tipo',
             'sub_tipo': 'Sub Tipo'
+        }
+
+
+class AdministradoresForm(forms.ModelForm):
+    class Meta:
+        model = T_admin
+        exclude = ['perfil']
+        field = ['area', 'esta']
+        widgets = {
+            'area': forms.TextInput(attrs={'class': 'form-control'}),
+            'esta': forms.TextInput(attrs={'class': 'form-control'})
+        }
+        labels = {
+            'area': 'Area',
+            'esta':  'Estado'
         }

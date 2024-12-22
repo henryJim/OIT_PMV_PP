@@ -10,51 +10,50 @@
 
             <!-- Botón de creación con margen -->
             <div class="d-flex justify-content-end mb-3">
-                <a href="/instructores/crear" class="btn btn-success btn-lg">
+                <a href="/administradores/crear/" class="btn btn-success btn-lg">
                     <i class="bi bi-person-plus"></i> Crear Administrador
                 </a>
             </div>
             <div class="table-responsive">
-                <table id="instructores" class="table table-hover table-bordered align-middle">
+                <table id="Administradores" class="table table-hover table-bordered align-middle">
                     <thead class="table-primary text-center">
                     <tr>
                         <th></th>
                         <th>Acciones</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
+                        <th>Area</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Tipo de documento</th>
+                        <th>Numero de documento</th>
                         <th>Telefono</th>
-                        <th>Direccion</th>
-                        <th>Mail</th>
-                        <th>Fecha nacimiento</th>
-                        <th># Contrato</th>
-                        <th>Fecha inicio</th>
-                        <th>Fecha fin</th>
-                        <th>Estado</th>
-                        <th>Profesion</th>
-                        <th>Vinculacion</th>
+                        <th>direccion</th>
+                        <th>Genero</th>
+                        <th>Fecha de nacimiento</th>
+                        <th>Nombre de usuario</th>
+                        <th>Correo Electronico</th>
+
                     </tr>
                 </thead>
                 <tbody>
-                    {% for instructor in instructores %}
-                    <tr data-id="{{ instructor.id }}">
+                    {% for admin in administradores %}
+                    <tr data-id="{{ admin.id }}">
                         <td class="details-control">    <i class="bi bi-chevron-right"></i>
                         </td>
-                        <td><a href="{% url 'instructor_detalle' instructor.id %}" class="btn btn-primary btn-sm ">
+                        <td><a href="/" class="btn btn-primary btn-sm ">
                             {% icon 'edit' %}
     
                         </a></td>
-                        <td>{{ instructor.perfil.nom}}</td>
-                        <td>{{ instructor.perfil.apelli}}</td>
-                        <td>{{ instructor.perfil.tele}}</td>
-                        <td>{{ instructor.perfil.dire}}</td>
-                        <td>{{ instructor.perfil.mail}}</td>
-                        <td>{{ instructor.perfil.fecha_naci}}</td>
-                        <td>{{ instructor.contra}}</td>
-                        <td>{{ instructor.fecha_ini}}</td>
-                        <td>{{ instructor.fecha_fin}}</td>
-                        <td>{{ instructor.esta}}</td>
-                        <td>{{ instructor.profe}}</td>
-                        <td>{{ instructor.tipo_vincu}}</td>
+                        <td>{{ admin.area}}</td>
+                        <td>{{ admin.perfil.nom}}</td>
+                        <td>{{ admin.perfil.apelli}}</td>
+                        <td>{{ admin.perfil.tipo_dni}}</td>
+                        <td>{{ admin.perfil.dni}}</td>
+                        <td>{{ admin.perfil.tele}}</td>
+                        <td>{{ admin.perfil.dire}}</td>
+                        <td>{{ admin.perfil.gene}}</td>
+                        <td>{{ admin.perfil.fecha_naci}}</td>
+                        <td>{{ admin.perfil.user.username}}</td>
+                        <td>{{ admin.perfil.mail}}</td>
 
                     </tr>
                     {% endfor %}
