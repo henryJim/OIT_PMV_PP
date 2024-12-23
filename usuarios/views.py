@@ -196,6 +196,51 @@ def aprendices(request):
     })
 
 
+def crear_aprendices(request):
+    if request.method == 'GET':
+
+        user_form = UserForm()
+        perfil_form = PerfilForm()
+        instructor_form = InstructorForm()
+
+        return render(request, 'instructor_crear.html', {
+            'user_form': user_form,
+            'perfil_form': perfil_form,
+            'instructor_form': instructor_form
+        })
+    else:
+        try:
+            user_form = UserForm(request.POST)
+            perfil_form = PerfilForm(request.POST)
+            instructor_form = InstructorForm(request.POST)
+            if user_form.is_valid() and perfil_form.is_valid() and instructor_form.is_valid():
+                # Creacion del usuario
+                new_user = user_form.save(commit=False)
+                new_user.set_password(user_form.cleaned_data['password'])
+                new_user.save()
+
+                # creacion del perfil
+                new_perfil = perfil_form.save(commit=False)
+                new_perfil.user = new_user
+                new_perfil.rol = 'instructor'
+                new_perfil.mail = new_user.email
+                new_perfil.save()
+
+                # creacion del instructor
+                new_instructor = instructor_form.save(commit=False)
+                new_instructor.perfil = new_perfil
+                new_instructor.save()
+                return redirect('instructores')
+
+        except ValueError as e:
+            return render(request, 'crear_instructor.html', {
+                'user_form': user_form,
+                'perfil_form': perfil_form,
+                'instructor_form': instructor_form,
+                'error': f'Ocurrió un error: {str(e)}'
+            })
+
+
 @login_required
 def administradores(request):
     administradores = T_admin.objects.select_related('perfil__user').all()
@@ -212,9 +257,7 @@ def lideres(request):
     })
 
 
-# Validar logica
-
-
+# funcion para crear administradores
 @login_required
 def crear_administradores(request):
 
@@ -245,7 +288,6 @@ def crear_administradores(request):
                 new_admin = admin_form.save(commit=False)
                 new_admin.perfil = new_perfil
                 new_admin.save()
-                # Redirigir a la lista de instructores (ajusta según sea necesario)
                 return redirect('administradores')
             else:
                 # Manejo de formularios inválidos
@@ -262,6 +304,82 @@ def crear_administradores(request):
                 'perfil_form': perfil_form,
                 'admin_form': admin_form,
                 'error': "Error al actualizar el administrador. Verifique los datos."})
+
+# funcion para actualizar informacion de los administradores
+
+
+@login_required
+def detalle_administradores(request, admin_id):
+    administrador = get_object_or_404(T_admin, id=admin_id)
+    perfil = administrador.perfil
+    user = perfil.user
+
+    if request.method == 'GET':
+        user_form = UserForm(instance=user)
+        perfil_form = PerfilForm(instance=perfil)
+        admin_form = AdministradoresForm(instance=administrador)
+
+        return render(request, 'administradores_detalle.html', {
+            'administrador': administrador,
+            'admin_form': admin_form,
+            'perfil_form': perfil_form,
+            'user_form':  user_form
+        })
+    else:
+        try:
+            # Si se envía el formulario con los datos modificados
+            user_form = UserForm(request.POST, instance=user)
+            perfil_form = PerfilForm(request.POST, instance=perfil)
+            admin_form = AdministradoresForm(
+                request.POST, instance=administrador)
+            if user_form.is_valid() and perfil_form.is_valid() and admin_form.is_valid():
+                user_form.save()
+                perfil_form.save()
+                admin_form.save()
+
+                # Redirigir a la lista de administradores (ajusta según sea necesario)
+                return redirect('administrador_detalle', admin_id=administrador.id)
+        except ValueError:
+            # Si ocurre un error al guardar, mostrar el formulario nuevamente con el mensaje de error
+            return render(request, 'administradores_detalle.html', {
+                'user_form': user_form,
+                'perfil_form': perfil_form,
+                'admin_form': admin_form,
+                'error': "Error al actualizar el administrador. Verifique los datos."})
+
+
+@login_required
+def administrador_detalle_tabla(request, admin_id):
+    try:
+        administrador = get_object_or_404(T_admin, id=admin_id)
+        administrador_data = model_to_dict(administrador)
+
+        # Incluimos datos relacionados del perfil
+        if hasattr(administrador, 'perfil'):
+            administrador_data = model_to_dict(administrador.perfil)
+
+            # Si el perfil tiene una relación con Usuario, la agregamos
+            if hasattr(administrador.perfil, 'user'):
+                administrador_data['user'] = {
+                    'username': administrador.perfil.user.username,
+                    'email': administrador.perfil.user.email,
+                    'first_name': administrador.perfil.user.first_name,
+                    'last_name': administrador.perfil.user.last_name,
+                }
+
+        administrador_data['perfil'] = perfil_data
+
+        return JsonResponse({'info_adicional': administrador_data})
+    except T_instru.DoesNotExist:
+        return JsonResponse({'error': 'Registro no encontrado'}, status=404)
+
+
+def eliminar_admin(request, admin_id):
+    admin = get_object_or_404(T_admin, pk=admin_id)
+    if request.method == 'POST':
+        admin.delete()
+        return redirect('administradores')
+    return render(request, 'confirmar_eliminacion_administradores.html', {'admin': admin})
 
 
 @login_required
