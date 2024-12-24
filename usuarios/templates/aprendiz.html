@@ -9,7 +9,7 @@
             <h1 class="text-center display-4 pb-4">Gestión de Aprendices</h1>
 
             <div class="d-flex justify-content-end mb-3">
-                <a href="/instructores/crear" class="btn btn-success btn-lg">
+                <a href="/aprendices/crear" class="btn btn-success btn-lg">
                     <i class="bi bi-person-plus"></i> Crear Aprendiz
                 </a>
             </div>
@@ -35,9 +35,12 @@
                 <tbody>
                     {% for aprendiz in aprendices %}
                     <tr>
-                        <td><a href="/" class="btn btn-primary btn-sm ">
+                        <td>
+                        <a href="{% url 'obtener_detalles_aprendiz' aprendiz.id %}" class="btn btn-primary btn-sm ">
                             {% icon 'edit' %}
-    
+                        </a>
+                        <a href="{% url 'obtener_detalles_aprendiz' aprendiz.id %}" class="btn btn-danger btn-sm ">
+                            {% icon 'delete' %}
                         </a>
                         <td>{{ aprendiz.perfil.nombre}}</td>
                         <td>{{ aprendiz.perfil.apelli}}</td>

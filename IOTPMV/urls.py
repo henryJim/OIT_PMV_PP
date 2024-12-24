@@ -52,6 +52,12 @@ urlpatterns = [
     # ROL Admin
     path('admin_dashboard/', usuarios_views.dashboard_admin, name='admin_dashboard'),
     path('aprendices/', usuarios_views.aprendices, name='aprendices'),
+    path('aprendices/crear', usuarios_views.crear_aprendices,
+         name='crear_aprendices'),  # ----> Crear aprendiz
+    path('aprendices/<int:aprendiz_id>/', usuarios_views.detalle_aprendices,
+         name='obtener_detalles_aprendiz'),  # ----> actualizar informacion de aprendiz
+    path('aprendices/<int:aprendiz_id>/eliminar', usuarios_views.eliminar_aprendiz,
+         name='eliminar_aprendiz'),  # ----> Eliminar informacion de aprendiz
     path('instructores/', usuarios_views.instructores, name='instructores'),
     path('instructores/crear/', usuarios_views.crear_instructor,
          name='crear_instructor'),

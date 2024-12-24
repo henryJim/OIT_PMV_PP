@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from commons.models import T_instru, T_apre, T_admin, T_lider, T_nove
-from .forms import InstructorForm, UserForm, PerfilForm, NovedadForm, AdministradoresForm
+from .forms import InstructorForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
@@ -82,7 +82,7 @@ def crear_instructor(request):
 
     if request.method == 'GET':
 
-        user_form = UserForm()
+        user_form = UserFormCreate()
         perfil_form = PerfilForm()
         instructor_form = InstructorForm()
 
@@ -93,7 +93,7 @@ def crear_instructor(request):
         })
     else:
         try:
-            user_form = UserForm(request.POST)
+            user_form = UserFormCreate(request.POST)
             perfil_form = PerfilForm(request.POST)
             instructor_form = InstructorForm(request.POST)
             if user_form.is_valid() and perfil_form.is_valid() and instructor_form.is_valid():
@@ -131,7 +131,7 @@ def instructor_detalle(request, instructor_id):
     user = perfil.user
 
     if request.method == 'GET':
-        user_form = UserForm(instance=user)
+        user_form = UserFormEdit(instance=user)
         perfil_form = PerfilForm(instance=perfil)
         instructor_form = InstructorForm(instance=instructor)
         return render(request, 'instructor_detalle.html', {
@@ -143,7 +143,7 @@ def instructor_detalle(request, instructor_id):
     else:
         try:
             # Si se envía el formulario con los datos modificados
-            user_form = UserForm(request.POST, instance=user)
+            user_form = UserFormEdit(request.POST, instance=user)
             perfil_form = PerfilForm(request.POST, instance=perfil)
             instructor_form = InstructorForm(request.POST, instance=instructor)
             if user_form.is_valid() and perfil_form.is_valid() and instructor_form.is_valid():
@@ -195,25 +195,27 @@ def aprendices(request):
         'aprendices': aprendices
     })
 
+# Funcion para crear aprendiz
+
 
 def crear_aprendices(request):
     if request.method == 'GET':
 
-        user_form = UserForm()
+        user_form = UserFormCreate()
         perfil_form = PerfilForm()
-        instructor_form = InstructorForm()
+        aprendiz_form = AprendizForm()
 
-        return render(request, 'instructor_crear.html', {
+        return render(request, 'aprendiz_crear.html', {
             'user_form': user_form,
             'perfil_form': perfil_form,
-            'instructor_form': instructor_form
+            'aprendiz_form': aprendiz_form
         })
     else:
         try:
-            user_form = UserForm(request.POST)
+            user_form = UserFormCreate(request.POST)
             perfil_form = PerfilForm(request.POST)
-            instructor_form = InstructorForm(request.POST)
-            if user_form.is_valid() and perfil_form.is_valid() and instructor_form.is_valid():
+            aprendiz_form = AprendizForm(request.POST)
+            if user_form.is_valid() and perfil_form.is_valid() and aprendiz_form.is_valid():
                 # Creacion del usuario
                 new_user = user_form.save(commit=False)
                 new_user.set_password(user_form.cleaned_data['password'])
@@ -222,23 +224,73 @@ def crear_aprendices(request):
                 # creacion del perfil
                 new_perfil = perfil_form.save(commit=False)
                 new_perfil.user = new_user
-                new_perfil.rol = 'instructor'
+                new_perfil.rol = 'aprendiz'
                 new_perfil.mail = new_user.email
                 new_perfil.save()
 
-                # creacion del instructor
-                new_instructor = instructor_form.save(commit=False)
-                new_instructor.perfil = new_perfil
-                new_instructor.save()
-                return redirect('instructores')
+                # creacion del aprendiz
+                new_aprendiz = aprendiz_form.save(commit=False)
+                new_aprendiz.perfil = new_perfil
+                new_aprendiz.save()
+                return redirect('aprendices')
 
         except ValueError as e:
-            return render(request, 'crear_instructor.html', {
+            return render(request, 'aprendiz_crear.html', {
                 'user_form': user_form,
                 'perfil_form': perfil_form,
-                'instructor_form': instructor_form,
+                'aprendiz_form': aprendiz_form,
                 'error': f'Ocurrió un error: {str(e)}'
             })
+
+# Funcion para editar aprendiz
+
+
+def detalle_aprendices(request, aprendiz_id):
+    aprendiz = get_object_or_404(T_apre, pk=aprendiz_id)
+    perfil = aprendiz.perfil
+    user = perfil.user
+
+    if request.method == 'GET':
+
+        user_form = UserFormCreate(instance=user)
+        perfil_form = PerfilForm(instance=perfil)
+        aprendiz_form = AprendizForm(instance=aprendiz)
+
+        return render(request, 'aprendiz_detalle.html', {
+            'aprendiz': aprendiz,
+            'user_form': user_form,
+            'perfil_form': perfil_form,
+            'aprendiz_form': aprendiz_form
+        })
+    else:
+        try:
+            user_form = UserFormCreate(request.POST)
+            perfil_form = PerfilForm(request.POST)
+            aprendiz_form = AprendizForm(request.POST)
+            if user_form.is_valid() and perfil_form.is_valid() and aprendiz_form.is_valid():
+                user_form.save()
+                perfil_form.save()
+                aprendiz_form.save()
+            return redirect('aprendices')
+
+        except ValueError:
+            return render(request, 'aprendiz_detalle.html', {
+                'user_form': user_form,
+                'perfil_form': perfil_form,
+                'aprendiz_form': aprendiz_form,
+                'error': 'Error al actualizar el administrador. Verifique los datos'
+            })
+
+# funcion para eliminar aprendiz
+
+
+def eliminar_aprendiz(request, aprendiz_id):
+    aprendiz = get_object_or_404(T_apre, pk=aprendiz_id)
+
+    if request.method == 'POST':
+        aprendiz.delete()
+        return redirect('aprendices')
+    return render(request, '', {'aprendiz': aprendiz})
 
 
 @login_required
@@ -262,7 +314,7 @@ def lideres(request):
 def crear_administradores(request):
 
     if request.method == 'GET':
-        user_form = UserForm()
+        user_form = UserFormCreate()
         perfil_form = PerfilForm()
         admin_form = AdministradoresForm()
 
@@ -274,7 +326,7 @@ def crear_administradores(request):
     else:
         try:
             # Si se envía el formulario con los datos modificados
-            user_form = UserForm(request.POST)
+            user_form = UserFormCreate(request.POST)
             perfil_form = PerfilForm(request.POST)
             admin_form = AdministradoresForm(request.POST)
             if user_form.is_valid() and perfil_form.is_valid() and admin_form.is_valid():
@@ -315,7 +367,7 @@ def detalle_administradores(request, admin_id):
     user = perfil.user
 
     if request.method == 'GET':
-        user_form = UserForm(instance=user)
+        user_form = UserFormEdit(instance=user)
         perfil_form = PerfilForm(instance=perfil)
         admin_form = AdministradoresForm(instance=administrador)
 
@@ -328,7 +380,7 @@ def detalle_administradores(request, admin_id):
     else:
         try:
             # Si se envía el formulario con los datos modificados
-            user_form = UserForm(request.POST, instance=user)
+            user_form = UserFormEdit(request.POST, instance=user)
             perfil_form = PerfilForm(request.POST, instance=perfil)
             admin_form = AdministradoresForm(
                 request.POST, instance=administrador)
@@ -338,7 +390,7 @@ def detalle_administradores(request, admin_id):
                 admin_form.save()
 
                 # Redirigir a la lista de administradores (ajusta según sea necesario)
-                return redirect('administrador_detalle', admin_id=administrador.id)
+                return redirect('administradores')
         except ValueError:
             # Si ocurre un error al guardar, mostrar el formulario nuevamente con el mensaje de error
             return render(request, 'administradores_detalle.html', {

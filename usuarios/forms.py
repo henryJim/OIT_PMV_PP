@@ -1,15 +1,35 @@
 from django import forms
 from django.contrib.auth.models import User
-from commons.models import T_instru, T_perfil, T_nove, T_admin
+from commons.models import T_instru, T_perfil, T_nove, T_admin, T_apre
 
 
-class UserForm(forms.ModelForm):
+class UserFormEdit(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+        exclude = ['password']
+        widgets = {
+
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Escriba el nombre de usuario'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Escriba el mail'}),
+        }
+        labels = {
+            'username': 'Nombre de usuario',
+            'email': 'Correo electrónico',
+        }
+        help_texts = {
+
+            'username': None
+        }
+
+
+class UserFormCreate(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'password', 'email']
         widgets = {
-            'password': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Escriba la contraseña'}),
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Escriba el nombre de usuario'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Escriba la contraseña de usuario'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Escriba el mail'}),
         }
         labels = {
@@ -18,8 +38,8 @@ class UserForm(forms.ModelForm):
             'email': 'Correo electrónico',
         }
         help_texts = {
-            'password': None,
-            'username': None
+            'username': None,
+            'password': None
         }
 
 
@@ -68,6 +88,24 @@ class InstructorForm(forms.ModelForm):
             'esta': 'Estado',
             'profe': 'Profesion',
             'tipo_vincu': 'Tipo de vinculacion'
+        }
+
+
+class AprendizForm(forms.ModelForm):
+    class Meta:
+        model = T_apre
+        exclude = ['perfil']
+        widgets = {
+            'cod': forms.TextInput(attrs={'class': 'form-control'}),
+            'esta': forms.Select(attrs={'class': 'form-control'}),
+            'ficha': forms.Select(attrs={'class': 'form-select'}),
+            'repre_legal': forms.Select(attrs={'class': 'form-select'}),
+        }
+        labels = {
+            'cod': 'Codigo',
+            'esta':  'Estado',
+            'ficha':  'ficha',
+            'repre_legal':  'Represante Legal'
         }
 
 
