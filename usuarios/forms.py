@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from commons.models import T_instru, T_perfil, T_nove, T_admin, T_apre
+from commons.models import T_instru, T_perfil, T_nove, T_admin, T_apre, T_lider
 
 
 class UserFormEdit(forms.ModelForm):
@@ -132,6 +132,20 @@ class AdministradoresForm(forms.ModelForm):
         model = T_admin
         exclude = ['perfil']
         field = ['area', 'esta']
+        widgets = {
+            'area': forms.TextInput(attrs={'class': 'form-control'}),
+            'esta': forms.TextInput(attrs={'class': 'form-control'})
+        }
+        labels = {
+            'area': 'Area',
+            'esta':  'Estado'
+        }
+
+
+class LiderForm(forms.ModelForm):
+    class Meta:
+        model = T_lider
+        exclude = ['perfil']
         widgets = {
             'area': forms.TextInput(attrs={'class': 'form-control'}),
             'esta': forms.TextInput(attrs={'class': 'form-control'})

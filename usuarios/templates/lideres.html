@@ -10,7 +10,7 @@
 
             <!-- Botón de creación con margen -->
             <div class="d-flex justify-content-end mb-3">
-                <a href="/instructores/crear" class="btn btn-success btn-lg">
+                <a href="/lideres/crear/" class="btn btn-success btn-lg">
                     <i class="bi bi-person-plus"></i> Crear Lider
                 </a>
             </div>
@@ -26,35 +26,31 @@
                         <th>Direccion</th>
                         <th>Mail</th>
                         <th>Fecha nacimiento</th>
-                        <th># Contrato</th>
-                        <th>Fecha inicio</th>
-                        <th>Fecha fin</th>
+                        <th>Area</th>
                         <th>Estado</th>
-                        <th>Profesion</th>
-                        <th>Vinculacion</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for instructor in instructores %}
-                    <tr data-id="{{ instructor.id }}">
+                    {% for lider in lideres %}
+                    <tr data-id="{{ lider.id }}">
                         <td class="details-control">    <i class="bi bi-chevron-right"></i>
                         </td>
-                        <td><a href="{% url 'instructor_detalle' instructor.id %}" class="btn btn-primary btn-sm ">
+                        <td>
+                        <a href="{% url 'detalle_lider' lider.id %}" class="btn btn-primary btn-sm ">
                             {% icon 'edit' %}
-    
-                        </a></td>
-                        <td>{{ instructor.perfil.nom}}</td>
-                        <td>{{ instructor.perfil.apelli}}</td>
-                        <td>{{ instructor.perfil.tele}}</td>
-                        <td>{{ instructor.perfil.dire}}</td>
-                        <td>{{ instructor.perfil.mail}}</td>
-                        <td>{{ instructor.perfil.fecha_naci}}</td>
-                        <td>{{ instructor.contra}}</td>
-                        <td>{{ instructor.fecha_ini}}</td>
-                        <td>{{ instructor.fecha_fin}}</td>
-                        <td>{{ instructor.esta}}</td>
-                        <td>{{ instructor.profe}}</td>
-                        <td>{{ instructor.tipo_vincu}}</td>
+                        </a>
+                        <a href="{% url 'eliminar_lider' lider.id %}" class="btn btn-danger btn-sm ">
+                            {% icon 'delete' %}
+                        </a>
+                        </td>
+                        <td>{{ lider.perfil.nom}}</td>
+                        <td>{{ lider.perfil.apelli}}</td>
+                        <td>{{ lider.perfil.tele}}</td>
+                        <td>{{ lider.perfil.dire}}</td>
+                        <td>{{ lider.perfil.user.email}}</td>
+                        <td>{{ lider.perfil.fecha_naci}}</td>
+                        <td>{{ lider.area}}</td>
+                        <td>{{ lider.esta}}</td>
 
                     </tr>
                     {% endfor %}

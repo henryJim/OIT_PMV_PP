@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from commons.models import T_instru, T_apre, T_admin, T_lider, T_nove
-from .forms import InstructorForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm
+from .forms import InstructorForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm, LiderForm
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
@@ -294,14 +294,6 @@ def eliminar_aprendiz(request, aprendiz_id):
 
 
 @login_required
-def administradores(request):
-    administradores = T_admin.objects.select_related('perfil__user').all()
-    return render(request, 'administradores.html', {
-        'administradores': administradores
-    })
-
-
-@login_required
 def lideres(request):
     lideres = T_lider.objects.select_related('perfil__user').all()
     return render(request, 'lideres.html', {
@@ -309,7 +301,111 @@ def lideres(request):
     })
 
 
+@login_required  # Funcion para crear lider
+def crear_lideres(request):
+
+    if request.method == 'GET':
+        user_form = UserFormCreate()
+        perfil_form = PerfilForm()
+        lider_form = LiderForm()
+        return render(request, 'lider_crear.html', {
+            'user_form': user_form,
+            'perfil_form': perfil_form,
+            'lider_form': lider_form
+        })
+    else:
+        try:
+            # Si se envía el formulario con los datos modificados
+            user_form = UserFormCreate(request.POST)
+            perfil_form = PerfilForm(request.POST)
+            lider_form = LiderForm(request.POST)
+            if user_form.is_valid() and perfil_form.is_valid() and lider_form.is_valid():
+                new_user = user_form.save(commit=False)
+                new_user.set_password(user_form.cleaned_data['password'])
+                new_user.save()
+                new_perfil = perfil_form.save(commit=False)
+                new_perfil.user = new_user
+                new_perfil.rol = 'Lider'
+                new_perfil.save()
+                new_lider = lider_form.save(commit=False)
+                new_lider.perfil = new_perfil
+                new_lider.save()
+                return redirect('lideres')
+            else:
+                # Manejo de formularios inválidos
+                return render(request, 'lider_crear.html', {
+                    'user_form': user_form,
+                    'perfil_form': perfil_form,
+                    'lider_form':  lider_form,
+                    'error': "Datos inválidos en el formulario. Corrige los errores."
+                })
+        except ValueError:
+            # Si ocurre un error al guardar, mostrar el formulario nuevamente con el mensaje de error
+            return render(request, 'lider_crear.html', {
+                'user_form': user_form,
+                'perfil_form': perfil_form,
+                'lider_form': lider_form,
+                'error': "Se presenta un error al crear el lider"})
+
+
+@login_required  # Funcion para actualizar informacion de lider
+def detalle_lideres(request, lider_id):
+    lider = get_object_or_404(T_lider, id=lider_id)
+    perfil = lider.perfil
+    user = perfil.user
+
+    if request.method == 'GET':
+        user_form = UserFormEdit(instance=user)
+        perfil_form = PerfilForm(instance=perfil)
+        lider_form = LiderForm(instance=lider)
+        return render(request, 'lider_detalle.html', {
+            'lider': lider,
+            'user_form': user_form,
+            'perfil_form': perfil_form,
+            'lider_form': lider_form
+        })
+    else:
+        try:
+            # Si se envía el formulario con los datos modificados
+            user_form = UserFormEdit(request.POST, instance=user)
+            perfil_form = PerfilForm(request.POST, instance=perfil)
+            lider_form = LiderForm(request.POST, instance=lider)
+            if user_form.is_valid() and perfil_form.is_valid() and lider_form.is_valid():
+
+                user_form.save()
+                perfil_form.save()
+                lider_form.save()
+                return redirect('lideres')
+
+        except ValueError:
+            # Si ocurre un error al guardar, mostrar el formulario nuevamente con el mensaje de error
+            return render(request, 'lider_detalle.html', {
+                'user_form': user_form,
+                'perfil_form': perfil_form,
+                'lider_form': lider_form,
+                'error': "Error al actualizar el lider. Verifique los datos."})
+
+
+def eliminar_lideres(request, lider_id):
+    lider = get_object_or_404(T_lider, id=lider_id)
+    if request.method == 'POST':
+        lider.delete()
+        return redirect('lideres')
+    return render(request, 'confirmar_eliminacion_lider.html', {
+        'lider': lider
+    })
+
+
+@login_required
+def administradores(request):
+    administradores = T_admin.objects.select_related('perfil__user').all()
+    return render(request, 'administradores.html', {
+        'administradores': administradores
+    })
+
 # funcion para crear administradores
+
+
 @login_required
 def crear_administradores(request):
 
@@ -399,6 +495,16 @@ def detalle_administradores(request, admin_id):
                 'admin_form': admin_form,
                 'error': "Error al actualizar el administrador. Verifique los datos."})
 
+# Funcion para eliminar informacion del admin
+
+
+def eliminar_admin(request, admin_id):
+    admin = get_object_or_404(T_admin, pk=admin_id)
+    if request.method == 'POST':
+        admin.delete()
+        return redirect('administradores')
+    return render(request, 'confirmar_eliminacion_administradores.html', {'admin': admin})
+
 
 @login_required
 def administrador_detalle_tabla(request, admin_id):
@@ -424,14 +530,6 @@ def administrador_detalle_tabla(request, admin_id):
         return JsonResponse({'info_adicional': administrador_data})
     except T_instru.DoesNotExist:
         return JsonResponse({'error': 'Registro no encontrado'}, status=404)
-
-
-def eliminar_admin(request, admin_id):
-    admin = get_object_or_404(T_admin, pk=admin_id)
-    if request.method == 'POST':
-        admin.delete()
-        return redirect('administradores')
-    return render(request, 'confirmar_eliminacion_administradores.html', {'admin': admin})
 
 
 @login_required
