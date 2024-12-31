@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from commons.models import T_instru, T_perfil, T_nove, T_admin, T_apre, T_lider
+from commons.models import T_instru, T_perfil, T_nove, T_admin, T_apre, T_lider, T_repre_legal
 
 
 class UserFormEdit(forms.ModelForm):
@@ -106,6 +106,30 @@ class AprendizForm(forms.ModelForm):
             'esta':  'Estado',
             'ficha':  'ficha',
             'repre_legal':  'Represante Legal'
+        }
+
+
+class RepresanteLegalForm(forms.ModelForm):
+    class Meta:
+        model = T_repre_legal
+        fields = ['nom', 'tele', 'dire', 'mail', 'paren', 'ciu', 'depa']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'tele': forms.TextInput(attrs={'class': 'form-control'}),
+            'dire': forms.TextInput(attrs={'class': 'form-control'}),
+            'mail': forms.TextInput(attrs={'class': 'form-control'}),
+            'paren': forms.TextInput(attrs={'class': 'form-control'}),
+            'ciu': forms.TextInput(attrs={'class': 'form-control'}),
+            'depa': forms.TextInput(attrs={'class': 'form-control'})
+        }
+        labels = {
+            'nom': 'Nombre',
+            'tele': 'Telefono',
+            'dire': 'Direccion',
+            'mail': 'Correo',
+            'paren': 'Parentesco',
+            'ciu': 'Ciudad',
+            'depa': 'Departamento'
         }
 
 
