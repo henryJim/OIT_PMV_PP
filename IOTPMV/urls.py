@@ -75,12 +75,23 @@ urlpatterns = [
     path('administradores/<int:admin_id>/eliminar', usuarios_views.eliminar_admin,
          name='eliminar_administrador'),  # ----> Eliminar info usuario admin
 
+    # ROL Lideres
     path('lideres/', usuarios_views.lideres, name='lideres'),
     path('lideres/crear/', usuarios_views.crear_lideres, name='crear_lideres'),
     path('lideres/<int:lider_id>/',
          usuarios_views.detalle_lideres, name='detalle_lider'),
     path('lideres/<int:lider_id>/eliminar',
          usuarios_views.eliminar_lideres, name='eliminar_lider'),
+
+    # ROL Representantes Legales
+    path('represantesLegales/', usuarios_views.representante_legal,
+         name='represantesLegales'),
+    path('represantesLegales/crear/', usuarios_views.crear_representante_legal,
+         name='crearRepresantesLegales'),
+    path('represantesLegales/<int:repreLegal_id>/', usuarios_views.detalle_representante_legal,
+         name='detalleRepresanteLegal'),
+    path('represantesLegales/<int:repreLegal_id>/eliminar', usuarios_views.eliminar_representante_legal,
+         name='eliminarRepresanteLegal'),
 
     # ROL Instructores
     path('gestion_instructor/', gestion_instructores_views.gestion_instructor,
