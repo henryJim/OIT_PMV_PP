@@ -3,8 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from commons.models import T_instru, T_apre, T_admin, T_lider, T_nove
-from .forms import InstructorForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm, LiderForm
+from commons.models import T_instru, T_apre, T_admin, T_lider, T_nove, T_repre_legal
+from .forms import InstructorForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm, LiderForm, RepresanteLegalForm
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
@@ -67,6 +67,8 @@ def signout(request):
 @login_required
 def dashboard_admin(request):
     return render(request, 'admin_dashboard.html')
+
+### INSTRUCTORES ###
 
 
 @login_required
@@ -187,6 +189,76 @@ def instructor_detalle_tabla(request, instructor_id):
     except T_instru.DoesNotExist:
         return JsonResponse({'error': 'Registro no encontrado'}, status=404)
 
+### REP. LEGAL ###
+
+
+@login_required
+def representante_legal(request):
+    representantes_legales = T_repre_legal.objects.all()
+    return render(request, 'representantesLegales.html', {
+        'representantesLegales': representantes_legales
+    })
+
+
+@login_required  # Funcion para crear Representante legal
+def crear_representante_legal(request):
+    if request.method == 'GET':
+
+        replegal_form = RepresanteLegalForm()
+        return render(request, 'representanteLegal_crear.html', {
+            'replegal_form': replegal_form
+        })
+    else:
+        try:
+            replegal_form = RepresanteLegalForm(request.POST)
+            if replegal_form.is_valid():
+                new_represanteLegal = replegal_form.save(commit=False)
+                new_represanteLegal.save()
+                return redirect('represantesLegales')
+        except ValueError as e:
+            return render(request, 'representanteLegal_crear.html', {
+                'replegal_form': replegal_form,
+                'error': f'Ocurrió un error: {str(e)}'
+            })
+
+
+@login_required  # Funcion para Actualizar Representante legal
+def detalle_representante_legal(request, repreLegal_id):
+    representante_legal = get_object_or_404(T_repre_legal, id=repreLegal_id)
+
+    if request.method == 'GET':
+
+        replegal_form = RepresanteLegalForm(instance=representante_legal)
+        return render(request, 'representanteLegal_detalle.html', {
+            'represante_legal': representante_legal,
+            'replegal_form': replegal_form
+        })
+    else:
+        try:
+            replegal_form = RepresanteLegalForm(
+                request.POST, instance=representante_legal)
+            if replegal_form.is_valid():
+                replegal_form.save()
+                return redirect('represantesLegales')
+        except ValueError:
+            return render(request, 'representanteLegal_detalle.html', {
+                'replegal_form': replegal_form,
+                'error': 'Error al actualizar el administrador. Verifique los datos'
+            })
+
+
+@login_required  # Funcion para eliminar  Representante legal
+def eliminar_representante_legal(request, repreLegal_id):
+    representante_legal = get_object_or_404(T_repre_legal, id=repreLegal_id)
+    if request.method == 'POST':
+        representante_legal.delete()
+        return redirect('represantesLegales')
+    return render(request, 'confirmar_eliminacion_represante_legal.html', {
+        'represante_legal': representante_legal,
+    })
+
+ ### APRENDICES ###
+
 
 @login_required
 def aprendices(request):
@@ -195,10 +267,11 @@ def aprendices(request):
         'aprendices': aprendices
     })
 
-# Funcion para crear aprendiz
+
+login_required
 
 
-def crear_aprendices(request):
+def crear_aprendices(request):  # Funcion para crear aprendiz
     if request.method == 'GET':
 
         user_form = UserFormCreate()
@@ -242,10 +315,11 @@ def crear_aprendices(request):
                 'error': f'Ocurrió un error: {str(e)}'
             })
 
-# Funcion para editar aprendiz
+
+login_required
 
 
-def detalle_aprendices(request, aprendiz_id):
+def detalle_aprendices(request, aprendiz_id):  # Funcion para editar aprendiz
     aprendiz = get_object_or_404(T_apre, pk=aprendiz_id)
     perfil = aprendiz.perfil
     user = perfil.user
@@ -281,16 +355,18 @@ def detalle_aprendices(request, aprendiz_id):
                 'error': 'Error al actualizar el administrador. Verifique los datos'
             })
 
-# funcion para eliminar aprendiz
 
+@login_required
+def eliminar_aprendiz(request, aprendiz_id):  # funcion para eliminar aprendiz
 
-def eliminar_aprendiz(request, aprendiz_id):
     aprendiz = get_object_or_404(T_apre, pk=aprendiz_id)
 
     if request.method == 'POST':
         aprendiz.delete()
         return redirect('aprendices')
     return render(request, '', {'aprendiz': aprendiz})
+
+### LIDERES ###
 
 
 @login_required
@@ -386,7 +462,8 @@ def detalle_lideres(request, lider_id):
                 'error': "Error al actualizar el lider. Verifique los datos."})
 
 
-def eliminar_lideres(request, lider_id):
+@login_required
+def eliminar_lideres(request, lider_id):  # Funcion para eliminar informacion de lider
     lider = get_object_or_404(T_lider, id=lider_id)
     if request.method == 'POST':
         lider.delete()
@@ -394,6 +471,8 @@ def eliminar_lideres(request, lider_id):
     return render(request, 'confirmar_eliminacion_lider.html', {
         'lider': lider
     })
+
+### ADMINISTRADOR ###
 
 
 @login_required
@@ -403,11 +482,9 @@ def administradores(request):
         'administradores': administradores
     })
 
-# funcion para crear administradores
-
 
 @login_required
-def crear_administradores(request):
+def crear_administradores(request):  # funcion para crear administradores
 
     if request.method == 'GET':
         user_form = UserFormCreate()
@@ -453,10 +530,9 @@ def crear_administradores(request):
                 'admin_form': admin_form,
                 'error': "Error al actualizar el administrador. Verifique los datos."})
 
-# funcion para actualizar informacion de los administradores
-
 
 @login_required
+# funcion para actualizar informacion de los administradores
 def detalle_administradores(request, admin_id):
     administrador = get_object_or_404(T_admin, id=admin_id)
     perfil = administrador.perfil
@@ -495,10 +571,8 @@ def detalle_administradores(request, admin_id):
                 'admin_form': admin_form,
                 'error': "Error al actualizar el administrador. Verifique los datos."})
 
-# Funcion para eliminar informacion del admin
 
-
-def eliminar_admin(request, admin_id):
+def eliminar_admin(request, admin_id):  # Funcion para eliminar informacion del admin
     admin = get_object_or_404(T_admin, pk=admin_id)
     if request.method == 'POST':
         admin.delete()
@@ -530,6 +604,8 @@ def administrador_detalle_tabla(request, admin_id):
         return JsonResponse({'info_adicional': administrador_data})
     except T_instru.DoesNotExist:
         return JsonResponse({'error': 'Registro no encontrado'}, status=404)
+
+### NOVEDADES ###
 
 
 @login_required
