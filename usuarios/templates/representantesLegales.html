@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load icons %}
+
+{% block content %}
+<main class="container-fluid py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center display-4 pb-4">Gestión de Representantes legales</h1>
+
+            <!-- Botón de creación con margen -->
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/represantesLegales/crear/" class="btn btn-success btn-lg">
+                    <i class="bi bi-person-plus"></i> Crear Representante Legal
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table id="instructores" class="table table-hover table-bordered align-middle">
+                    <thead class="table-primary text-center">
+                    <tr>
+                        <th></th>
+                        <th>Acciones</th>
+                        <th>Nombres</th>
+                        <th>Telefono</th>
+                        <th>Direccion</th>
+                        <th>Email</th>
+                        <th>Parentesco</th>
+                        <th>Ciudad</th>
+                        <th>Departamento</th> 
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for represanteLegal in representantesLegales %}
+                    <tr data-id="{{ represanteLegal.id }}">
+                        <td class="details-control">    <i class="bi bi-chevron-right"></i>
+                        </td>
+                        <td>
+                            <a href="{% url 'detalleRepresanteLegal'  represanteLegal.id %}" class="btn btn-primary btn-sm ">
+                                {% icon 'edit' %}
+                            </a>
+                            <a href="{% url 'eliminarRepresanteLegal' represanteLegal.id %}" class="btn btn-danger btn-sm">
+                                {% icon 'delete' %}
+                            </a>
+                        </td>
+                        <td>{{ represanteLegal.nom}}</td>
+                        <td>{{ represanteLegal.tele}}</td>
+                        <td>{{ represanteLegal.dire}}</td>
+                        <td>{{ represanteLegal.mail}}</td>
+                        <td>{{ represanteLegal.paren}}</td>
+                        <td>{{ represanteLegal.ciu}}</td>
+                        <td>{{ represanteLegal.depa}}</td> 
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
