@@ -3,8 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from commons.models import T_instru, T_apre, T_admin, T_lider, T_nove, T_repre_legal
-from .forms import InstructorForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm, LiderForm, RepresanteLegalForm
+from commons.models import T_instru, T_apre, T_admin, T_lider, T_nove, T_repre_legal, T_munici, T_departa
+from .forms import InstructorForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm, LiderForm, RepresanteLegalForm, DepartamentoForm, MunicipioForm
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
@@ -572,6 +572,7 @@ def detalle_administradores(request, admin_id):
                 'error': "Error al actualizar el administrador. Verifique los datos."})
 
 
+@login_required
 def eliminar_admin(request, admin_id):  # Funcion para eliminar informacion del admin
     admin = get_object_or_404(T_admin, pk=admin_id)
     if request.method == 'POST':
@@ -641,3 +642,96 @@ def crear_novedad(request):
                 'novedad_form': novedad_form,
                 'error': f'Ocurrió un error: {str(e)}'
             })
+
+
+## DEPARTAMENTOS ##
+@login_required
+def departamentos(request):
+    departamentos = T_departa.objects.all()
+    return render(request, 'departamentos.html', {
+        'departamentos': departamentos
+    })
+
+
+@login_required
+def creardepartamentos(request):  # funcion para crear departamento
+    if request.method == 'GET':
+        departamentosForm = DepartamentoForm()
+        return render(request, 'departamentos_crear.html', {
+            'departamentosForm': departamentosForm
+        })
+    else:
+        try:
+            departamentosForm = DepartamentoForm(request.POST)
+            if departamentosForm.is_valid():
+                new_departamento = departamentosForm.save(commit=False)
+                new_departamento.save()
+                return redirect('departamentos')
+        except ValueError:
+            return render(request, 'departamentos_crear.html', {
+                'departamentosForm': departamentosForm,
+                'error': '"Error al crear departamento. Verifique los datos.'
+            })
+
+
+## MUNICIPIOS ##
+def municipios(request):
+    municipios = T_munici.objects.all()
+    return render(request, 'municipios.html', {
+        'municipios': municipios
+    })
+
+
+@login_required
+def crearmunicipios(request):  # funcion para crear municipio
+    if request.method == 'GET':
+        municipiosForm = MunicipioForm()
+        return render(request, 'municipios_crear.html', {
+            'municipiosForm': municipiosForm
+        })
+    else:
+        try:
+            municipiosForm = MunicipioForm(request.POST)
+            if municipiosForm.is_valid():
+                new_municipio = municipiosForm.save(commit=False)
+                new_municipio.save()
+                return redirect('municipios')
+        except ValueError:
+            return render(request, 'municipios_crear.html', {
+                'municipiosForm': municipiosForm,
+                'error': '"Error al al crear municipio. Verifique los datos.'
+            })
+
+
+@login_required
+def detalle_municipios(request, municipio_id):  # funcion para editar municipio
+    municipios = get_object_or_404(T_munici, id=municipio_id)
+
+    if request.method == 'GET':
+        municipiosForm = MunicipioForm(instance=municipios)
+        return render(request, 'municipios_detalle.html', {
+            'municipios': municipios,
+            'municipiosForm': municipiosForm
+        })
+    else:
+        try:
+            municipiosForm = MunicipioForm(request.POST, instance=municipios)
+            if municipiosForm.is_valid():
+                municipiosForm.save()
+                return redirect('municipios')
+        except ValueError:
+            return render(request, 'municipios_detalle.html', {
+                'municipiosForm': municipiosForm,
+                'error': '"Error al actualizar. Verifique los datos.'
+            })
+
+
+def eliminar_municipios(request, municipio_id):  # funcion para eliminar municipio
+    municipio = get_object_or_404(T_munici, id=municipio_id)
+
+    if request.method == 'POST':
+        municipio.delete()
+        return redirect('municipios')
+    return render(request, 'confirmar_eliminacion_municipio.html', {
+        'municipio': municipio,
+    })

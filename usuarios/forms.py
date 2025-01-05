@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from commons.models import T_instru, T_perfil, T_nove, T_admin, T_apre, T_lider, T_repre_legal
+from commons.models import T_instru, T_perfil, T_nove, T_admin, T_apre, T_lider, T_repre_legal, T_munici, T_departa
 
 
 class UserFormEdit(forms.ModelForm):
@@ -177,4 +177,34 @@ class LiderForm(forms.ModelForm):
         labels = {
             'area': 'Area',
             'esta':  'Estado'
+        }
+
+
+class DepartamentoForm(forms.ModelForm):
+    class Meta:
+        model = T_departa
+        fields = ['cod_departa', 'nom_departa']
+        widgets = {
+            'cod_departa': forms.TextInput(attrs={'class': 'form-control'}),
+            'nom_departa': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'cod_departa': 'Codigo de municipio',
+            'nom_departa': 'Departamento',
+        }
+
+
+class MunicipioForm(forms.ModelForm):
+    class Meta:
+        model = T_munici
+        fields = ['cod_munici', 'nom_munici', 'nom_departa']
+        widgets = {
+            'cod_munici': forms.TextInput(attrs={'class': 'form-control'}),
+            'nom_munici': forms.TextInput(attrs={'class': 'form-control'}),
+            'nom_departa': forms.Select(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'cod_munici': 'Codigo de municipio',
+            'nom_munici': 'Municipio',
+            'nom_departa': 'Departamento',
         }
