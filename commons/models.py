@@ -465,14 +465,20 @@ class T_departa(models.Model):
     class Meta:
         managed = True
         db_table = 'T_departa'
-    cod_departa = models.CharField(max_length=4),
-    nom_departa = models.CharField(max_length=200),
+    cod_departa = models.CharField(max_length=4, unique=True)
+    nom_departa = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.nom_departa
 
 
 class T_munici(models.Model):
     class Meta:
         managed = True
         db_table = 'T_munici'
-    cod_munici = models.CharField(max_length=4)
+    cod_munici = models.CharField(max_length=4, unique=True)
     nom_munici = models.CharField(max_length=200)
     nom_departa = models.ForeignKey(T_departa, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.nom_munici
