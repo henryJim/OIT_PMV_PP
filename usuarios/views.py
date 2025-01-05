@@ -674,6 +674,40 @@ def creardepartamentos(request):  # funcion para crear departamento
             })
 
 
+@login_required
+# funcion para actualizar info departamento
+def detalle_departamentos(request, departamento_id):
+    departamentos = get_object_or_404(T_departa, id=departamento_id)
+    if request.method == 'GET':
+        departamentosForm = DepartamentoForm(instance=departamentos)
+        return render(request, 'departamentos_detalle.html', {
+            'departamentos': departamentos,
+            'departamentosForm': departamentosForm
+        })
+    else:
+        try:
+            departamentosForm = DepartamentoForm(
+                request.POST, instance=departamentos)
+            if departamentosForm.is_valid():
+                departamentosForm.save()
+                return redirect('departamentos')
+        except ValueError:
+            return render(request, 'departamentos_detalle.html', {
+                'departamentosForm': departamentosForm,
+                'error': '"Error al actualizar departamento. Verifique los datos.'
+            })
+
+
+def eliminar_departamentos(request, departamento_id):
+    departamento = get_object_or_404(T_departa, id=departamento_id)
+    if request.method == 'POST':
+        departamento.delete()
+        return redirect('departamentos')
+    return render(request, 'confirmar_eliminacion_departamento.html', {
+        'departamento': departamento,
+    })
+
+
 ## MUNICIPIOS ##
 def municipios(request):
     municipios = T_munici.objects.all()
@@ -722,7 +756,7 @@ def detalle_municipios(request, municipio_id):  # funcion para editar municipio
         except ValueError:
             return render(request, 'municipios_detalle.html', {
                 'municipiosForm': municipiosForm,
-                'error': '"Error al actualizar. Verifique los datos.'
+                'error': 'Error al actualizar. Verifique los datos.'
             })
 
 

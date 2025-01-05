@@ -87,13 +87,17 @@ urlpatterns = [
     path('departamentos/', usuarios_views.departamentos, name='departamentos'),
     path('departamentos/crear/', usuarios_views.creardepartamentos,
          name='creardepartamentos'),
+    path('departamentos/<int:departamento_id>/', usuarios_views.detalle_departamentos,
+         name='detalle_departamentos'),
+    path('departamentos/<int:departamento_id>/eliminar', usuarios_views.eliminar_departamentos,
+         name='eliminar_departamentos'),
 
     # ROL Municipios
     path('municipios/', usuarios_views.municipios, name='municipios'),
     path('municipios/crear/', usuarios_views.crearmunicipios, name='crearmunicipios'),
     path('municipios/<int:municipio_id>/',
          usuarios_views.detalle_municipios, name='detalle_municipio'),
-    path('municipios/<int:municipio_id>/eliminar',
+    path('municipios/<int:municipio_id>/eliminar/',
          usuarios_views.eliminar_municipios, name='eliminar_municipio'),
 
     # ROL Instituciones

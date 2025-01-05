@@ -6,11 +6,11 @@
     <div class="row">
         <div class="col-12 offset-md-12">
             <form action="/departamentos/crear/" method="POST" class="card card-body mt-5">
-                <h1 class="text-center">Crear municipios</h1>
+                <h1 class="text-center">Crear departamento</h1>
                 {{error}}
                 {% csrf_token %}
                 {{ departamentosForm.as_p }}
-                <button type="submit" class="btn btn-primary">Crear municipio</button>
+                <button type="submit" class="btn btn-primary">Crear departamento</button>
             </form>
         </div>
     </div>

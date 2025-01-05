@@ -189,7 +189,7 @@ class DepartamentoForm(forms.ModelForm):
             'nom_departa': forms.TextInput(attrs={'class': 'form-control'}),
         }
         labels = {
-            'cod_departa': 'Codigo de municipio',
+            'cod_departa': 'Codigo de departamento',
             'nom_departa': 'Departamento',
         }
 
