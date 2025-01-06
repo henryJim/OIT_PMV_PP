@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from commons.models import T_instru, T_perfil, T_nove, T_admin, T_apre, T_lider, T_repre_legal, T_munici, T_departa
+from commons.models import T_instru, T_perfil, T_nove, T_admin, T_apre, T_lider, T_repre_legal, T_munici, T_departa, T_insti_edu
 
 
 class UserFormEdit(forms.ModelForm):
@@ -207,4 +207,20 @@ class MunicipioForm(forms.ModelForm):
             'cod_munici': 'Codigo de municipio',
             'nom_munici': 'Municipio',
             'nom_departa': 'Departamento',
+        }
+
+
+class InstitucionForm(forms.ModelForm):
+    class Meta:
+        model = T_insti_edu
+        fields = ['nom', 'dire', 'ofi']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'dire': forms.TextInput(attrs={'class': 'form-control'}),
+            'ofi': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'nom': 'Nombre institución',
+            'dire': 'Dirección institución',
+            'ofi': 'Oficina',
         }

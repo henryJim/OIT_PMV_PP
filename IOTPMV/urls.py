@@ -101,6 +101,14 @@ urlpatterns = [
          usuarios_views.eliminar_municipios, name='eliminar_municipio'),
 
     # ROL Instituciones
+    path('instituciones/', usuarios_views.instituciones,
+         name='instituciones'),
+    path('instituciones/crear/', usuarios_views.crear_instituciones,
+         name='crear_instituciones'),
+    path('instituciones/<int:institucion_id>/', usuarios_views.detalle_instituciones,
+         name='detalle_institucion'),
+    path('instituciones/<int:institucion_id>/eliminar', usuarios_views.eliminar_instituciones,
+         name='eliminar_institucion'),
 
 
     # ROL Representantes Legales

@@ -3,8 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from commons.models import T_instru, T_apre, T_admin, T_lider, T_nove, T_repre_legal, T_munici, T_departa
-from .forms import InstructorForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm, LiderForm, RepresanteLegalForm, DepartamentoForm, MunicipioForm
+from commons.models import T_instru, T_apre, T_admin, T_lider, T_nove, T_repre_legal, T_munici, T_departa, T_insti_edu
+from .forms import InstructorForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm, LiderForm, RepresanteLegalForm, DepartamentoForm, MunicipioForm, InstitucionForm
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
@@ -733,7 +733,7 @@ def crearmunicipios(request):  # funcion para crear municipio
         except ValueError:
             return render(request, 'municipios_crear.html', {
                 'municipiosForm': municipiosForm,
-                'error': '"Error al al crear municipio. Verifique los datos.'
+                'error': 'Error al al crear municipio. Verifique los datos.'
             })
 
 
@@ -768,4 +768,71 @@ def eliminar_municipios(request, municipio_id):  # funcion para eliminar municip
         return redirect('municipios')
     return render(request, 'confirmar_eliminacion_municipio.html', {
         'municipio': municipio,
+    })
+
+
+## Instituciones ##
+@login_required
+def instituciones(request):
+    instituciones = T_insti_edu.objects.all()
+    return render(request, 'instituciones.html', {
+        'instituciones': instituciones
+    })
+
+
+@login_required
+def crear_instituciones(request):  # funcion para crear institucion
+    if request.method == 'GET':
+        institucionForm = InstitucionForm()
+        return render(request, 'instituciones_crear.html', {
+            'institucionForm': institucionForm
+        })
+    else:
+        try:
+            institucionForm = InstitucionForm(request.POST)
+            if institucionForm.is_valid():
+                new_institucion = institucionForm.save(commit=False)
+                new_institucion.save()
+                return redirect('instituciones')
+        except ValueError:
+            return render(request, 'instituciones_crear.html', {
+                'institucionForm': institucionForm,
+                'error': 'Error al al crear institución. Verifique los datos.'
+            })
+
+
+@login_required
+# funcion para actualizar institucion
+def detalle_instituciones(request, institucion_id):
+    institucion = get_object_or_404(T_insti_edu, id=institucion_id)
+
+    if request.method == 'GET':
+        institucionForm = InstitucionForm(instance=institucion)
+        return render(request, 'instituciones_detalle.html', {
+            'institucion': institucion,
+            'institucionForm': institucionForm
+        })
+    else:
+        try:
+            institucionForm = InstitucionForm(
+                request.POST, instance=institucion)
+            if institucionForm.is_valid():
+                institucionForm.save()
+                return redirect('instituciones')
+        except ValueError:
+            return render(request, 'instituciones_detalle.html', {
+                'institucionForm': institucionForm,
+                'error': 'Error al actualizar. Verifique los datos.'
+            })
+
+
+@login_required  # funcion para eliminar institucion
+def eliminar_instituciones(request, institucion_id):
+    institucion = get_object_or_404(T_insti_edu, id=institucion_id)
+
+    if request.method == 'POST':
+        institucion.delete()
+        return redirect('instituciones')
+    return render(request, 'confirmar_eliminacion_instituciones.html', {
+        'institucion': institucion,
     })
