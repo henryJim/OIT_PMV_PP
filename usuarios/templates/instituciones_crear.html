@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main class="container">
+    <div class="row">
+        <div class="col-12 offset-md-12">
+            <form action="/instituciones/crear/" method="POST" class="card card-body mt-5">
+                <h1 class="text-center">Crear institución</h1>
+                {{error}}
+                {% csrf_token %}
+                {{ institucionForm.as_p }}
+                <button type="submit" class="btn btn-primary">Crear institución</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+{% endblock %}
