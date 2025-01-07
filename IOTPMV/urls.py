@@ -107,8 +107,18 @@ urlpatterns = [
          name='crear_instituciones'),
     path('instituciones/<int:institucion_id>/', usuarios_views.detalle_instituciones,
          name='detalle_institucion'),
-    path('instituciones/<int:institucion_id>/eliminar', usuarios_views.eliminar_instituciones,
+    path('instituciones/<int:institucion_id>/eliminar/', usuarios_views.eliminar_instituciones,
          name='eliminar_institucion'),
+
+    # Rol  De Centros De Formacion
+    path('centroformacion/', usuarios_views.centrosformacion,
+         name='centrosformacion'),
+    path('centroformacion/crear/', usuarios_views.crear_centrosformacion,
+         name='crear_centrosformacion'),
+    path('centroformacion/<int:centroformacion_id>/', usuarios_views.detalle_centrosformacion,
+         name='detalle_centrosformacion'),
+    path('centroformacion/<int:centroformacion_id>/eliminar/', usuarios_views.eliminar_centrosformacion,
+         name='eliminar_centrosformacion'),
 
 
     # ROL Representantes Legales

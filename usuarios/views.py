@@ -3,8 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from commons.models import T_instru, T_apre, T_admin, T_lider, T_nove, T_repre_legal, T_munici, T_departa, T_insti_edu
-from .forms import InstructorForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm, LiderForm, RepresanteLegalForm, DepartamentoForm, MunicipioForm, InstitucionForm
+from commons.models import T_instru, T_apre, T_admin, T_lider, T_nove, T_repre_legal, T_munici, T_departa, T_insti_edu, T_centro_forma
+from .forms import InstructorForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm, LiderForm, RepresanteLegalForm, DepartamentoForm, MunicipioForm, InstitucionForm, CentroFormacionForm
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
@@ -835,4 +835,74 @@ def eliminar_instituciones(request, institucion_id):
         return redirect('instituciones')
     return render(request, 'confirmar_eliminacion_instituciones.html', {
         'institucion': institucion,
+    })
+
+
+## Centros de formacion ##
+login_required
+
+
+def centrosformacion(request):
+    centrosformacion = T_centro_forma.objects.all()
+    return render(request, 'centro_formacion.html', {
+        'centrosformacion': centrosformacion
+    })
+
+
+login_required  # Funcion para crear centros de formacion
+
+
+def crear_centrosformacion(request):
+    if request.method == 'GET':
+        centrosformacionForm = CentroFormacionForm()
+        return render(request, 'centro_formacion_crear.html', {
+            'centrosformacionForm': centrosformacionForm
+        })
+    else:
+        try:
+            centrosformacionForm = CentroFormacionForm(request.POST)
+            if centrosformacionForm.is_valid():
+                new_centroFormacion = centrosformacionForm.save(commit=False)
+                new_centroFormacion.save()
+                return redirect('centrosformacion')
+        except ValueError:
+            return render(request, 'centro_formacion_crear.html', {
+                'centrosformacionForm': centrosformacionForm,
+                'error': 'Error al crear institución. Verifique los datos'
+            })
+
+
+@login_required  # funcion para actualizar centro de formacion
+def detalle_centrosformacion(request, centroformacion_id):
+    centroFormacion = get_object_or_404(T_centro_forma, id=centroformacion_id)
+
+    if request.method == 'GET':
+        centrosformacionForm = CentroFormacionForm(instance=centroFormacion)
+        return render(request, 'centro_formacion_detalle.html', {
+            'centroFormacion': centroFormacion,
+            'centrosformacionForm': centrosformacionForm
+        })
+    else:
+        try:
+            centrosformacionForm = CentroFormacionForm(
+                request.POST, instance=centroFormacion)
+            if centrosformacionForm.is_valid():
+                centrosformacionForm.save()
+                return redirect('centrosformacion')
+        except ValueError:
+            return render(request, 'centro_formacion_detalle.html', {
+                'centrosformacionForm': centrosformacionForm,
+                'error': 'Error al crear institución. Verifique los datos'
+            })
+
+
+@login_required  # funcion para eliminar centro de formacion
+def eliminar_centrosformacion(request, centroformacion_id):
+    centroformacion = get_object_or_404(T_centro_forma, id=centroformacion_id)
+
+    if request.method == 'POST':
+        centroFormacion.delete()
+        return redirect('centrosformacion')
+    return render(request, 'confirmar_eliminacion_centro_formacion.html', {
+        'centroformacion': centroformacion,
     })
