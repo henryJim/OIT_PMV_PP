@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load icons %}
+
+{% block content %}
+<main class="container-fluid py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center display-4 pb-4">Gestión de Administradores</h1>
+
+            <!-- Botón de creación con margen -->
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/administradores/crear/" class="btn btn-success btn-lg">
+                    <i class="bi bi-person-plus"></i> Crear Administrador
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table id="administradores" class="table table-hover table-bordered align-middle">
+                    <thead class="table-primary text-center">
+                    <tr>
+                        <th></th>
+                        <th>Acciones</th>
+                        <th>Area</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Tipo de documento</th>
+                        <th>Numero de documento</th>
+                        <th>Telefono</th>
+                        <th>direccion</th>
+                        <th>Genero</th>
+                        <th>Fecha de nacimiento</th>
+                        <th>Nombre de usuario</th>
+                        <th>Correo Electronico</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for admin in administradores %}
+                    <tr data-id="{{ admin.id }}">
+                        <td class="details-control">    <i class="bi bi-chevron-right"></i>
+                        </td>
+                        <td>
+                            <a href="{% url 'administrador_detalle' admin.id %}" class="btn btn-primary btn-sm ">
+                                {% icon 'edit' %}
+                            </a>
+                            <a href="{% url 'eliminar_administrador' admin.id %}" class="btn btn-danger btn-sm">
+                                {% icon 'delete' %}
+                            </a>
+                        </td>
+                        <td>{{ admin.area}}</td>
+                        <td>{{ admin.perfil.nom}}</td>
+                        <td>{{ admin.perfil.apelli}}</td>
+                        <td>{{ admin.perfil.tipo_dni}}</td>
+                        <td>{{ admin.perfil.dni}}</td>
+                        <td>{{ admin.perfil.tele}}</td>
+                        <td>{{ admin.perfil.dire}}</td>
+                        <td>{{ admin.perfil.gene}}</td>
+                        <td>{{ admin.perfil.fecha_naci}}</td>
+                        <td>{{ admin.perfil.user.username}}</td>
+                        <td>{{ admin.perfil.user.email}}</td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

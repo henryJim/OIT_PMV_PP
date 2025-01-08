@@ -3,7 +3,7 @@
 {% block content %}
 <main class="container py-5">
     <section class="card card-body shadow-sm p-4">
-        <h2 class="text-center mb-4">Gestion de entidades</h2>
+        <h2 class="text-center mb-4">Gestión de entidades</h2>
         
         <p class="text-center mb-4">En esta sección, el administrador puede crear nuevos usuarios y gestionar los actores del sistema.</p>
 
@@ -29,10 +29,20 @@
                     </div>
                 </div>
             </a>
+        </div><div class="col">
+            <a href="{% url 'represantesLegales' %}" class="btn">
+            <div class="card shadow-sm h-100">
+                <img src="{% static 'images/RepresentanteLegalIcon.png' %}" class="card-img-top" alt="RepresentanteLegal" >
+                <div class="card-body text-center">
+                    <h5 class="card-title">Representante legal</h5>
+                    <p class="card-text">Administrar los representantes legales del sistema.</p>
+                </div>
+            </div>
+        </a>
             </div><div class="col">
-                <a href="{% url 'instructores' %}" class="btn">
+                <a href="{% url 'administradores' %}" class="btn">
                 <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/adminicon2.png' %}" class="card-img-top" alt="Instructores" >
+                    <img src="{% static 'images/adminicon2.png' %}" class="card-img-top" alt="administradores" >
                     <div class="card-body text-center">
                         <h5 class="card-title">Administradores</h5>
                         <p class="card-text">Administrar los admins del sistema.</p>
@@ -40,12 +50,84 @@
                 </div>
             </a>
             </div><div class="col">
-                <a href="{% url 'instructores' %}" class="btn">
+                <a href="{% url 'lideres' %}" class="btn">
                 <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/leadericon.png' %}" class="card-img-top" alt="Instructores" >
+                    <img src="{% static 'images/leadericon.png' %}" class="card-img-top" alt="Lideres" >
                     <div class="card-body text-center">
                         <h5 class="card-title">Control del sistema</h5>
                         <p class="card-text">Administrar los controladores del sistema.</p>
+                    </div>
+                </div>
+            </a>
+
+            <!--- Nuevas entidades agregadas -->
+            </div><div class="col">
+                <a href="{% url 'departamentos' %}" class="btn">
+                <div class="card shadow-sm h-100">
+                    <img src="{% static 'images/departamentosIcon.png' %}" class="card-img-top" alt="Departamentos" >
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Departamentos</h5>
+                        <p class="card-text">Administrar los departamentos del sistema.</p>
+                    </div>
+                </div>
+            </a>
+            </div><div class="col">
+                <a href="{% url 'municipios' %}" class="btn">
+                <div class="card shadow-sm h-100">
+                    <img src="{% static 'images/municipiosIcon.png' %}" class="card-img-top" alt="Municipios" >
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Municipios</h5>
+                        <p class="card-text">Administrar los municipios del sistema.</p>
+                    </div>
+                </div>
+            </a>
+            </div><div class="col">
+                <a href="{% url 'instituciones' %}" class="btn">
+                <div class="card shadow-sm h-100">
+                    <img src="{% static 'images/InstitucionesIcon.png' %}" class="card-img-top" alt="Instituciones" >
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Instituciones</h5>
+                        <p class="card-text">Administrar las instituciones del sistema.</p>
+                    </div>
+                </div>
+            </a>
+            </div><div class="col">
+                <a href="{% url 'centrosformacion' %}" class="btn">
+                <div class="card shadow-sm h-100">
+                    <img src="{% static 'images/centroFormacionIcon.png' %}" class="card-img-top" alt="centro-formacion" >
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Centros de formación</h5>
+                        <p class="card-text">Administrar los Centros de formación del sistema.</p>
+                    </div>
+                </div>
+            </a>
+            </div><div class="col">
+                <a href="{% url 'programas' %}" class="btn">
+                <div class="card shadow-sm h-100">
+                    <img src="{% static 'images/programasIcon.png' %}" class="card-img-top" alt="Programas" >
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Programas</h5>
+                        <p class="card-text">Administrar los programas del sistema.</p>
+                    </div>
+                </div>
+            </a>
+            </div><div class="col">
+                <a href="{% url 'competencias' %}" class="btn">
+                <div class="card shadow-sm h-100">
+                    <img src="{% static 'images/competenciaIcon.png' %}" class="card-img-top" alt="Competencias" >
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Competencias</h5>
+                        <p class="card-text">Administrar los competencias del sistema.</p>
+                    </div>
+                </div>
+            </a>
+            </div><div class="col">
+                <a href="{% url 'raps' %}" class="btn">
+                <div class="card shadow-sm h-100">
+                    <img src="{% static 'images/rapsIcon.png' %}" class="card-img-top" alt="Raps" >
+                    <div class="card-body text-center">
+                        <h5 class="card-title">RAPS</h5>
+                        <p class="card-text">Administrar los RAPS del sistema.</p>
                     </div>
                 </div>
             </a>

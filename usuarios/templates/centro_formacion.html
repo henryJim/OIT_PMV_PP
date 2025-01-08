@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load icons %}
+
+{% block content %}
+<main class="container-fluid py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center display-4 pb-4">Gestión de centros de formación</h1>
+
+            <!-- Botón de creación con margen -->
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/centroformacion/crear/" class="btn btn-success btn-lg">
+                    <i class="bi bi-person-plus"></i> Crear centro de formación
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table id="centrosformacion" class="table table-hover table-bordered align-middle">
+                    <thead class="table-primary text-center">
+                    <tr>
+                        <th></th>
+                        <th>Acciones</th>
+                        <th>Nombre</th>
+                        <th>Dirección</th>
+                        <th>Departamento</th>
+                        <th>Municipio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for centroformacion in centrosformacion %}
+                    <tr data-id="{{ centroformacion.id }}">
+                        <td class="details-control">    <i class="bi bi-chevron-right"></i>
+                        </td>
+                        <td>
+                        <a href="{% url 'detalle_centrosformacion' centroformacion.id  %}" class="btn btn-primary btn-sm ">
+                            {% icon 'edit' %}
+                        </a>
+                        <a href="{% url 'eliminar_centrosformacion' centroformacion.id  %}" class="btn btn-danger btn-sm ">
+                            {% icon 'delete' %}
+                        </a>
+                        </td>
+                        <td>{{ centroformacion.nom  }}</td>
+                        <td>{{ centroformacion.dire }}</td>
+                        <td>{{ centroformacion.depa }}</td>
+                        <td>{{ centroformacion.muni }}</td>
+                       
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
