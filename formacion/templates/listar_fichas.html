@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load icons %}
+
+{% block content %}
+<main class="container-fluid py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center display-4 pb-4">Gestión de fichas</h1>
+
+            <!-- Botón de creación con margen -->
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/fichas_adm/crear" class="btn btn-success btn-lg">
+                    <i class="bi bi-person-plus"></i> Crear ficha
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table id="listado_fichas" class="table table-hover table-bordered align-middle">
+                    <thead class="table-primary text-center">
+                    <tr>
+                        <th></th>
+                        <th>Acciones</th>
+                        <th>Numero ficha</th>
+                        <th>Fecha apertura</th>
+                        <th>Fecha cierre</th>
+                        <th>Centro</th>
+                        <th>Institucion</th>
+                        <th>Instructor</th>
+                        <th>Matriculados</th>
+                        <th>Programa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ficha in fichas %}
+                    <tr data-id="{{ programa.id }}">
+                        <td class="details-control">    <i class="bi bi-chevron-right"></i>
+                        </td>
+                        <td><a href="/" class="btn btn-primary btn-sm ">
+                            {% icon 'edit' %}
+    
+                        </a></td>
+                        <td>{{ ficha.num }}</td>
+                        <td>{{ ficha.fecha_aper}}</td>
+                        <td>{{ ficha.fecha_cierre}}</td>
+                        <td>{{ ficha.centro.nom }}</td>
+                        <td>{{ ficha.insti.nom }}</td>
+                        <td>{{ ficha.instru.perfil.nom }}</td>
+                        <td>{{ ficha.num_matri }}</td>
+                        <td>{{ ficha.progra.nom }}</td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'usuarios',
     'formacion',
     'gestion_instructores',
-    'commons'
+    'commons',
+    'mptt',
+    'matricula'
 ]
 
 MIDDLEWARE = [

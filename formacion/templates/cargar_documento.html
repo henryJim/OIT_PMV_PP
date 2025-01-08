@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load icons %}
+
+{% block content %}
+<h1>Cargar un Documento</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Esto renderiza los campos del formulario -->
+        <button type="submit">Cargar Documento</button>
+    </form>
+{% endblock %}

@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load icons %}
+{% load custom_filters %}
 
 {% block content %}
 <main class="container py-5">
@@ -35,48 +37,64 @@
             <!-- Portafolio Ficha -->
             <div class="tab-pane fade show active" id="portfolioFicha" role="tabpanel" aria-labelledby="portfolioFicha-tab">
                 <p>En esta seccion podra administrar y modificar el contenido del portafolio asociado a la ficha.</p>
-                
-                <script>
-                    document.addEventListener("DOMContentLoaded", (event) => {
-    const tree = new mar10.Wunderbaum({
-        element: document.getElementById("demo-tree"),
-        source: {
-              url: "{% url 'get_tree_instructor' %}",
-          },
-    });
-});
-
-                </script>
-                <div class="row">
+                 <div class="row">
                     <!-- Sección para cargar documentos -->
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <h5>Portafolio</h5>
+                                <h5>Portafolio ficha</h5>
                             </div>
                             <div class="card-body">
-                                <div id="demo-tree"></div>
-
-                            </div>
-                        </div>
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <h5>Cargar Documentos</h5>
-                            </div>
-                            <div class="card-body">
-                                <form>
-                                    <div class="mb-3">
-                                        <label for="uploadFile" class="form-label">Seleccionar archivo</label>
-                                        <input type="file" class="form-control" id="uploadFile">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Subir</button>
-                                </form>
+                                <div id="tree" class="wb-skeleton wb-initializing wb-fade-expander"></div>
+                                <!-- Botones carga de documentos -->
+                                <form action="{% url 'cargar_link_folders' ficha.id '3' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_root_folder_3"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '4' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_root_folder_4"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '5' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_root_folder_5"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '7' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_root_folder_7"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '8' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_root_folder_8"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '1_1' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder1_1"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '1_2' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder2_1"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '1_3' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder3_1"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '1_4' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder4_1"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '2_1_1' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder1_2_1"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '2_1_2' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_ssubfolder2_2_1"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '2_2_1' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder1_2_2"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '2_2_2' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder2_2_2"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '2_3_1' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder1_2_3"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '2_3_2' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder2_2_3"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '2_4_1' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder1_2_4"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '2_4_2'%}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder2_2_4"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '6_1' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder1_6"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '6_2' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder2_6"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '6_3' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder3_6"></button></form>
+                                <form action="{% url 'cargar_link_folders' ficha.id '6_4' %}" method="POST" style="display: none;">{% csrf_token %}
+                                    <button class="btn btn-success" id="link_subfolder4_6"></button></form>
                             </div>
                         </div>
                     </div>
             
                     <!-- Sección para descargar documentos -->
-                    <div class="col-md-6">
+                    <div class="col-md-12 mt-3">
                         <div class="card">
                             <div class="card-header">
                                 <h5>Descargar Documentos</h5>
@@ -104,6 +122,10 @@
             <div class="tab-pane fade" id="portfolioAprendices" role="tabpanel" aria-labelledby="portfolioAprendices-tab">
                 <h4>Portafolio Aprendices</h4>
                 <p>Aquí podrás gestionar el portafolio de los aprendices y su progreso.</p>
+                <select id="estudianteSelect" class="form-select mb-5">
+                    <option value="">Seleccione un estudiante</option>
+                  </select>
+                <div id="treeApre" class="wb-skeleton wb-initializing wb-fade-expander"></div>
             </div>
 
             <!-- Calificaciones -->
@@ -116,7 +138,39 @@
             <div class="tab-pane fade" id="aprendicespes" role="tabpanel" aria-labelledby="aprendices-tab">
                 <h4>Aprendices</h4>
                 <p>Aquí podrás ver y gestionar la lista de aprendices asignados al curso.</p>
+                <table id="instructores" class="table table-hover table-bordered align-middle">
+                    <thead class="table-primary text-center">
+                    <tr>
+                        <th></th>
+                        <th>Acciones</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Codigo</th>
+                        <th>Nombre Repre</th>
+                        <th>Telefono Repre</th>
+                        <th>mail Repre</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for aprendiz in aprendices %}
+                    <tr data-id="{{ aprendiz.id }}">
+                        <td class="details-control">    <i class="bi bi-chevron-right"></i>
+                        </td>
+                        <td><a href="/" class="btn btn-primary btn-sm ">
+                            {% icon 'edit' %}
+    
+                        </a></td>
+                        <td>{{ aprendiz.perfil.nom}}</td>
+                        <td>{{ aprendiz.perfil.apelli}}</td>
+                        <td>{{ aprendiz.cod}}</td>
+                        <td>{{ aprendiz.repre_legal.nom}}</td>
+                        <td>{{ aprendiz.repre_legal.tele}}</td>
+                        <td>{{ aprendiz.repre_legal.mail}}</td>
 
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
             </div>
 
             <!-- Reportes -->
@@ -137,11 +191,13 @@
                                 <i class="bi bi-plus"></i> Crear Actividad
                             </a>
                             <button class="btn btn-secondary">Ver calendario</button>
-                            <button class="btn btn-success">Publicar actividades de fase</button>
+                            {% if raps_count == 0 %}
+                                <button class="btn btn-success">Publicar actividades de fase</button>
+                            {% endif %}
                         </div>
                         <!-- Tabla -->
                         <div class="table-responsive">
-                            <table class="table table-bordered align-middle">
+                            <table id="actividades_ficha" class="table table-bordered align-middle">
                                 <thead class="table-primary text-center">
                                     <tr>
                                         <th>Nombre</th>
@@ -175,9 +231,10 @@
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <button class="btn btn-danger">Cerrar fase</button>
                             <div>
-                                <span class="text-danger">Pendiente: Faltan X RAPS para la fase X</span><br>
-                                <span class="text-danger">Estado: Incompleto</span>
-                            </div>
+                                <span class="{% if raps_count == 0 %}text-success{% else %}text-danger{% endif %}">Faltan {{ raps_count }} RAPS para la fase {{ fase }}</span><br>
+                                <span class="{% if raps_count == 0 %}text-success{% else %}text-danger{% endif %}">
+                                    Estado: {% if raps_count == 0 %}Completo{% else %}Incompleto{% endif %}
+                                </span>                            </div>
                         </div>
                     </div>
                 </div>
@@ -188,9 +245,47 @@
             <div class="tab-pane fade" id="inasistencias" role="tabpanel" aria-labelledby="inasistencias-tab">
                 <h4>Inasistencias</h4>
                 <p>Aquí podrás registrar y revisar las inasistencias de los aprendices.</p>
+                <a href="{% url 'crear_encuentro' ficha.id %}" class="btn btn-success btn-lg">
+                    <i class="bi bi-plus"></i> Crear Encuentro
+                </a>
+                <div class="table-responsive">
+                    <table id="encuentros_ficha" class="table table-bordered align-middle mt-1">
+                        <thead class="table-primary text-center">
+                            <tr>
+                                <th>Fecha encuentro</th>
+                                <th>Aprendices</th>
+                                <th>¿Asistió?</th>
+                                <th>tema</th>
+                                <th>Lugar</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for encuentro in encuentros %}
+                            <tr>
+                                <td>{{ encuentro.encu.fecha|date:"d \d\e F \d\e Y"}}</td>
+                                <td>{{ encuentro.apre.perfil.nom }}</td>
+                                <td>
+                                    {% if encuentro.prese == "Si" %}
+                                    ✔️
+                                {% else %}
+                                    ❌
+                                {% endif %}
+                                </td>
+                                <td>{{ encuentro.encu.tema }}</td>
+                                <td>{{ encuentro.encu.lugar }}</td>
+                                <td>
+                                    <a href="#" class="btn btn-info btn-sm">Detalle</a>
+                                    <a href="#" class="btn btn-warning btn-sm">Editar</a>
+                                    <a href="#" class="btn btn-danger btn-sm">Desactivar</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </section>
 </main>
-
 {% endblock %}

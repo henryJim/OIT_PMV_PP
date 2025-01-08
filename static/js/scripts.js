@@ -5,11 +5,27 @@ $(document).ready(function () {
             url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
         }
     });
+    new DataTable('#encuentros_ficha', {
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
+        }
+    });
+    new DataTable('#listado_fichas', {
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
+        }
+    });
+    new DataTable('#actividades_ficha', {
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
+        }
+    });
     new DataTable('#novedades', {
         language: {
             url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
         }
     });
+    
 });
 
 $(document).ready(function () {
@@ -41,6 +57,7 @@ $(document).ready(function () {
                     <p><strong>Usuario:</strong> ${data.info_adicional.perfil.user.username}</p>
                     <p><strong>Email Usuario:</strong> ${data.info_adicional.perfil.user.email}</p>
                     </div>
+                    <div id="tree" class="wb-skeleton wb-initializing wb-fade-expander"></div>
                     `;
             },
             error: function () {
@@ -70,5 +87,12 @@ $(document).ready(function () {
             icon.removeClass('bi-chevron-right').addClass('bi-chevron-down');
 
         }
+    });
+});
+
+$(document).ready(function() {
+    $('.select2').select2({
+        placeholder: 'Selecciona estudiantes',
+        width: '100%'
     });
 });

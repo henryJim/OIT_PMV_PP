@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from mptt.models import MPTTModel, TreeForeignKey
+import os
 # Create your models here.
 class T_perfil(models.Model):
     class Meta:
@@ -37,7 +38,7 @@ class T_perfil(models.Model):
     rol = models.CharField(max_length=50, choices=ROL_CHOICES)
     
     def __str__(self):
-        return f"{self.nombre} {self.apelli} - {self.get_gene_display()}"
+        return f"{self.nom} {self.apelli} - {self.get_gene_display()}"
 
 class T_repre_legal(models.Model):
     class Meta:
@@ -70,7 +71,7 @@ class T_instru(models.Model):
     tipo_vincu = models.CharField(max_length=50, choices=VINCULACION_CHOICES)
 
     def __str__(self):
-        return f"{self.perfil.nombre} {self.perfil.apelli} - Profesion: {self.profe}"
+        return f"{self.perfil.nom} {self.perfil.apelli} - Profesion: {self.profe}"
 
 class T_admin(models.Model):
     class Meta:
@@ -81,7 +82,7 @@ class T_admin(models.Model):
     esta = models.CharField(max_length=200)
 
     def __str__(self):
-        return f"{self.perfil.nombre} {self.perfil.apelli} - Area/equipo: {self.area}"
+        return f"{self.perfil.nom} {self.perfil.apelli} - Area/equipo: {self.area}"
     
 class T_lider(models.Model):
     class Meta:
@@ -92,7 +93,7 @@ class T_lider(models.Model):
     esta = models.CharField(max_length=200)
 
     def __str__(self):
-        return f"{self.perfil.nombre} {self.perfil.apelli} - Area/equipo: {self.area}"
+        return f"{self.perfil.nom} {self.perfil.apelli} - Area/equipo: {self.area}"
 
 class T_centro_forma(models.Model):
     class Meta:
@@ -103,6 +104,9 @@ class T_centro_forma(models.Model):
     depa = models.CharField(max_length=100)
     muni = models.CharField(max_length=100)
 
+    def __str__(self):
+        return f"{self.nom}"
+
 class T_insti_edu(models.Model):
     class Meta:
         managed = True
@@ -111,6 +115,9 @@ class T_insti_edu(models.Model):
     dire = models.CharField(max_length=100)
     ofi = models.CharField(max_length=100)
 
+    def __str__(self):
+        return f"{self.nom}"
+    
 class T_progra(models.Model):
     class Meta:
         managed = True
@@ -133,6 +140,9 @@ class T_ficha(models.Model):
     progra = models.ForeignKey(T_progra, on_delete=models.CASCADE)
     num_matri = models.CharField(max_length=100)
 
+    def __str__(self):
+        return f"{self.num}"
+
 class T_fase_ficha(models.Model):
     class Meta:
         managed = True
@@ -148,6 +158,7 @@ class T_fase_ficha(models.Model):
     fecha_ini = models.DateTimeField(null=True, blank=True)
     fecha_fin = models.DateTimeField(null=True, blank=True)
     instru = models.ForeignKey(T_instru, on_delete=models.CASCADE)
+    vige = models.CharField(max_length=100, default='No')
 
     def __str__(self):
         return f"{self.fase}"
@@ -199,6 +210,7 @@ class T_acti(models.Model):
     tipo = models.ManyToManyField(T_tipo_acti)
     guia = models.ForeignKey(T_guia, on_delete=models.CASCADE)
     fase = models.CharField(max_length=100)
+    raps = models.ManyToManyField('T_raps', related_name='acti', blank=True)
 
 
 class T_descri(models.Model):
@@ -235,13 +247,12 @@ class T_apre(models.Model):
     perfil = models.OneToOneField(T_perfil, on_delete=models.CASCADE)
     cod = models.CharField(max_length=200)
     esta = models.CharField(max_length=200, choices=ESTADO_ESTUDIANTE_CHOICES)
-    ficha = models.ForeignKey(T_ficha, on_delete= models.CASCADE)
+    ficha = models.ForeignKey(T_ficha, on_delete= models.CASCADE, null=True, blank=True)
     repre_legal = models.ForeignKey(T_repre_legal , on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.perfil.nombre} {self.perfil.apelli} - Ficha: {self.ficha}"
+        return f"{self.perfil.nom} {self.perfil.apelli}"
 
-    
 class T_acti_apre(models.Model):
     class Meta:
         managed = True
@@ -255,16 +266,27 @@ class T_encu(models.Model):
     class Meta:
         managed = True
         db_table = 'T_encu'
+    FASE_CHOICES = [
+        ('fase analisis', 'Fase Analisis'),
+        ('fase planeacion', 'Fase Planeacion'),
+        ('fase ejecucion', 'Fase Ejecucion'),
+        ('fase evaluacion', 'Fase Evaluacion'),
+    ]
     fecha = models.DateTimeField(null=True, blank=True)
+    tema = models.CharField(max_length=200)
+    fase = models.CharField(max_length=200, choices=FASE_CHOICES)
     lugar = models.CharField(max_length=200)
     guia = models.ForeignKey(T_guia, on_delete=models.CASCADE)
+    ficha = models.ForeignKey(T_ficha, on_delete=models.CASCADE)
 
 class T_encu_apre(models.Model):
     class Meta:
         managed = True
         db_table = 'T_encu_apre'
     encu = models.ForeignKey(T_encu, on_delete=models.CASCADE)
-    estu = models.ForeignKey(T_apre, on_delete= models.CASCADE)
+    apre = models.ForeignKey(T_apre, on_delete= models.CASCADE)
+    prese = models.CharField(max_length=200)
+    ficha = models.ForeignKey(T_ficha, on_delete=models.CASCADE)
 
 class T_compe(models.Model):
     class Meta:
@@ -299,17 +321,25 @@ class T_raps(models.Model):
     comple = models.CharField(max_length=100, default='No')
 
     def __str__(self):
-        return f"{self.nom} ({'Completado' if self.comple('Si') else 'Pendiente'})"
+        return f"{self.nom}"
 
-class T_rap_acti(models.Model):
+class T_raps_ficha(models.Model):
+    class Meta:
+        managed= True
+        db_table = 'T_raps_ficha'
+    ficha = models.ForeignKey(T_ficha, on_delete=models.CASCADE)
+    rap = models.ForeignKey(T_raps, on_delete=models.CASCADE)
+    agre = models.CharField(max_length=100, default='No')
+
+    def __str__(self):
+        return f"RAP: {self.rap.nom} - Ficha: {self.ficha.num}"
+
+class T_raps_acti(models.Model):
     class Meta:
         managed = True
-        db_table = 'T_rap_acti'
+        db_table = 'T_raps_acti'
     rap = models.ForeignKey(T_raps, on_delete=models.CASCADE)
     acti = models.ForeignKey(T_acti, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = 'T_rap_acti'
 
 class T_crite_eva(models.Model):
     class Meta:
@@ -319,6 +349,13 @@ class T_crite_eva(models.Model):
     guia = models.ForeignKey(T_guia, on_delete=models.CASCADE)
     evi = models.CharField(max_length=200)
     tecni = models.CharField(max_length=200)
+
+def documentos(instance, filename):
+    # Reemplazar espacios por guiones bajos y eliminar caracteres especiales
+    nombre_base, extension = os.path.splitext(filename)
+    nombre_base = nombre_base.replace(" ", "_")  # Reemplazar espacios
+    nombre_base = "".join(c for c in nombre_base if c.isalnum() or c in ["_", "-"])  # Eliminar caracteres especiales
+    return f'documentos/{nombre_base}{extension}'
 
 class T_docu(models.Model):
     class Meta:
@@ -330,7 +367,7 @@ class T_docu(models.Model):
     ]
     nom = models.CharField(max_length=200)
     tipo = models.CharField(max_length=200)
-    archi = models.FileField(upload_to='documentos/', null=True, blank=True )
+    archi = models.FileField(upload_to='documentos', null=True, blank=True )
     tama = models.CharField(max_length=200)
     priva = models.CharField(max_length=200)
     esta  = models.CharField(max_length=200, choices=ESTADO_CHOICES, default='activo')
@@ -422,3 +459,28 @@ class T_nove_ficha(models.Model):
         db_table = 'T_nove_ficha'
     ficha = models.ForeignKey(T_ficha, on_delete=models.CASCADE)
     nove = models.ForeignKey(T_nove, on_delete=models.CASCADE)
+
+
+
+class T_DocumentFolder(MPTTModel):
+    name = models.CharField(max_length=255) #Nombre de la carpeta o doc
+    parent = TreeForeignKey('self', on_delete = models.CASCADE, null=True, blank=True, related_name='children')
+    tipo = models.CharField(max_length=50, choices=[('documento', 'Documento'), ('link', 'Enlace'), ('carpeta', 'Carpeta')], default='carpeta')
+    ficha = models.ForeignKey(T_ficha, on_delete=models.CASCADE)
+    url = models.URLField(blank=True, null=True)
+    iden = models.CharField(max_length=200, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+    
+class T_DocumentFolderAprendiz(MPTTModel):
+    name = models.CharField(max_length=200)
+    parent = TreeForeignKey('self', on_delete = models.CASCADE, null=True, blank=True, related_name='children')
+    tipo = models.CharField(max_length=50, choices=[('documento', 'Documento'), ('link', 'Enlace'), ('carpeta', 'Carpeta')], default='carpeta')
+    ficha = models.ForeignKey(T_ficha, on_delete=models.CASCADE)
+    aprendiz = models.ForeignKey(T_apre, on_delete=models.CASCADE)
+    url = models.URLField(blank=True, null=True)
+    iden = models.CharField(max_length=200, blank=True, null=True)
+
+    def __str__(self):
+        return self.name

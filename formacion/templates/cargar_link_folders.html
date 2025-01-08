@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container">
+    <div class="row">
+        <div class="col-12 offset-md-12">
+            <form method="POST" class="card card-body mt-5" enctype="multipart/form-data">
+                {% if carpeta == "1_1" %}
+                <h1 class="text-center">Cargar documento - PLAN DE TRABAJO CON SUS DESCRIPTORES - ANALISIS</h1>
+                {% elif carpeta == "1_2" %}
+                <h1 class="text-center">Cargar documento - PLAN DE TRABAJO CON SUS DESCRIPTORES - PLANEACION</h1>
+                {% elif carpeta == "1_3" %}
+                <h1 class="text-center">Cargar documento - PLAN DE TRABAJO CON SUS DESCRIPTORES - EJECUCION</h1>
+                {% elif carpeta == "1_4" %}
+                <h1 class="text-center">Cargar documento - PLAN DE TRABAJO CON SUS DESCRIPTORES - EVALUACION</h1>
+                {% elif carpeta == "2_1_1" %}
+                <h1 class="text-center">Cargar documento - GUIA DE APRENDIZAJE - ANALISIS - GUIAS DE LA FASE</h1>
+                {% elif carpeta == "2_1_2" %}
+                <h1 class="text-center">Cargar documento - GUIA DE APRENDIZAJE - ANALISIS - INSTRUMENTOS DE EVALUACION</h1>
+                {% elif carpeta == "2_2_1" %}
+                <h1 class="text-center">Cargar documento - GUIA DE APRENDIZAJE - PLANEACION - GUIAS DE LA FASE</h1>
+                {% elif carpeta == "2_2_2" %}
+                <h1 class="text-center">Cargar documento - GUIA DE APRENDIZAJE - PLANEACION - INSTRUMENTOS DE EVALUACION</h1>
+                {% elif carpeta == "2_3_1" %}
+                <h1 class="text-center">Cargar documento - GUIA DE APRENDIZAJE - EJECUCION - GUIAS DE LA FASE</h1>
+                {% elif carpeta == "2_3_2" %}
+                <h1 class="text-center">Cargar documento - GUIA DE APRENDIZAJE - EJECUCION - INSTRUMENTOS DE EVALUACION</h1>
+                {% elif carpeta == "2_4_1" %}
+                <h1 class="text-center">Cargar documento - GUIA DE APRENDIZAJE - EVALUACION - GUIAS DE LA FASE</h1>
+                {% elif carpeta == "2_4_2" %}
+                <h1 class="text-center">Cargar documento - GUIA DE APRENDIZAJE - EVALUACION - INSTRUMENTOS DE EVALUACION</h1>
+                {% elif carpeta == "3" %}
+                <h1 class="text-center">Cargar documento - FORMATO ACTA</h1>
+                {% elif carpeta == "4" %}
+                <h1 class="text-center">Cargar documento - GFPI-F-023-PLANEACIÓN, SEGUIMIENTO Y EVALUACIÓN ETAPA PRODUCTIVA</h1>
+                {% elif carpeta == "5" %}
+                <h1 class="text-center">Cargar documento - FORMATO DE INASISTENCIAS</h1>
+                {% elif carpeta == "6_1" %}
+                <h1 class="text-center">Cargar documento - ACTA PLAN DE MEJORAMIENTO - ANALISIS</h1>
+                {% elif carpeta == "6_2" %}
+                <h1 class="text-center">Cargar documento - ACTA PLAN DE MEJORAMIENTO - PLANEACION</h1>
+                {% elif carpeta == "6_3" %}
+                <h1 class="text-center">Cargar documento - ACTA PLAN DE MEJORAMIENTO - EJECUCION</h1>
+                {% elif carpeta == "6_4" %}
+                <h1 class="text-center">Cargar documento - ACTA PLAN DE MEJORAMIENTO - EVALUACION</h1>
+                {% elif carpeta == "7" %}
+                <h1 class="text-center">Cargar documento - EVIDENCIAS DE ESTRATEGIA DE NIVELACION</h1>
+                {% elif carpeta == "8" %}
+                <h1 class="text-center">Cargar documento - FORMATO DE HOMOLOGACION</h1>
+                {% endif %}
+                {{error}}
+                {% csrf_token %}
+                {{documento_form.as_p}}
+                <button type="submit" class="btn btn-primary" id="archivo" name="archivo">Cargar documento</button>
+            </form>
+    
+
+
+        </div>
+    </div>
+</main>
+{% endblock %}

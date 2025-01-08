@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container">
+    <div class="row">
+        <div class="col-12 offset-md-12">
+            <form action="/fichas_adm/crear/" method="POST" class="card card-body mt-5">
+                <h1 class="text-center">Crear ficha</h1>
+                {{error}}
+                {% csrf_token %}
+                <h3>Datos de la ficha</h3>
+                {{ ficha_form.as_p }}
+                <h3>Seleccione los estudiantes asociados</h3>
+                {{ aprendiz_asi_form.as_p }}
+                <button type="submit" class="btn btn-primary">Crear ficha</button>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}

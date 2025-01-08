@@ -1,6 +1,31 @@
 from django import forms
 from django.contrib.auth.models import User
-from commons.models import T_acti, T_docu, T_acti_docu, T_acti_ficha, T_acti_apre, T_acti_descri, T_crono, T_progra, T_compe, T_raps
+from commons.models import T_acti, T_docu, T_DocumentFolder, T_encu,T_apre, T_raps_ficha, T_acti_docu, T_acti_ficha, T_acti_apre, T_acti_descri, T_crono, T_progra, T_compe, T_raps, T_ficha
+
+class FichaForm(forms.ModelForm):
+    class Meta:
+        model = T_ficha
+        fields = ['fecha_aper', 'fecha_cierre', 'centro', 'insti', 'num', 'instru', 'num_matri', 'progra']
+        widgets = {
+            'fecha_aper': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}), 
+            'fecha_cierre': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'centro': forms.Select(attrs={'class': 'form-select'}), 
+            'insti': forms.Select(attrs={'class':'form-select'}), 
+            'num': forms.TextInput(attrs={'class': 'form-control'}), 
+            'instru': forms.Select(attrs={'class':'form-select'}),
+            'num_matri': forms.TextInput(attrs={'class': 'form-control'}), 
+            'progra': forms.Select(attrs={'class': 'form-select'})
+        }
+        labels = {
+            'fecha_aper': 'Fecha de apertura', 
+            'fecha_cierre': 'Fecha de cierre',
+            'centro': 'Centro de formacion', 
+            'insti': 'Institucion educativa', 
+            'num': 'Numero de ficha', 
+            'instru': 'Instructor asignado',
+            'num_matri': 'Numero de matriculados', 
+            'progra': 'Programa de formacion'
+        }
 
 class ActividadForm(forms.ModelForm):
     class Meta:
@@ -31,8 +56,22 @@ class DocumentosForm(forms.ModelForm):
             'archi': forms.FileInput(attrs={'class': 'form-select'})   
         }
         labels = {
-            'archi': 'Archivos'
+            'archi': 'Archivo'
         }
+
+class RapsFichaForm(forms.Form):
+    raps = forms.ModelMultipleChoiceField(
+        queryset=T_raps_ficha.objects.none(),  # Inicialmente vacío
+        widget=forms.CheckboxSelectMultiple,  # Widget de checkboxes
+        required=False  # No es obligatorio seleccionar RAPs
+    )
+
+    def __init__(self, *args, **kwargs):
+        ficha = kwargs.pop('ficha', None)  # Extraer 'ficha' de los argumentos
+        super().__init__(*args, **kwargs)  # Llamar al constructor de la clase base
+        if ficha:
+            # Si se pasó una ficha, ajustar el queryset para incluir los RAPs de la ficha
+            self.fields['raps'].queryset = T_raps_ficha.objects.filter(ficha=ficha, agre='No')
 
 class CronogramaForm(forms.ModelForm):
     class Meta:
@@ -93,3 +132,47 @@ class RapsForm(forms.ModelForm):
             'compe': 'Competencia',
             'fase': 'Fase'
         }
+
+class EncuentroForm(forms.ModelForm):
+    class Meta:
+        model = T_encu
+        fields = ['fase', 'tema', 'guia', 'lugar', 'fecha']
+        widgets = {
+            'fase': forms.Select(attrs={'class': 'form-control'}),
+            'tema': forms.TextInput(attrs={'class': 'form-control'}),
+            'guia': forms.Select(attrs={'class': 'form-control'}),
+            'lugar': forms.TextInput(attrs={'class': 'form-control'}),
+            'fecha': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
+        labels = {
+            'fase': 'Fase',
+            'tema': 'Tema del encuentro',
+            'guia': 'Guia asociada al encuentro',
+            'lugar': 'Lugar de encuentro',
+            'fecha': 'Fecha',
+        }
+
+class EncuApreForm(forms.Form):
+    aprendices = forms.ModelMultipleChoiceField(
+        queryset=T_apre.objects.none(),  # Inicialmente vacío
+        widget=forms.CheckboxSelectMultiple,  # Widget de checkboxes
+        required=False  # No es obligatorio seleccionar RAPs
+    )
+
+    def __init__(self, *args, **kwargs):
+        ficha = kwargs.pop('ficha', None)  # Extraer 'ficha' de los argumentos
+        super().__init__(*args, **kwargs)  # Llamar al constructor de la clase base
+        if ficha:
+            # Si se pasó una ficha, ajustar el queryset para incluir los RAPs de la ficha
+            self.fields['aprendices'].queryset = T_apre.objects.filter(ficha=ficha)
+
+class CargarDocuPortafolioFichaForm(forms.Form):
+    nombre_documento = forms.CharField(max_length=255, label="Nombre del Documento")
+    url_documento = forms.URLField(label="URL del Documento")
+
+class AsignarAprendicesFichaForm(forms.Form):
+    aprendices = forms.ModelMultipleChoiceField(
+        # queryset=T_apre.objects.filter(ficha__isnull=True),
+        queryset=T_apre.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': 'form-control select2'})
+    )
