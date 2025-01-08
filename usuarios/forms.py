@@ -1,15 +1,35 @@
 from django import forms
 from django.contrib.auth.models import User
-from commons.models import T_instru, T_perfil, T_nove
+from commons.models import T_instru, T_perfil, T_nove, T_admin, T_apre, T_lider, T_repre_legal, T_munici, T_departa, T_insti_edu, T_centro_forma
 
 
-class UserForm(forms.ModelForm):
+class UserFormEdit(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+        exclude = ['password']
+        widgets = {
+
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Escriba el nombre de usuario'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Escriba el mail'}),
+        }
+        labels = {
+            'username': 'Nombre de usuario',
+            'email': 'Correo electrónico',
+        }
+        help_texts = {
+
+            'username': None
+        }
+
+
+class UserFormCreate(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'password', 'email']
         widgets = {
-            'password': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Escriba la contraseña'}),
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Escriba el nombre de usuario'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Escriba la contraseña de usuario'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Escriba el mail'}),
         }
         labels = {
@@ -18,9 +38,10 @@ class UserForm(forms.ModelForm):
             'email': 'Correo electrónico',
         }
         help_texts = {
-            'password': None,
-            'username': None
+            'username': None,
+            'password': None
         }
+
 
 class PerfilForm(forms.ModelForm):
     class Meta:
@@ -47,6 +68,7 @@ class PerfilForm(forms.ModelForm):
             'fecha_naci': 'Fecha de nacimiento'
         }
 
+
 class InstructorForm(forms.ModelForm):
     class Meta:
         model = T_instru
@@ -68,10 +90,53 @@ class InstructorForm(forms.ModelForm):
             'tipo_vincu': 'Tipo de vinculacion'
         }
 
+
+class AprendizForm(forms.ModelForm):
+    class Meta:
+        model = T_apre
+        exclude = ['perfil']
+        widgets = {
+            'cod': forms.TextInput(attrs={'class': 'form-control'}),
+            'esta': forms.Select(attrs={'class': 'form-control'}),
+            'ficha': forms.Select(attrs={'class': 'form-select'}),
+            'repre_legal': forms.Select(attrs={'class': 'form-select'}),
+        }
+        labels = {
+            'cod': 'Codigo',
+            'esta':  'Estado',
+            'ficha':  'ficha',
+            'repre_legal':  'Represante Legal'
+        }
+
+
+class RepresanteLegalForm(forms.ModelForm):
+    class Meta:
+        model = T_repre_legal
+        fields = ['nom', 'tele', 'dire', 'mail', 'paren', 'ciu', 'depa']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'tele': forms.TextInput(attrs={'class': 'form-control'}),
+            'dire': forms.TextInput(attrs={'class': 'form-control'}),
+            'mail': forms.TextInput(attrs={'class': 'form-control'}),
+            'paren': forms.TextInput(attrs={'class': 'form-control'}),
+            'ciu': forms.TextInput(attrs={'class': 'form-control'}),
+            'depa': forms.TextInput(attrs={'class': 'form-control'})
+        }
+        labels = {
+            'nom': 'Nombre',
+            'tele': 'Telefono',
+            'dire': 'Direccion',
+            'mail': 'Correo',
+            'paren': 'Parentesco',
+            'ciu': 'Ciudad',
+            'depa': 'Departamento'
+        }
+
+
 class NovedadForm(forms.ModelForm):
     class Meta:
         model = T_nove
-        exclude = ['estado'] # El estado se asignara automaticamente
+        exclude = ['estado']  # El estado se asignara automaticamente
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'descri': forms.TextInput(attrs={'class': 'form-control'}),
@@ -83,4 +148,97 @@ class NovedadForm(forms.ModelForm):
             'descri': 'Descripcion',
             'tipo': 'Tipo',
             'sub_tipo': 'Sub Tipo'
+        }
+
+
+class AdministradoresForm(forms.ModelForm):
+    class Meta:
+        model = T_admin
+        exclude = ['perfil']
+        field = ['area', 'esta']
+        widgets = {
+            'area': forms.TextInput(attrs={'class': 'form-control'}),
+            'esta': forms.TextInput(attrs={'class': 'form-control'})
+        }
+        labels = {
+            'area': 'Area',
+            'esta':  'Estado'
+        }
+
+
+class LiderForm(forms.ModelForm):
+    class Meta:
+        model = T_lider
+        exclude = ['perfil']
+        widgets = {
+            'area': forms.TextInput(attrs={'class': 'form-control'}),
+            'esta': forms.TextInput(attrs={'class': 'form-control'})
+        }
+        labels = {
+            'area': 'Area',
+            'esta':  'Estado'
+        }
+
+
+class DepartamentoForm(forms.ModelForm):
+    class Meta:
+        model = T_departa
+        fields = ['cod_departa', 'nom_departa']
+        widgets = {
+            'cod_departa': forms.TextInput(attrs={'class': 'form-control'}),
+            'nom_departa': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'cod_departa': 'Codigo de departamento',
+            'nom_departa': 'Departamento',
+        }
+
+
+class MunicipioForm(forms.ModelForm):
+    class Meta:
+        model = T_munici
+        fields = ['cod_munici', 'nom_munici', 'nom_departa']
+        widgets = {
+            'cod_munici': forms.TextInput(attrs={'class': 'form-control'}),
+            'nom_munici': forms.TextInput(attrs={'class': 'form-control'}),
+            'nom_departa': forms.Select(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'cod_munici': 'Codigo de municipio',
+            'nom_munici': 'Municipio',
+            'nom_departa': 'Departamento',
+        }
+
+
+class InstitucionForm(forms.ModelForm):
+    class Meta:
+        model = T_insti_edu
+        fields = ['nom', 'dire', 'ofi']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'dire': forms.TextInput(attrs={'class': 'form-control'}),
+            'ofi': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'nom': 'Nombre institución',
+            'dire': 'Dirección institución',
+            'ofi': 'Oficina',
+        }
+
+
+class CentroFormacionForm(forms.ModelForm):
+    class Meta:
+        model = T_centro_forma
+        fields = ['nom', 'dire', 'depa', 'muni']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'dire': forms.TextInput(attrs={'class': 'form-control'}),
+            'depa': forms.TextInput(attrs={'class': 'form-control'}),
+            'muni': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'nom': 'Nombre de centro de formacion',
+            'dire': 'Dirección del centro de formación',
+            'depa': 'Departamento del centro de formación',
+            'muni': 'Municipio del centro de formación',
         }

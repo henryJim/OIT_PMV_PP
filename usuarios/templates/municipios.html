@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load icons %}
+
+{% block content %}
+<main class="container-fluid py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center display-4 pb-4">Gestión de municipios</h1>
+
+            <!-- Botón de creación con margen -->
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/municipios/crear/" class="btn btn-success btn-lg">
+                    <i class="bi bi-person-plus"></i> Crear municipios
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table id="municipios" class="table table-hover table-bordered align-middle">
+                    <thead class="table-primary text-center">
+                    <tr>
+                        <th></th>
+                        <th>Acciones</th>
+                        <th>Codigo municipio</th>
+                        <th>Municipio</th>
+                        <th>Departamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for municipio in municipios %}
+                    <tr data-id="{{ municipio.id }}">
+                        <td class="details-control">    <i class="bi bi-chevron-right"></i>
+                        </td>
+                        <td>
+                        <a href="{% url 'detalle_municipio' municipio.id %}" class="btn btn-primary btn-sm ">
+                            {% icon 'edit' %}
+                        </a>
+                        <a href="{% url 'eliminar_municipio' municipio.id %}" class="btn btn-danger btn-sm ">
+                            {% icon 'delete' %}
+                        </a>
+                        </td>
+                        <td>{{ municipio.cod_munici}}</td>
+                        <td>{{ municipio.nom_munici}}</td>
+                        <td>{{ municipio.nom_departa}}</td>
+                       
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -57,7 +57,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'IOTPMV.urls'
 
-TEMPLATES_DIR = os.path.join(BASE_DIR,'templates')
+TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
 SESSION_COOKIE_AGE = 1200
 
@@ -87,6 +87,7 @@ DJANGO_ICONS = {
     "ICONS": {
         "edit": {"name": "bi bi-pencil"},
         "plus": {"name": "bi bi-plus-lg"},
+        "delete": {"name": "bi bi-trash"},
     },
 }
 
@@ -103,7 +104,7 @@ DATABASES = {
         'USER': 'oit_app',
         'PASSWORD': 'N7t5kecjWs55FT1',
         'HOST': 'localhost',
-        'PORT': '3306', 
+        'PORT': '3306',
     }
 }
 
