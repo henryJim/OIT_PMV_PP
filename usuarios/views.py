@@ -600,7 +600,7 @@ def administrador_detalle_tabla(request, admin_id):
                     'last_name': administrador.perfil.user.last_name,
                 }
 
-        administrador_data['perfil'] = perfil_data
+        administrador_data['perfil'] = administrador_data
 
         return JsonResponse({'info_adicional': administrador_data})
     except T_instru.DoesNotExist:
