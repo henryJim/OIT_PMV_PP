@@ -113,9 +113,6 @@ body {
                             {% elif perfil.rol == 'aprendiz' %}
                                 <!-- Contenido específico de aprendiz -->
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/">Documentación</a>
-                                </li>
-                                <li class="nav-item">
                                     <a class="nav-link" href="{% url 'panel_aprendiz' %}">Portafolio</a>
                                 </li>
                                 <li class="nav-item">
@@ -123,6 +120,9 @@ body {
                                 </li>
                             {% elif perfil.rol == 'lider' %}
                                 <!-- Contenido específico de líder -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'pre_matricula' %}">Pre matricula</a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="/">Aprobaciones</a>
                                 </li>

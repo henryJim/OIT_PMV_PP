@@ -5,6 +5,16 @@ $(document).ready(function () {
             url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
         }
     });
+    new DataTable('#instituciones', {
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
+        }
+    });
+    new DataTable('#fichas_prematricula', {
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
+        }
+    });
     new DataTable('#encuentros_ficha', {
         language: {
             url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
@@ -293,5 +303,31 @@ $(document).ready(function() {
     $('.select2').select2({
         placeholder: 'Selecciona estudiantes',
         width: '100%'
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const departamentoSelect = document.getElementById('id_depa');
+    const municipioSelect = document.getElementById('id_muni');
+
+    departamentoSelect.addEventListener('change', function() {
+        const departamentoId = this.value;
+
+        // Limpiar municipios previos
+        municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+
+        if (departamentoId) {
+            fetch(`/obtener-municipios/?departamento_id=${departamentoId}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(municipio => {
+                        const option = document.createElement('option');
+                        option.value = municipio.id;
+                        option.textContent = municipio.nom_munici;
+                        municipioSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
     });
 });

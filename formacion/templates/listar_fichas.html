@@ -21,6 +21,7 @@
                         <th></th>
                         <th>Acciones</th>
                         <th>Numero ficha</th>
+                        <th>Estado</th>
                         <th>Fecha apertura</th>
                         <th>Fecha cierre</th>
                         <th>Centro</th>
@@ -40,12 +41,13 @@
     
                         </a></td>
                         <td>{{ ficha.num }}</td>
+                        <td>{{ ficha.esta }}</td>
                         <td>{{ ficha.fecha_aper}}</td>
                         <td>{{ ficha.fecha_cierre}}</td>
                         <td>{{ ficha.centro.nom }}</td>
                         <td>{{ ficha.insti.nom }}</td>
                         <td>{{ ficha.instru.perfil.nom }}</td>
-                        <td>{{ ficha.num_matri }}</td>
+                        <td>{{ ficha.num_apre_pendi_regi }}</td>
                         <td>{{ ficha.progra.nom }}</td>
 
                     </tr>

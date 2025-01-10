@@ -94,17 +94,15 @@ class InstructorForm(forms.ModelForm):
 class AprendizForm(forms.ModelForm):
     class Meta:
         model = T_apre
-        exclude = ['perfil']
+        exclude = ['perfil', 'ficha']
         widgets = {
             'cod': forms.TextInput(attrs={'class': 'form-control'}),
             'esta': forms.Select(attrs={'class': 'form-control'}),
-            'ficha': forms.Select(attrs={'class': 'form-select'}),
             'repre_legal': forms.Select(attrs={'class': 'form-select'}),
         }
         labels = {
             'cod': 'Codigo',
             'esta':  'Estado',
-            'ficha':  'ficha',
             'repre_legal':  'Represante Legal'
         }
 
@@ -213,16 +211,36 @@ class MunicipioForm(forms.ModelForm):
 class InstitucionForm(forms.ModelForm):
     class Meta:
         model = T_insti_edu
-        fields = ['nom', 'dire', 'ofi']
+        fields = ['nom', 'dire', 'secto', 'pote_apre', 'depa', 'muni', 'coordi', 'coordi_mail', 'coordi_tele', 'esta', 'insti_mail', 'recto', 'recto_tel']
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control'}),
             'dire': forms.TextInput(attrs={'class': 'form-control'}),
-            'ofi': forms.TextInput(attrs={'class': 'form-control'}),
+            'secto': forms.Select(attrs={'class': 'form-control'}),
+            'pote_apre': forms.TextInput(attrs={'class': 'form-control'}),
+            'depa': forms.Select(attrs={'class': 'form-control'}),
+            'muni': forms.Select(attrs={'class': 'form-control'}),
+            'coordi': forms.TextInput(attrs={'class': 'form-control'}),
+            'coordi_mail': forms.TextInput(attrs={'class': 'form-control'}),
+            'coordi_tele': forms.TextInput(attrs={'class': 'form-control'}),
+            'esta': forms.Select(attrs={'class': 'form-control'}),
+            'insti_mail': forms.TextInput(attrs={'class': 'form-control'}),
+            'recto': forms.TextInput(attrs={'class': 'form-control'}),
+            'recto_tel': forms.TextInput(attrs={'class': 'form-control'}),
         }
         labels = {
             'nom': 'Nombre institución',
             'dire': 'Dirección institución',
-            'ofi': 'Oficina',
+            'secto': 'Sector',
+            'pote_apre': 'Aprendices potenciales',
+            'depa': 'Departamento',
+            'muni': 'municipio',
+            'coordi': 'Coordinador',
+            'coordi_mail': 'Correo coordinador',
+            'coordi_tele': 'Telefono coordinador',
+            'esta': 'Estado',
+            'insti_mail': 'Correo institucion',
+            'recto': 'Nombre Rector',
+            'recto_tel': 'Telefono rector'
         }
 
 
@@ -242,3 +260,9 @@ class CentroFormacionForm(forms.ModelForm):
             'depa': 'Departamento del centro de formación',
             'muni': 'Municipio del centro de formación',
         }
+
+class CargarAprendicesMasivoForm(forms.Form):
+    archivo = forms.FileField(
+        widget=forms.FileInput(attrs={'class': 'form-control'}),
+        label="Seleccione un archivo CSV"
+    )

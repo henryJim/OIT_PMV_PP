@@ -19,6 +19,7 @@ from django.urls import path
 from tasks import views as tasks_views
 from usuarios import views as usuarios_views
 from formacion import views as formacion_views
+from matricula import views as matricula_views
 from gestion_instructores import views as gestion_instructores_views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -52,7 +53,7 @@ urlpatterns = [
     # ROL Admin
     path('admin_dashboard/', usuarios_views.dashboard_admin, name='admin_dashboard'),
     path('aprendices/', usuarios_views.aprendices, name='aprendices'),
-    path('aprendices/crear', usuarios_views.crear_aprendices,
+    path('aprendices/crear/', usuarios_views.crear_aprendices,
          name='crear_aprendices'),  # ----> Crear aprendiz
     path('aprendices/<int:aprendiz_id>/', usuarios_views.detalle_aprendices,
          name='obtener_detalles_aprendiz'),  # ----> actualizar informacion de aprendiz
@@ -97,8 +98,8 @@ urlpatterns = [
     path('municipios/crear/', usuarios_views.crearmunicipios, name='crearmunicipios'),
     path('municipios/<int:municipio_id>/',
          usuarios_views.detalle_municipios, name='detalle_municipio'),
-    path('municipios/<int:municipio_id>/eliminar/',
-         usuarios_views.eliminar_municipios, name='eliminar_municipio'),
+    path('municipios/<int:municipio_id>/eliminar/', usuarios_views.eliminar_municipios, name='eliminar_municipio'),
+    path('obtener-municipios/', usuarios_views.obtener_municipios, name='obtener_municipios'),
 
     # ROL Instituciones
     path('instituciones/', usuarios_views.instituciones,
@@ -179,7 +180,19 @@ urlpatterns = [
     path('api/estudiantes/<int:ficha_id>/', formacion_views.listar_estudiantes, name='listar_estudiantes'),
 
     # Eliminar documentos
-    path('eliminar_documento/<int:documento_id>/', formacion_views.eliminar_doc, name='eliminar_documento')
+    path('eliminar_documento/<int:documento_id>/', formacion_views.eliminar_doc, name='eliminar_documento'),
+
+    # Pre matricula
+    path('pre_matricula/', matricula_views.fichas_prematricula, name='pre_matricula'),
+    path('asignar_aprendices/<int:ficha_id>/', matricula_views.asignar_aprendices, name='asignar_aprendices'),
+    path('confirmar_documentacion/<int:ficha_id>/', matricula_views.confirmar_documentacion, name='confirmar_documentacion'),
+    path('subir_documento_prematricula/<int:documento_id>/', formacion_views.cargar_documento_prematricula, name='subir_documento_prematricula'),
+    path('pre_matricula/<int:ficha_id>/detalle/', matricula_views.ver_docs_prematricula_ficha, name='ver_docs_prematricula'),
+
+     path('cargar_aprendices_masivo/', usuarios_views.cargar_aprendices_masivo, name='cargar_aprendices_masivo'),
+    path('descargar_documentos_zip/<int:aprendiz_id>/', matricula_views.descargar_documentos_zip, name='descargar_documentos_zip'),
+    path('confirmar_documento/<int:documento_id>/<int:ficha_id>/', matricula_views.confirmar_documento, name='confirmar_documento'),
+
 
 ]       
 

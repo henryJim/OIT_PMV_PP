@@ -9,6 +9,17 @@
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
             <div class="col">
+                <a href="{% url 'fichas_adm' %}" class="btn">
+                <div class="card shadow-sm h-100">
+                    <img src="{% static 'images/programasIcon.png' %}" class="card-img-top" alt="Instructores" >
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Fichas</h5>
+                        <p class="card-text">Administrar fichas.</p>
+                    </div>
+                </div>
+            </a>
+            </div>
+            <div class="col">
                 <a href="{% url 'instructores' %}" class="btn">
                 <div class="card shadow-sm h-100">
                     <img src="{% static 'images/instructoricon2.png' %}" class="card-img-top" alt="Instructores" >
