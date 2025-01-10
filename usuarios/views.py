@@ -3,11 +3,20 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from commons.models import T_instru, T_apre, T_admin, T_lider, T_nove, T_repre_legal, T_munici, T_departa, T_insti_edu, T_centro_forma
-from .forms import InstructorForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm, LiderForm, RepresanteLegalForm, DepartamentoForm, MunicipioForm, InstitucionForm, CentroFormacionForm
+from django.urls import reverse
+from commons.models import T_instru, T_apre,T_perfil, T_admin, T_lider, T_nove, T_repre_legal, T_munici, T_departa, T_insti_edu, T_centro_forma
+from .forms import InstructorForm,CargarAprendicesMasivoForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm, LiderForm, RepresanteLegalForm, DepartamentoForm, MunicipioForm, InstitucionForm, CentroFormacionForm
 from django.db import IntegrityError
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.forms.models import model_to_dict
+from io import TextIOWrapper
+from django.core.mail import send_mail
+from django.conf import settings
+from datetime import datetime
+import csv
+import random
+import string
+
 
 # Create your views here.
 
@@ -22,8 +31,10 @@ def signin(request):
             'form': AuthenticationForm
         })
     else:
+        # Autenticación del usuario
         user = authenticate(
             request, username=request.POST['username'], password=request.POST['password'])
+        
         if user is None:
             return render(request, 'signin.html', {
                 'form': AuthenticationForm,
@@ -31,6 +42,18 @@ def signin(request):
             })
         else:
             login(request, user)
+            
+            # Obtener el perfil del usuario
+            try:
+                perfil = T_perfil.objects.get(user=user)  # Obtener el perfil asociado al usuario
+                
+                # Verificar el rol del perfil
+                if perfil.rol == 'aprendiz':
+                    return redirect('panel_aprendiz')  # Redirigir al panel del aprendiz
+            except T_perfil.DoesNotExist:
+                pass  # Si no se encuentra el perfil, no hacer nada adicional
+
+            # Si no es aprendiz, redirigir a novedades
             return redirect('novedades')
 
 
@@ -781,24 +804,50 @@ def instituciones(request):
 
 
 @login_required
-def crear_instituciones(request):  # funcion para crear institucion
+def crear_instituciones(request):  # Función para crear institución
     if request.method == 'GET':
         institucionForm = InstitucionForm()
         return render(request, 'instituciones_crear.html', {
             'institucionForm': institucionForm
         })
-    else:
+
+    elif request.method == 'POST':
         try:
             institucionForm = InstitucionForm(request.POST)
+            
+            # Validar el formulario
             if institucionForm.is_valid():
+                # Obtener el departamento seleccionado
+                departamento_id = institucionForm.cleaned_data.get('depa')
+                
+                # Actualizar el queryset de municipios
+                if departamento_id:
+                    institucionForm.fields['muni'].queryset = T_munici.objects.filter(nom_departa=departamento_id)
+                
+
+                # Guardar la nueva institución
                 new_institucion = institucionForm.save(commit=False)
+                new_institucion.vigen = datetime.now().year
                 new_institucion.save()
-                return redirect('instituciones')
-        except ValueError:
+                return redirect('instituciones')  # Redirigir a la lista de instituciones
+            
+            # Si el formulario no es válido, renderizar con errores
             return render(request, 'instituciones_crear.html', {
                 'institucionForm': institucionForm,
-                'error': 'Error al al crear institución. Verifique los datos.'
+                'error': 'Error al crear institución. Verifique los datos ingresados.'
             })
+        
+        except ValueError:
+            # Manejar errores específicos
+            return render(request, 'instituciones_crear.html', {
+                'institucionForm': institucionForm,
+                'error': 'Error al crear institución. Verifique los datos ingresados.'
+            })
+
+    else:
+        # Si el método no es GET ni POST, redirigir
+        return redirect('instituciones')
+
 
 
 @login_required
@@ -906,3 +955,86 @@ def eliminar_centrosformacion(request, centroformacion_id):
     return render(request, 'confirmar_eliminacion_centro_formacion.html', {
         'centroformacion': centroformacion,
     })
+
+def obtener_municipios(request):
+    departamento_id = request.GET.get('departamento_id')
+    if departamento_id:
+        municipios = T_munici.objects.filter(nom_departa_id=departamento_id).values('id', 'nom_munici')
+        return JsonResponse(list(municipios), safe=False)
+    return JsonResponse({'error': 'No se proporcionó el ID del departamento'}, status=400)
+
+# Función para generar contraseña aleatoria
+def generar_contraseña(length=8):
+    caracteres = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choice(caracteres) for _ in range(length))
+
+@login_required
+def cargar_aprendices_masivo(request):
+    if request.method == 'POST':
+        form = CargarAprendicesMasivoForm(request.POST, request.FILES)
+        if form.is_valid():
+            archivo = request.FILES['archivo']
+            datos_csv = TextIOWrapper(archivo.file, encoding='utf-8-sig')
+            lector = csv.DictReader(datos_csv)
+            
+            for fila in lector:
+                if 'username' not in fila:
+                    print(f"Error: La columna 'username' está ausente en una fila: {fila}")
+                    continue  # Salta esta fila y pasa a la siguiente
+
+                # Generar contraseña aleatoria
+                contraseña = generar_contraseña()
+
+                # Crear el usuario
+                user = User.objects.create_user(
+                    username=fila['username'],
+                    password=contraseña,
+                    email=fila['email']
+                )
+                
+                # Crear el perfil
+                perfil = T_perfil.objects.create(
+                    user=user,
+                    nom=fila['nom'],
+                    apelli=fila['apelli'],
+                    tipo_dni=fila['tipo_dni'],
+                    dni=fila['dni'],
+                    tele=fila['tele'],
+                    dire=fila['dire'],
+                    gene=fila['gene'],
+                    mail=fila['mail'],
+                    fecha_naci=fila['fecha_naci'],
+                    rol = "aprendiz"
+                )
+
+                repre = T_repre_legal.objects.create(
+                    nom = fila['nom_repre'],
+                    tele = fila['tele_repre'],
+                    dire = fila['dire_repre'],
+                    mail = fila['mail_repre'],
+                    paren = fila['parentezco']
+                )
+
+                aprendiz = T_apre.objects.create(
+                    cod = "z",
+                    esta= "Activo",
+                    perfil = perfil,
+                    repre_legal = repre
+                )
+
+                 # Enviar el correo con la contraseña al usuario
+                asunto = "Bienvenido a la plataforma"
+                mensaje = f"Hola {fila['nom']} {fila['apelli']},\n\nTu cuenta ha sido creada con éxito. A continuación se encuentran tus credenciales:\n\nUsuario: {fila['username']}\nContraseña: {contraseña}\n\nRecuerda cambiar tu contraseña después de iniciar sesión."
+                send_mail(
+                    asunto,
+                    mensaje,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [fila['email']],
+                    fail_silently=False,
+                )
+
+            return HttpResponseRedirect(reverse('aprendices'))
+    else:
+        form = CargarAprendicesMasivoForm()
+
+    return render(request, 'aprendiz_masivo_crear.html', {'form': form})

@@ -163,3 +163,13 @@ LOGIN_URL = '/signin/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Configuración de correo en Django
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Si usas Gmail o el servidor de correo de tu elección
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'andrelipe897@gmail.com'
+EMAIL_HOST_PASSWORD = 'tadg xqga lxsn jxtq'
+DEFAULT_FROM_EMAIL = 'andrelipe897@gmail.com'  # El correo desde el cual se enviarán los mensajes

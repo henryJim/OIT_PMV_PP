@@ -1,22 +1,27 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse, HttpResponse
-from .forms import AsignarAprendicesFichaForm, CargarDocuPortafolioFichaForm, ActividadForm,RapsFichaForm, EncuApreForm, EncuentroForm, DocumentosForm, CronogramaForm, ProgramaForm, CompetenciaForm, RapsForm, FichaForm
-from commons.models import T_acti_apre,T_raps_acti, T_DocumentFolderAprendiz, T_encu_apre, T_apre, T_raps_ficha, T_acti_ficha, T_ficha, T_crono, T_progra, T_fase_ficha ,T_instru, T_acti_docu, T_perfil, T_compe, T_raps, T_DocumentFolder
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from .forms import CargarDocuPortafolioFichaForm, ActividadForm,RapsFichaForm, EncuApreForm, EncuentroForm, DocumentosForm, CronogramaForm, ProgramaForm, CompetenciaForm, RapsForm, FichaForm
+from commons.models import T_prematri_docu ,T_docu, T_acti_apre,T_raps_acti,T_perfil, T_DocumentFolderAprendiz, T_encu_apre, T_apre, T_raps_ficha, T_acti_ficha, T_ficha, T_crono, T_progra, T_fase_ficha ,T_instru, T_acti_docu, T_perfil, T_compe, T_raps, T_DocumentFolder
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from .scripts.cargar_tree import crear_datos_prueba 
 from .scripts.cargar_tree_apre import crear_datos_prueba_aprendiz
 from django.conf import settings
-
+from django.core.files.storage import default_storage
+from django.urls import reverse
+from django.contrib.auth.models import User
 
 # Create your views here.
 
 def crear_ficha(request):
     if request.method == 'POST':
         ficha_form = FichaForm(request.POST)
-        aprendiz_asi_form = AsignarAprendicesFichaForm(request.POST)
-        if ficha_form.is_valid() and aprendiz_asi_form.is_valid():
+        if ficha_form.is_valid():
+            new_ficha = ficha_form.save(commit=False)
+            new_ficha.esta = "Pre matricula"
+            new_ficha.num_apre_pendi_regi = new_ficha.num_apre_proce
+            new_ficha.num_apre_forma = "0"
             ficha = ficha_form.save()
             
             # Crear las fases asociadas a la ficha
@@ -54,22 +59,13 @@ def crear_ficha(request):
             # Llamamos a la función para crear la estructura de carpetas asociada a la ficha
             crear_datos_prueba(ficha.id)
 
-            aprendices = aprendiz_asi_form.cleaned_data['aprendices']
-            for aprendiz in aprendices:
-                aprendiz.ficha = ficha
-                aprendiz.save()
-
-                crear_datos_prueba_aprendiz(ficha.id, aprendiz.id)
-
             return redirect('fichas_adm')
     else:
         ficha_form = FichaForm()
-        aprendiz_asi_form = AsignarAprendicesFichaForm(request.POST)
 
         
     return render(request, 'crear_ficha.html', {
-        'ficha_form': ficha_form,
-        'aprendiz_asi_form': aprendiz_asi_form
+        'ficha_form': ficha_form
         })
 
 def listar_fichas_adm(request):
@@ -376,7 +372,29 @@ def crear_actividad(request, ficha_id):
 
 @login_required
 def panel_aprendiz(request):
-    return render(request, 'panel_aprendiz.html')
+    # Obtener el perfil del usuario logueado
+    perfil = T_perfil.objects.filter(user=request.user).first()
+    
+    # Verificar que el perfil existe
+    if perfil:
+        # Buscar el aprendiz asociado con ese perfil
+        aprendiz = T_apre.objects.filter(perfil=perfil).first()
+
+        # Verificar si el aprendiz tiene ficha asignada
+        ficha = aprendiz.ficha if aprendiz else None
+
+        # Obtener el listado de documentos del aprendiz
+        documentos = T_prematri_docu.objects.filter(apren=aprendiz) if aprendiz else []
+
+        total_documentos = 0
+        for documento in documentos:
+            if  documento.esta == "Cargado":
+                total_documentos += 1
+    else:
+        ficha = None
+        documentos = []
+        total_documentos = 0
+    return render(request, 'panel_aprendiz.html', {'ficha': ficha, 'documentos': documentos, 'total_documentos': total_documentos})
 
 @login_required
 def tree_detalle(request):
@@ -550,3 +568,34 @@ def listar_estudiantes(request, ficha_id):
         for estudiante in estudiantes
     ]
     return JsonResponse(data, safe=False)
+
+def cargar_documento_prematricula(request, documento_id):
+    documento = T_prematri_docu.objects.filter(id=documento_id, apren__perfil__user=request.user).first()
+
+    if not documento:
+        # Redirige si el documento no pertenece al aprendiz logueado
+        return HttpResponseRedirect(reverse('panel_aprendiz'))
+
+    if request.method == 'POST' and 'archivo' in request.FILES:
+        archivo = request.FILES['archivo']
+        ruta = default_storage.save(f'documentos/aprendices/prematricula/{documento.apren.perfil.nom}{documento.apren.perfil.apelli}{documento.apren.perfil.dni}/{archivo.name}', archivo)
+        ruta_guardada = default_storage.save(ruta, archivo)
+
+         # Crear un registro en T_docu
+        t_docu = T_docu.objects.create(
+            nom=archivo.name,
+            tipo= archivo.name.split('.')[-1],
+            tama = str(archivo.size // 1024) + " KB",
+            archi=ruta_guardada,
+            priva='No',
+            esta='Activo'
+        )
+
+        documento.esta = "Cargado"
+        documento.docu = t_docu
+        documento.fecha_carga = datetime.now()
+        documento.usr_carga = request.user
+        documento.save()
+
+        return HttpResponseRedirect(reverse('panel_aprendiz'))
+    return HttpResponseRedirect(reverse('panel_aprendiz'))

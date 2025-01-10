@@ -5,15 +5,14 @@ from commons.models import T_acti, T_docu, T_DocumentFolder, T_encu,T_apre, T_ra
 class FichaForm(forms.ModelForm):
     class Meta:
         model = T_ficha
-        fields = ['fecha_aper', 'fecha_cierre', 'centro', 'insti', 'num', 'instru', 'num_matri', 'progra']
+        fields = ['fecha_aper', 'fecha_cierre', 'centro', 'insti', 'instru', 'num_apre_proce', 'progra']
         widgets = {
             'fecha_aper': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}), 
             'fecha_cierre': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'centro': forms.Select(attrs={'class': 'form-select'}), 
             'insti': forms.Select(attrs={'class':'form-select'}), 
-            'num': forms.TextInput(attrs={'class': 'form-control'}), 
             'instru': forms.Select(attrs={'class':'form-select'}),
-            'num_matri': forms.TextInput(attrs={'class': 'form-control'}), 
+            'num_apre_proce': forms.TextInput(attrs={'class': 'form-control'}), 
             'progra': forms.Select(attrs={'class': 'form-select'})
         }
         labels = {
@@ -21,9 +20,8 @@ class FichaForm(forms.ModelForm):
             'fecha_cierre': 'Fecha de cierre',
             'centro': 'Centro de formacion', 
             'insti': 'Institucion educativa', 
-            'num': 'Numero de ficha', 
             'instru': 'Instructor asignado',
-            'num_matri': 'Numero de matriculados', 
+            'num_apre_proce': 'Numero de aprendices en proceso', 
             'progra': 'Programa de formacion'
         }
 
@@ -175,10 +173,3 @@ class EncuApreForm(forms.Form):
 class CargarDocuPortafolioFichaForm(forms.Form):
     nombre_documento = forms.CharField(max_length=255, label="Nombre del Documento")
     url_documento = forms.URLField(label="URL del Documento")
-
-class AsignarAprendicesFichaForm(forms.Form):
-    aprendices = forms.ModelMultipleChoiceField(
-        # queryset=T_apre.objects.filter(ficha__isnull=True),
-        queryset=T_apre.objects.all(),
-        widget=forms.SelectMultiple(attrs={'class': 'form-control select2'})
-    )

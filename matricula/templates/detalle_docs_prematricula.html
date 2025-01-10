@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container mt-5">
+    
+</main>
+<main class="container py-5">
+    <section class="card card-body shadow-sm p-4">
+        <h2 class="text-center mb-4">
+            Panel de la ficha
+            {% if ficha.num == 'null' %}
+                - Ficha {{ ficha.num }}
+            {% else %}
+                (Sin ficha asignada)
+            {% endif %}
+        </h2>
+
+        {% if ficha %}
+        <!-- NavPills -->
+        <ul class="nav nav-tabs mb-4 nav-fill" id="aprendizTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="instituciones-tab" data-bs-toggle="pill" href="#institucionest" role="tab" aria-controls="instituciones" aria-selected="true">
+                    insituciones
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="aprendicest-tab" data-bs-toggle="pill" href="#aprendicest" role="tab" aria-controls="aprendicest" aria-selected="false">
+                    Aprendices
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="instructores-tab" data-bs-toggle="pill" href="#instructores" role="tab" aria-controls="instructores" aria-selected="false">
+                    Instructores
+                </a>
+            </li>
+        </ul>
+
+        <!-- Contenido de las Pills -->
+        <div class="tab-content" id="aprendizTabContent">
+            <!-- Portafolio -->
+            <div class="tab-pane fade show active" id="institucionest" role="tabpanel" aria-labelledby="instituciones-tab">
+                <h4>Instituciones</h4>
+                <p>Aquí puedes consultar y gestionar la documentacion de la isntitucion</p>
+                <div id="treePortafolio" class="wb-skeleton wb-initializing wb-fade-expander"></div>
+            </div>
+
+            <!-- Entregas -->
+            <div class="tab-pane fade" id="aprendicest" role="tabpanel" aria-labelledby="aprendicest-tab">    
+                <div>
+                    <h4>Documentación</h4>
+                    <p>Aquí deberá cargar los documentos relacionados con la matrícula.</p>
+                </div>
+    <div class="table-responsive">
+        <table id="fichas_prematricula" class="table table-hover table-bordered align-middle">
+            <thead class="table-primary text-center">
+            <tr>
+                <th>Nombre</th>
+                <th>Resumen</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aprendiz, documentos in documentos_por_aprendiz.items %}
+                <tr>
+                    <td>{{ aprendiz.perfil.nom }} {{ aprendiz.perfil.apelli }}</td>
+                    <td colspan="3">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre del Documento</th>
+                                    <th>Estado</th>
+                                    <th>Archivo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for documento in documentos %}
+                                    <tr>
+                                        <td>{{ documento.nom }}</td>
+                                        <td>
+                                            {% if documento.vali == '0' %}
+                                            Pendiente
+                                            {% else %}
+                                            Aprobado
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if documento.docu.archi %}
+                                                <a href="{{ documento.docu.archi.url }}" target="_blank" class="btn btn-link">
+                                                    Ver/Descargar
+                                                </a>
+                                            {% else %}
+                                                No cargado
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if documento.docu.archi %}
+                                                {% if documento.vali == '0' %}
+                                                    <a href="{% url 'confirmar_documento' documento.id ficha.id %}" class="btn btn-success btn-sm">Aprobar</a>
+                                                {% else %}
+                                                    <button type="button" class="btn btn-success btn-sm" disabled>Aprobado</button> 
+                                                {% endif %}
+
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- Botón para descargar ZIP -->
+                        <a href="{% url 'descargar_documentos_zip' aprendiz.id %}" class="btn btn-success btn-sm">
+                            Descargar Documentos ZIP
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No hay aprendices en esta ficha.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+            </div>
+
+            <!-- Documentación -->
+            <div class="tab-pane fade" id="instructorest" role="tabpanel" aria-labelledby="instructorest-tab">
+            </div>
+        </div>
+        {% else %}
+            <div class="alert alert-warning text-center">
+                No tienes una ficha asignada aún. Por favor, contacta a tu instructor.
+            </div>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}

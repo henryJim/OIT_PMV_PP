@@ -6,12 +6,82 @@
         <div class="col-12 offset-md-12">
             <form action="/fichas_adm/crear/" method="POST" class="card card-body mt-5">
                 <h1 class="text-center">Crear ficha</h1>
-                {{error}}
+                {{ error }}
                 {% csrf_token %}
-                <h3>Datos de la ficha</h3>
-                {{ ficha_form.as_p }}
-                <h3>Seleccione los estudiantes asociados</h3>
-                {{ aprendiz_asi_form.as_p }}
+                <!-- Fila para fecha de apertura y fecha de cierre -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ ficha_form.fecha_aper.id_for_label }}" class="form-label">
+                                {{ ficha_form.fecha_aper.label }}
+                            </label>
+                            {{ ficha_form.fecha_aper }}
+                            {% if ficha_form.fecha_aper.errors %}
+                                <div class="text-danger">{{ ficha_form.fecha_aper.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ ficha_form.fecha_cierre.id_for_label }}" class="form-label">
+                                {{ ficha_form.fecha_cierre.label }}
+                            </label>
+                            {{ ficha_form.fecha_cierre }}
+                            {% if ficha_form.fecha_cierre.errors %}
+                                <div class="text-danger">{{ ficha_form.fecha_cierre.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campos restantes -->
+                <div class="mb-3">
+                    {{ ficha_form.centro.label_tag }}
+                    {{ ficha_form.centro }}
+                    {% if ficha_form.centro.errors %}
+                        <div class="text-danger">{{ ficha_form.centro.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    {{ ficha_form.insti.label_tag }}
+                    {{ ficha_form.insti }}
+                    {% if ficha_form.insti.errors %}
+                        <div class="text-danger">{{ ficha_form.insti.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="row">
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ ficha_form.instru.label_tag }}
+                        {{ ficha_form.instru }}
+                        {% if ficha_form.instru.errors %}
+                            <div class="text-danger">{{ ficha_form.instru.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                <div class="mb-3">
+                    {{ ficha_form.num_apre_proce.label_tag }}
+                    {{ ficha_form.num_apre_proce }}
+                    {% if ficha_form.num_apre_proce.errors %}
+                        <div class="text-danger">{{ ficha_form.num_apre_proce.errors }}</div>
+                    {% endif %}
+                </div>
+                </div>
+            </div>
+
+                
+
+                <div class="mb-3">
+                    {{ ficha_form.progra.label_tag }}
+                    {{ ficha_form.progra }}
+                    {% if ficha_form.progra.errors %}
+                        <div class="text-danger">{{ ficha_form.progra.errors }}</div>
+                    {% endif %}
+                </div>
+
                 <button type="submit" class="btn btn-primary">Crear ficha</button>
             </form>
         </div>

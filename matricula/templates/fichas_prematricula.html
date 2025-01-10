@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container mt-5">
+    <h1 class="text-center">Fichas en Pre Matrícula</h1>
+    <table id="prematriculas" class="table table-hover table-bordered align-middle">
+        <thead class="table-primary text-center">
+            <tr>
+                <th>Número de ficha</th>
+                <th>Centro</th>
+                <th>Institución</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ficha in fichas %}
+                <tr>
+                    <td>{{ ficha.num|default:"Pendiente SENA" }}</td>
+                    <td>{{ ficha.centro }}</td>
+                    <td>{{ ficha.insti }}</td>
+                    <td>{{ ficha.esta }}</td> <!-- Muestra el texto legible del estado -->
+                    <td>
+                        {% if ficha.esta == 'Pre matricula' %}
+                            <a href="{% url 'asignar_aprendices' ficha.id %}" class="btn btn-info btn-sm">Asignar aprendices</a>
+                        {% elif ficha.esta == 'Validacion matriculas' %}
+                            <a href="{% url 'ver_docs_prematricula' ficha.id %}" class="btn btn-warning btn-sm">Ver detalle</a>
+                            <a href="{% url 'confirmar_documentacion' ficha.id %}" class="btn btn-success btn-sm">Confirmar documentación</a>
+                            {% elif ficha.esta == 'Matriculada' %}
+                            <a href="{% url 'ver_docs_prematricula' ficha.id %}" class="btn btn-warning btn-sm">Ver detalle</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No hay fichas disponibles.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</main>
+
+{% endblock %}

@@ -55,7 +55,9 @@ class T_repre_legal(models.Model):
     paren = models.CharField(max_length=200)
     ciu = models.CharField(max_length=200)
     depa = models.CharField(max_length=200)
-
+    
+    def __str__(self):
+        return f"{self.nom}"
 
 class T_instru(models.Model):
     class Meta:
@@ -113,13 +115,56 @@ class T_centro_forma(models.Model):
     def __str__(self):
         return f"{self.nom}"
 
+
+class T_departa(models.Model):
+    class Meta:
+        managed = True
+        db_table = 'T_departa'
+    cod_departa = models.CharField(max_length=4, unique=True)
+    nom_departa = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.nom_departa
+
+
+class T_munici(models.Model):
+    class Meta:
+        managed = True
+        db_table = 'T_munici'
+    cod_munici = models.CharField(max_length=4, unique=True)
+    nom_munici = models.CharField(max_length=200)
+    nom_departa = models.ForeignKey(T_departa, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.nom_munici
+    
 class T_insti_edu(models.Model):
     class Meta:
         managed = True
         db_table = 'T_insti_edu'
+    SECTOR_CHOICES = [
+        ('oficial', 'Oficial'),
+        ('noficial', 'No oficial')
+    ]
+    ESTADO_CHOICES = [
+        ('articulado', 'Articulado'),
+        ('articulado nuevo', 'Articulado nuevo')
+    ]
     nom = models.CharField(max_length=100)
     dire = models.CharField(max_length=100)
-    ofi = models.CharField(max_length=100)
+    secto = models.CharField(max_length=100, choices=SECTOR_CHOICES)
+    pote_apre = models.CharField(max_length=100)
+    depa = models.ForeignKey(T_departa, on_delete=models.CASCADE)
+    muni = models.ForeignKey(T_munici, on_delete=models.CASCADE)
+    esta = models.CharField(max_length=100, choices=ESTADO_CHOICES)
+    vigen = models.CharField(max_length=100)
+    recto = models.CharField(max_length=100)
+    recto_tel = models.CharField(max_length=100)
+    insti_mail = models.CharField(max_length=100)
+    coordi = models.CharField(max_length=100)
+    coordi_tele = models.CharField(max_length=100)
+    coordi_mail = models.CharField(max_length=100)
+
 
     def __str__(self):
         return f"{self.nom}"
@@ -145,7 +190,10 @@ class T_ficha(models.Model):
     num = models.CharField(max_length=100)
     instru = models.ForeignKey(T_instru, on_delete=models.CASCADE)
     progra = models.ForeignKey(T_progra, on_delete=models.CASCADE)
-    num_matri = models.CharField(max_length=100)
+    num_apre_proce = models.CharField(max_length=100)
+    num_apre_forma = models.CharField(max_length=100)
+    num_apre_pendi_regi = models.CharField(max_length=100)
+    esta = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.num}"
@@ -384,12 +432,39 @@ class T_docu(models.Model):
     ]
     nom = models.CharField(max_length=200)
     tipo = models.CharField(max_length=200)
-    archi = models.FileField(upload_to='documentos', null=True, blank=True )
+    archi = models.FileField(upload_to='documentos', null=True, blank=True, max_length=500 )
     tama = models.CharField(max_length=200)
     priva = models.CharField(max_length=200)
     esta = models.CharField(
         max_length=200, choices=ESTADO_CHOICES, default='activo')
 
+class T_insti_docu(models.Model):
+    class Meta:
+        managed = True
+        db_table = 'T_insti_docu'
+    nom = models.CharField(max_length=200)
+    ficha = models.ForeignKey(T_ficha, on_delete=models.CASCADE)
+    docu = models.ForeignKey(T_docu, on_delete=models.CASCADE, blank=True, null=True)
+    esta = models.CharField(max_length=200)
+    vali = models.CharField(max_length=1, blank=True, null=True)
+    usr_apro = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='documentos_insti_aprobados')
+    fecha_apro = models.DateField(null=True, blank=True)
+    usr_carga = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='documentos_insti_cargados')
+    fecha_carga = models.DateField(null=True, blank=True)
+
+class T_prematri_docu(models.Model):
+    class Meta:
+        managed = True
+        db_table = 'T_prematri_docu'
+    nom = models.CharField(max_length=200)
+    apren = models.ForeignKey(T_apre, on_delete=models.CASCADE)
+    docu = models.ForeignKey(T_docu, on_delete=models.CASCADE, blank=True, null=True)
+    esta = models.CharField(max_length=200)
+    vali = models.CharField(max_length=1, blank=True, null=True)
+    usr_apro = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='documentos_aprobados')
+    fecha_apro = models.DateField(null=True, blank=True)
+    usr_carga = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='documentos_cargados')
+    fecha_carga = models.DateField(null=True, blank=True)
 
 class T_guia_docu(models.Model):
     class Meta:
@@ -488,29 +563,6 @@ class T_nove_ficha(models.Model):
         db_table = 'T_nove_ficha'
     ficha = models.ForeignKey(T_ficha, on_delete=models.CASCADE)
     nove = models.ForeignKey(T_nove, on_delete=models.CASCADE)
-
-
-class T_departa(models.Model):
-    class Meta:
-        managed = True
-        db_table = 'T_departa'
-    cod_departa = models.CharField(max_length=4, unique=True)
-    nom_departa = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.nom_departa
-
-
-class T_munici(models.Model):
-    class Meta:
-        managed = True
-        db_table = 'T_munici'
-    cod_munici = models.CharField(max_length=4, unique=True)
-    nom_munici = models.CharField(max_length=200)
-    nom_departa = models.ForeignKey(T_departa, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.nom_munici
 
 
 

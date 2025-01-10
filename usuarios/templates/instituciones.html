@@ -18,18 +18,27 @@
                 <table id="instituciones" class="table table-hover table-bordered align-middle">
                     <thead class="table-primary text-center">
                     <tr>
-                        <th></th>
                         <th>Acciones</th>
                         <th>Nombre</th>
                         <th>Dirección</th>
-                        <th>Oficina</th>
+                        <th>Sector</th>
+                        <th>Departamento</th>
+                        <th>Municipio</th>
+                        <th>Aprendices potenciales</th>
+                        <th>Rector</th>
+                        <th>Tel Rector</th>
+                        <th>Mail institucion</th>
+                        <th>Coordinador</th>
+                        <th>Tel Coordinador</th>
+                        <th>Mail Coordinador</th>
+                        <th>Vigencia</th>
+                        <th>Estado</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for institucion in instituciones %}
                     <tr data-id="{{ institucion.id }}">
-                        <td class="details-control">    <i class="bi bi-chevron-right"></i>
-                        </td>
+                       
                         <td>
                         <a href="{% url 'detalle_institucion' institucion.id %}" class="btn btn-primary btn-sm ">
                             {% icon 'edit' %}
@@ -40,7 +49,18 @@
                         </td>
                         <td>{{ institucion.nom}}</td>
                         <td>{{ institucion.dire}}</td>
-                        <td>{{ institucion.ofi}}</td>
+                        <td>{{ institucion.get_secto_display }}</td>
+                        <td>{{ institucion.depa}}</td>
+                        <td>{{ institucion.muni}}</td>
+                        <td>{{ institucion.pote_apre}}</td>
+                        <td>{{ institucion.recto}}</td>
+                        <td>{{ institucion.recto_tel}}</td>
+                        <td>{{ institucion.insti_mail}}</td>
+                        <td>{{ institucion.coordi}}</td>
+                        <td>{{ institucion.coordi_tele}}</td>
+                        <td>{{ institucion.coordi_mail}}</td>
+                        <td>{{ institucion.vigen}}</td>
+                        <td>{{ institucion.esta}}</td>
                        
 
                     </tr>

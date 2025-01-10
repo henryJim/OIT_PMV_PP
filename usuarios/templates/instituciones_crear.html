@@ -9,7 +9,163 @@
                 <h1 class="text-center">Crear institución</h1>
                 {{error}}
                 {% csrf_token %}
-                {{ institucionForm.as_p }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ institucionForm.nom.id_for_label }}" class="form-label"">
+                                {{ institucionForm.nom.label }}
+                            </label>
+                            {{ institucionForm.nom }}
+                            {% if institucionForm.nom.errors %}
+                                <div class="text-danger">{{ institucionForm.nom.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ institucionForm.dire.id_for_label }}" class="form-label"">
+                                {{ institucionForm.dire.label }}
+                            </label>
+                            {{ institucionForm.dire }}
+                            {% if institucionForm.dire.errors %}
+                                <div class="text-danger">{{ institucionForm.dire.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ institucionForm.depa.id_for_label }}" class="form-label"">
+                                {{ institucionForm.depa.label }}
+                            </label>
+                            {{ institucionForm.depa }}
+                            {% if institucionForm.depa.errors %}
+                                <div class="text-danger">{{ institucionForm.depa.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ institucionForm.muni.id_for_label }}" class="form-label"">
+                                {{ institucionForm.muni.label }}
+                            </label>
+                            {{ institucionForm.muni }}
+                            {% if institucionForm.muni.errors %}
+                                <div class="text-danger">{{ institucionForm.muni.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ institucionForm.secto.id_for_label }}" class="form-label"">
+                                {{ institucionForm.secto.label }}
+                            </label>
+                            {{ institucionForm.secto }}
+                            {% if institucionForm.secto.errors %}
+                                <div class="text-danger">{{ institucionForm.secto.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ institucionForm.pote_apre.id_for_label }}" class="form-label"">
+                                {{ institucionForm.pote_apre.label }}
+                            </label>
+                            {{ institucionForm.pote_apre }}
+                            {% if institucionForm.pote_apre.errors %}
+                                <div class="text-danger">{{ institucionForm.pote_apre.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ institucionForm.coordi.id_for_label }}" class="form-label"">
+                                {{ institucionForm.coordi.label }}
+                            </label>
+                            {{ institucionForm.coordi }}
+                            {% if institucionForm.coordi.errors %}
+                                <div class="text-danger">{{ institucionForm.coordi.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ institucionForm.coordi_mail.id_for_label }}" class="form-label"">
+                                {{ institucionForm.coordi_mail.label }}
+                            </label>
+                            {{ institucionForm.coordi_mail }}
+                            {% if institucionForm.coordi_mail.errors %}
+                                <div class="text-danger">{{ institucionForm.coordi_mail.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ institucionForm.coordi_tele.id_for_label }}" class="form-label"">
+                                {{ institucionForm.coordi_tele.label }}
+                            </label>
+                            {{ institucionForm.coordi_tele }}
+                            {% if institucionForm.coordi_tele.errors %}
+                                <div class="text-danger">{{ institucionForm.coordi_tele.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ institucionForm.esta.id_for_label }}" class="form-label"">
+                                {{ institucionForm.esta.label }}
+                            </label>
+                            {{ institucionForm.esta }}
+                            {% if institucionForm.esta.errors %}
+                                <div class="text-danger">{{ institucionForm.esta.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ institucionForm.insti_mail.id_for_label }}" class="form-label"">
+                                {{ institucionForm.insti_mail.label }}
+                            </label>
+                            {{ institucionForm.insti_mail }}
+                            {% if institucionForm.insti_mail.errors %}
+                                <div class="text-danger">{{ institucionForm.insti_mail.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ institucionForm.recto.id_for_label }}" class="form-label"">
+                                {{ institucionForm.recto.label }}
+                            </label>
+                            {{ institucionForm.recto }}
+                            {% if institucionForm.recto.errors %}
+                                <div class="text-danger">{{ institucionForm.recto.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ institucionForm.recto_tel.id_for_label }}" class="form-label"">
+                                {{ institucionForm.recto_tel.label }}
+                            </label>
+                            {{ institucionForm.recto_tel }}
+                            {% if institucionForm.recto_tel.errors %}
+                                <div class="text-danger">{{ institucionForm.recto_tel.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
                 <button type="submit" class="btn btn-primary">Crear institución</button>
             </form>
         </div>
