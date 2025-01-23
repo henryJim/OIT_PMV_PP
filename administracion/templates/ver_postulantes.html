@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load icons %}
+{% block content %}
+<main class="container py-5">
+    <section class="card card-body shadow-sm p-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-5">Postulantes para: {{ oferta.nom }}</h1>
+                <p class="lead">{{ oferta.descri }}</p>
+
+                <!-- Lista de postulantes -->
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle">
+                        <thead class="table-secondary text-center">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Estado de Postulación</th>
+                                <th>Fecha de Postulación</th>
+                                <th>Respuesta RH</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for postulacion in postulaciones %}
+                                <tr>
+                                    <td>{{ postulacion.instru.perfil.nom }}</td>
+                                    <td>{{ postulacion.esta}}</td>
+                                    <td>{{ postulacion.fecha_apli|date:"d M, Y" }}</td>
+                                    <td>
+                                        {% if postulacion.respuesta_rh %}
+                                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modalRespuesta{{ postulacion.id }}">
+                                                Ver respuesta
+                                            </button>
+
+                                            <!-- Modal para mostrar la respuesta de RH -->
+                                            <div class="modal fade" id="modalRespuesta{{ postulacion.id }}" tabindex="-1" aria-labelledby="modalRespuestaLabel{{ postulacion.id }}" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="modalRespuestaLabel{{ postulacion.id }}">Respuesta de RH</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            {{ postulacion.respuesta_rh }}
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-muted">Aún no hay respuesta</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'ver_postulantes_detalle' postulacion.id %}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Crear oferta">
+                                            {% icon 'plus' %} Ver detalle
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

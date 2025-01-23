@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load icons %}
+{% load admin_filters %}
+
+{% block content %}
+<main class="container py-5">
+    <section class="card card-body shadow-sm p-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center pb-4">
+                    <h1 class="display-5">Ofertas Disponibles</h1>
+                    <a href="{% url 'mis_postulaciones' %}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Crear oferta">
+                        {% icon 'plus' %} Mis postulaciones
+                    </a>
+                </div>
+                <p class="lead">Explora las oportunidades disponibles y postúlate al cargo que más se ajuste a tu perfil.</p>
+                
+
+
+        <!-- Barra de búsqueda -->
+        <form method="get" action="" class="mb-4">
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    name="search" 
+                    class="form-control" 
+                    placeholder="Buscar ofertas..." 
+                    value="{{ search }}" 
+                    aria-label="Buscar ofertas"
+                >
+                <button class="btn btn-primary" type="submit">
+                    {% icon 'search' %}
+                </button>
+            </div>
+        </form>
+
+        <!-- Resultados -->
+        <div class="row gy-4 mt-4">
+            {% if ofertas %}
+                {% for oferta in ofertas %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-primary">{{ oferta.cargo }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ oferta.tipo_contra|traducir_tipo_contrato }}</h6>
+                            <p class="card-text">
+                                <strong>Descripción:</strong> {{ oferta.descri|truncatewords:15 }}<br>
+                                <strong>Horario:</strong> {{ oferta.jorna_labo|traducir_horario }}<br>
+                                <strong>Educación mínima:</strong> {{ oferta.edu_mini }}<br>
+                                <strong>Experiencia mínima:</strong> {{ oferta.expe_mini }}<br>
+                                <strong>Profesión requerida:</strong> {{ oferta.profe_reque }}<br>
+                            </p>
+                            <p class="text-muted small">
+                                <strong>Ubicación:</strong> {{ oferta.depa.nom_departa }}<br>
+                                <strong>Programa:</strong> {{ oferta.progra.nom }}
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{% url 'ofertas_detalle' oferta.id %}" class="btn btn-primary btn-sm w-100">
+                                    Ver más detalles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-center text-muted">No se encontraron ofertas que coincidan con la búsqueda.</p>
+            {% endif %}
+        </div>
+            </div>
+    </section>
+</main>
+{% endblock %}

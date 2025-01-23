@@ -1,29 +1,48 @@
 from django import forms
 from django.contrib.auth.models import User
-from commons.models import T_acti, T_docu, T_DocumentFolder, T_encu,T_apre, T_raps_ficha, T_acti_docu, T_acti_ficha, T_acti_apre, T_acti_descri, T_crono, T_progra, T_compe, T_raps, T_ficha
+from commons.models import T_acti, T_centro_forma, T_docu,T_departa, T_insti_edu, T_munici, T_DocumentFolder, T_encu,T_apre, T_raps_ficha, T_acti_docu, T_acti_ficha, T_acti_apre, T_acti_descri, T_crono, T_progra, T_compe, T_raps, T_ficha
+
+
 
 class FichaForm(forms.ModelForm):
     class Meta:
         model = T_ficha
-        fields = ['fecha_aper', 'fecha_cierre', 'centro', 'insti', 'instru', 'num_apre_proce', 'progra']
+        fields = [ 'num_apre_proce', 'progra']
         widgets = {
-            'fecha_aper': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}), 
-            'fecha_cierre': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'centro': forms.Select(attrs={'class': 'form-select'}), 
-            'insti': forms.Select(attrs={'class':'form-select'}), 
-            'instru': forms.Select(attrs={'class':'form-select'}),
             'num_apre_proce': forms.TextInput(attrs={'class': 'form-control'}), 
             'progra': forms.Select(attrs={'class': 'form-select'})
         }
         labels = {
-            'fecha_aper': 'Fecha de apertura', 
-            'fecha_cierre': 'Fecha de cierre',
-            'centro': 'Centro de formacion', 
-            'insti': 'Institucion educativa', 
-            'instru': 'Instructor asignado',
             'num_apre_proce': 'Numero de aprendices en proceso', 
             'progra': 'Programa de formacion'
         }
+
+class CascadaMunicipioInstitucionForm(forms.Form):
+    departamento = forms.ModelChoiceField(
+        queryset=T_departa.objects.all(),
+        required=False,
+        empty_label="Selecciona un departamento",
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_departamento'})
+    )
+    municipio = forms.ModelChoiceField(
+        queryset=T_munici.objects.none(),  # Inicialmente vacío
+        required=False,
+        empty_label="Selecciona un municipio",
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_municipio'})
+    )
+    centro = forms.ModelChoiceField(
+        queryset=T_centro_forma.objects.none(),
+        required=False,
+        empty_label="Selecciona un centro",
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_centro'})
+    )
+    insti = forms.ModelChoiceField(
+        queryset=T_insti_edu.objects.none(),  # Inicialmente vacío
+        required=False,
+        empty_label="Selecciona una institución",
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_insti'})
+    )
+
 
 class ActividadForm(forms.ModelForm):
     class Meta:
@@ -71,7 +90,6 @@ class RapsFichaForm(forms.Form):
         if ficha:
             # Si se pasó una ficha, ajustar el queryset para incluir los RAPs de la ficha
             self.fields['raps'].queryset = T_raps_ficha.objects.filter(ficha=ficha, agre='No')
-
 
 class CronogramaForm(forms.ModelForm):
     class Meta:

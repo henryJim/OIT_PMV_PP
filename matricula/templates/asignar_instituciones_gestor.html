@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-5">
+  <section class="card card-body shadow-sm p-4">
+      <div class="row">
+          <div class="col-12 offset-md-12">
+              <h1 class="text-center text-center display-5">Seleccione la institución</h1>
+              <div class="d-flex justify-content-end mb-3"></div>
+              <form action="" method="POST" class="">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                      <label for="id_departamento" class="form-label">Departamento</label>
+                      {{ asignar_insti_form.departamento }}
+                  </div>
+                  <div class="mb-3">
+                      <label for="id_municipio" class="form-label">Municipio</label>
+                      {{ asignar_insti_form.municipio }}
+                  </div>
+                  <div class="mb-3">
+                      <label for="id_insti" class="form-label">Institución Educativa</label>
+                      {{ asignar_insti_form.insti }}
+                  </div>
+                  {% if error %}
+                      <div class="alert alert-danger">{{ error }}</div>
+                  {% endif %}
+                  <button type="submit" class="btn btn-primary">Asignar institución</button>
+              </form>
+          </div>
+      </div>
+  </section>
+</main>
+<script>
+  $(document).ready(function() {
+      // Manejar el cambio de departamento
+      $('#id_departamento').change(function() {
+          const departamentoId = $(this).val();
+          
+          // Resetear los campos de municipio e institución
+          $('#id_municipio').html('<option value="">Seleccione un municipio</option>');
+          $('#id_insti').html('<option value="">Seleccione una institución</option>');
+
+          if (departamentoId) {
+              $.ajax({
+                  url: '/cargar-municipios/',
+                  data: { 'departamento_id': departamentoId },
+                  success: function(data) {
+                      let options = '<option value="">Seleccione un municipio</option>';
+                      data.forEach(function(municipio) {
+                          options += `<option value="${municipio.id}">${municipio.nom_munici}</option>`;
+                      });
+                      $('#id_municipio').html(options);
+                  },
+                  error: function() {
+                      alert('Error al cargar los municipios.');
+                  }
+              });
+          }
+      });
+
+      // Manejar el cambio de municipio
+      $('#id_municipio').change(function() {
+          const municipioId = $(this).val();
+          
+          // Resetear el campo de institución
+          $('#id_insti').html('<option value="">Seleccione una institución</option>');
+
+          if (municipioId) {
+              $.ajax({
+                  url: '/cargar-instituciones/',
+                  data: { 'municipio_id': municipioId },
+                  success: function(data) {
+                      let options = '<option value="">Seleccione una institución</option>';
+                      data.forEach(function(institucion) {
+                          options += `<option value="${institucion.id}">${institucion.nom}</option>`;
+                      });
+                      $('#id_insti').html(options);
+                  },
+                  error: function() {
+                      alert('Error al cargar las instituciones.');
+                  }
+              });
+          }
+      });
+  });
+</script>
+
+{% endblock %}

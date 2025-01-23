@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load icons %}
+
+{% block content %}
+<main class="container py-5">
+    <section class="card card-body shadow-sm p-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center pb-4">
+                <h1 class="text-center display-5">Instituciones Asignadas</h1>
+                <div class="d-flex justify-content-end mb-3">
+                    {% if perfil.rol == 'gestor' %}
+                    <a href="{% url 'asignar_institucion_gestor' %}" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Asignar instituciones">{% icon 'plus' %}
+                    </a>
+                    {% endif %}
+                </div>  
+            </div>
+                     
+            <div class="table-responsive">
+                <table id="instituciones_gestor" class="table table-hover table-bordered align-middle">
+                    <thead class="table-secondary text-center">
+                    <tr>
+                        <th class="text-center">Nombre</th>
+                        <th class="text-center">Direccion</th>
+                        <th class="text-center">Municipio</th>
+                        <th class="text-center">Departamento</th>
+                        <th class="text-center">Sector</th>
+                        <th class="text-center">Estado</th>
+                        <th class="text-center">Dane</th>
+                        <th class="text-center">Genero</th>
+                        <th class="text-center">Zona</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for institucion in instituciones %}
+                    <tr data-id="{{ institucion.id }}">
+                        <td>{{ institucion.insti.nom}}</td>
+                        <td>{{ institucion.insti.dire}}</td>
+                        <td>{{ institucion.insti.muni.nom_munici}}</td>
+                        <td>{{ institucion.insti.muni.nom_departa.nom_departa}}</td>
+                        <td>{{ institucion.insti.secto}}</td>
+                        <td>{{ institucion.insti.esta}}</td>
+                        <td>{{ institucion.insti.dane}}</td>
+                        <td>{{ institucion.insti.gene}}</td>
+                        <td>
+                            {% if institucion.insti.zona %}
+                            {{institucion.insti.zona}}
+                            {% else %}
+                            No asignado
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a class="btn btn-warning btm-sm" title="Ver detalle" href="{% url 'instituciones_docs' institucion.insti.id %}" data-toggle="tooltip" data-placement="top" title="Ver documentacion">
+                                {% icon 'detalle' %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+</section>
+</main>
+<!-- Modal -->
+<!-- <div class="modal fade" id="cargaestudiantes" tabindex="-1" aria-labelledby="cargaestudiantesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="cargaestudiantesLabel">Administrar documentación</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5 id="institucion-nombre"></h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre del Documento</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="documentos-lista">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="guardardoc" class="btn btn-secondary">Guardar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('cargaestudiantes');
+        const modalTitle = document.getElementById('institucion-nombre');
+        const documentosLista = document.getElementById('documentos-lista');
+
+        modal.addEventListener('show.bs.modal', function (event) {
+            // Botón que activó el modal
+            const button = event.relatedTarget;
+
+            // Extraer datos de los atributos data-*
+            const institucionNombre = button.getAttribute('data-institucion-nombre');
+            const documentosJSON = button.getAttribute('data-documentos');
+
+            // Actualizar el título del modal
+            modalTitle.textContent = institucionNombre;
+
+            // Limpiar contenido previo
+            documentosLista.innerHTML = '';
+
+            // Cargar los documentos
+            const documentos = JSON.parse(documentosJSON); // Suponiendo que `documentos` viene como un JSON
+            documentos.forEach(doc => {
+                const estado = doc.vali === '0' ? 'Pendiente' : 'Aprobado';
+                const acciones = doc.vali === '0'
+                    ? `<button class="btn btn-success btn-sm">Aprobar</button>`
+                    : `<span class="text-success">✔ Aprobado</span>`;
+
+                const archivo = doc.archivo_url
+                    ? `<a href="${doc.archivo_url}" target="_blank" class="btn btn-link">🔎</a>`
+                    : 'No cargado';
+
+                const fila = `
+                    <tr>
+                        <td>${doc.nombre}</td>
+                        <td>${estado}</td>
+                        <td>
+                            ${archivo}
+                            ${acciones}
+                        </td>
+                    </tr>`;
+                documentosLista.insertAdjacentHTML('beforeend', fila);
+            });
+        });
+    });
+</script> -->
+{% endblock %}

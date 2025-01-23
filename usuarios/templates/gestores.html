@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load icons %}
+
+{% block content %}
+<main class="container py-5">
+    <section class="card card-body shadow-sm p-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center pb-4">
+                <h1 class="display-5">Gestión de Gestores</h1>
+                <div>
+                    <a href="/gestores/crear" class="btn btn-primary me-2" data-toggle="tooltip" data-placement="top" title="Crear gestor">
+                        {% icon 'plus' %}
+                    </a>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="gestores_table" class="table table-hover table-bordered align-middle">
+                    <thead class="table-secondary text-center">
+                    <tr>
+                        <th></th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Telefono</th>
+                        <th>Direccion</th>
+                        <th>Mail</th>
+                        <th>Fecha nacimiento</th>
+                        <th>Estado</th>
+                        <th>Departamentos asignados</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for gestor in gestores %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'gestor_detalle' gestor.id %}" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Editar">{% icon 'edit' %}</a>
+                        </td>
+                        <td>{{ gestor.perfil.nom}}</td>
+                        <td>{{ gestor.perfil.apelli}}</td>
+                        <td>{{ gestor.perfil.tele}}</td>
+                        <td>{{ gestor.perfil.dire}}</td>
+                        <td>{{ gestor.perfil.mail}}</td>
+                        <td>{{ gestor.perfil.fecha_naci}}</td>
+                        <td>{{ gestor.esta }}</td>
+                        <td>
+                            {% if 'gestor.departamento' %}
+                            {{ gestor.departamentos}}
+                            {% else%}
+                            Sin departamento asignado
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+    </section>
+</main>
+{% endblock %}

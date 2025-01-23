@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-5">
+    <section class="card card-body shadow-sm p-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center pb-4">
+                <h1 class="display-5">Crear oferta</h1>
+            </div>
+            <form action="/ofertas/crear/" method="POST" class="">
+                {% csrf_token %}
+                {{ oferta_form.as_p }}
+                <button type="submit" class="btn btn-primary">Crear oferta</button>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}

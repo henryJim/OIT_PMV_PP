@@ -1,36 +1,30 @@
 {% extends 'base.html' %}
+{% load icons %}
 
 {% block content %}
-<main class="container mt-5">
-    
-</main>
 <main class="container py-5">
     <section class="card card-body shadow-sm p-4">
-        <h2 class="text-center mb-4">
-            Panel de la ficha
-            {% if ficha.num == 'null' %}
-                - Ficha {{ ficha.num }}
-            {% else %}
-                (Sin ficha asignada)
-            {% endif %}
-        </h2>
-
-        {% if ficha %}
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center pb-4">
+                    <h1 class="display-5">Panel del grupo {{ grupo.id }} - {{ grupo.insti.nom }}</h1>
+                </div>
+        {% if grupo %}
         <!-- NavPills -->
         <ul class="nav nav-tabs mb-4 nav-fill" id="aprendizTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <a class="nav-link active" id="instituciones-tab" data-bs-toggle="pill" href="#institucionest" role="tab" aria-controls="instituciones" aria-selected="true">
-                    insituciones
+                <a class="nav-link" id="instituciones-tab" data-bs-toggle="pill" href="#institucionest" role="tab" aria-controls="instituciones" aria-selected="true">
+                    Institucion
                 </a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link" id="aprendicest-tab" data-bs-toggle="pill" href="#aprendicest" role="tab" aria-controls="aprendicest" aria-selected="false">
+                <a class="nav-link active" id="aprendicest-tab" data-bs-toggle="pill" href="#aprendicest" role="tab" aria-controls="aprendicest" aria-selected="false">
                     Aprendices
                 </a>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="instructores-tab" data-bs-toggle="pill" href="#instructores" role="tab" aria-controls="instructores" aria-selected="false">
-                    Instructores
+                    Instructor
                 </a>
             </li>
         </ul>
@@ -38,30 +32,83 @@
         <!-- Contenido de las Pills -->
         <div class="tab-content" id="aprendizTabContent">
             <!-- Portafolio -->
-            <div class="tab-pane fade show active" id="institucionest" role="tabpanel" aria-labelledby="instituciones-tab">
+            <div class="tab-pane fade" id="institucionest" role="tabpanel" aria-labelledby="instituciones-tab">
                 <h4>Instituciones</h4>
-                <p>Aquí puedes consultar y gestionar la documentacion de la isntitucion</p>
-                <div id="treePortafolio" class="wb-skeleton wb-initializing wb-fade-expander"></div>
+                <p>Aquí puedes consultar la documentación de la institución</p>
+                
+                <!-- Tabla de Documentos Cargados -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre del Documento</th>
+                            <th>Estado</th>
+                            <th>Archivo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for documento in documentos_institucion %}
+                        <tr>
+                            <td>{{ documento.nom }}</td>
+                            <td>
+                                {% if documento.vali == '0' %}
+                                Pendiente
+                                {% else %}
+                                Aprobado
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if documento.docu.archi %}
+                                <a href="{{ documento.docu.archi.url }}" target="_blank" class="btn" data-toggle="tooltip" data-placement="top" title="Ver archivo">
+                                    {% icon 'search' %}
+                                </a>
+                                {% else %}
+                                No cargado
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">No hay documentos cargados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-
+            
             <!-- Entregas -->
-            <div class="tab-pane fade" id="aprendicest" role="tabpanel" aria-labelledby="aprendicest-tab">    
-                <div>
-                    <h4>Documentación</h4>
-                    <p>Aquí deberá cargar los documentos relacionados con la matrícula.</p>
+            <div class="tab-pane fade show active" id="aprendicest" role="tabpanel" aria-labelledby="aprendicest-tab">    
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Documentación</h4>
+                        <p>Aquí deberá cargar los documentos relacionados con la matrícula.</p>
+                    </div>
+                    <div class="col-md-6">
+                        {% if grupo.esta == 'En radicacion' %}
+                        <a class="btn btn-danger float-end" href="{% url 'descargar_documentos_grupo_zip' grupo.id %}" data-toggle="tooltip" data-placement="top" title="Descargar documentos grupo">{% icon 'download' %}</a>
+                        {% endif %}
+                    </div>
                 </div>
+                
     <div class="table-responsive">
         <table id="fichas_prematricula" class="table table-hover table-bordered align-middle">
-            <thead class="table-primary text-center">
+            <thead class="table-secondary text-center">
             <tr>
+                {% if documentos_por_aprendiz %}
                 <th>Nombre</th>
                 <th>Resumen</th>
+                {% else %}
+                <th>Resumen</th>
+                {% endif%}
+
             </tr>
         </thead>
         <tbody>
             {% for aprendiz, documentos in documentos_por_aprendiz.items %}
                 <tr>
-                    <td>{{ aprendiz.perfil.nom }} {{ aprendiz.perfil.apelli }}</td>
+                    <td>{{ aprendiz.perfil.nom }} {{ aprendiz.perfil.apelli }}<!-- Botón para descargar ZIP -->
+                        <br><a href="{% url 'descargar_documentos_zip' aprendiz.id %}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="Descargar documento aprendiz">
+                            {% icon 'download' %}
+                        </a></td>
                     <td colspan="3">
                         <table class="table">
                             <thead>
@@ -69,7 +116,13 @@
                                     <th>Nombre del Documento</th>
                                     <th>Estado</th>
                                     <th>Archivo</th>
-                                    <th>Acciones</th>
+                                    {% if grupo.esta == 'Pre matricula' or grupo.esta == 'Validacion matriculas' %}
+                                        {% if rol == 'lider' %}
+                                            <th>Aprobacion</th>
+                                        {% else %}
+                                        <th>Cargar</th>
+                                        {% endif %}
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -85,36 +138,56 @@
                                         </td>
                                         <td>
                                             {% if documento.docu.archi %}
-                                                <a href="{{ documento.docu.archi.url }}" target="_blank" class="btn btn-link">
-                                                    Ver/Descargar
+                                                <a href="{{ documento.docu.archi.url }}" target="_blank" class="btn" data-toggle="tooltip" data-placement="top" title="Ver archivo">
+                                                    {% icon 'search' %}
                                                 </a>
+                                                {% if grupo.esta == 'Pre matricula' or grupo.esta == 'Validacion matriculas' %}
+                                                {% if documento.vali == '0' and rol == 'gestor' %}
+                                                <a href="{% url 'eliminar_documento_pre' documento.docu.id %}" class="btn" data-toggle="tooltip" data-placement="top" title="Eliminar archivo">
+                                                    {% icon 'delete' %}
+                                                </a>
+                                               {% endif %}
+                                                {% endif %}
                                             {% else %}
                                                 No cargado
                                             {% endif %}
                                         </td>
+                                        {% if grupo.esta == 'Pre matricula' or grupo.esta == 'Validacion matriculas' %}
+                                        {% if rol == 'lider' %}
                                         <td>
                                             {% if documento.docu.archi %}
                                                 {% if documento.vali == '0' %}
-                                                    <a href="{% url 'confirmar_documento' documento.id ficha.id %}" class="btn btn-success btn-sm">Aprobar</a>
+                                                    <a href="{% url 'confirmar_documento' documento.id grupo.id %}" class="btn btn-success btn-sm">Aprobar</a>
                                                 {% else %}
                                                     <button type="button" class="btn btn-success btn-sm" disabled>Aprobado</button> 
                                                 {% endif %}
 
                                             {% endif %}
                                         </td>
+                                        {% else %}
+                                        <td>
+                                            {% if documento.esta == "Pendiente" %}
+                                                <form method="post" action="{% url 'subir_documento_prematricula' documento.id aprendiz.id grupo.id %}" enctype="multipart/form-data">
+                                                    {% csrf_token %}
+                                                    <input type="file" name="archivo" class="form-control mb-2" required>
+                                                    <button type="submit" class="btn btn-primary">Cargar</button>
+                                                </form>
+                                                {% else %}
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="text-success">✔ Cargado</span>
+                                                {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        {% endif %}
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
-                        <!-- Botón para descargar ZIP -->
-                        <a href="{% url 'descargar_documentos_zip' aprendiz.id %}" class="btn btn-success btn-sm">
-                            Descargar Documentos ZIP
-                        </a>
                     </td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center">No hay aprendices en esta ficha.</td>
+                    <td colspan="4" class="text-center">No hay aprendices en este grupo.</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -133,4 +206,29 @@
         {% endif %}
     </section>
 </main>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tabs = document.querySelectorAll('.nav-link');
+        const activeTab = localStorage.getItem("activeTab");
+
+        // Activar la última pestaña seleccionada
+        if (activeTab) {
+            const tab = document.querySelector(activeTab);
+            const pane = document.querySelector(tab.getAttribute("href"));
+            tabs.forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove("show", "active"));
+            pane.classList.add("show", "active");
+        }
+
+        // Guardar la pestaña activa al cambiar
+        tabs.forEach(tab => {
+            tab.addEventListener("click", function () {
+                localStorage.setItem("activeTab", `#${this.id}`);
+            });
+        });
+    });
+</script>
 {% endblock %}

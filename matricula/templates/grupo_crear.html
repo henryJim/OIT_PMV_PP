@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block content%}
+<main class="container">
+    <div class="row">
+        <div class="col-12 offset-md-12">
+            <form action="" method="POST" enctype="multipart/form-data" class="card card-body mt-5">
+                <h1 class="text-center">Crear Grupo</h1>
+                
+                <!-- Mostrar errores generales del formulario -->
+                {% if grupo_form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in grupo_form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% csrf_token %}
+                
+                <h3>Datos del grupo:</h3>
+                
+                <!-- Campo: Número de aprendices potenciales -->
+                <div class="form-group">
+                    <label for="{{ grupo_form.num_apre_poten.id_for_label }}">
+                        {{ grupo_form.num_apre_poten.label }}
+                    </label>
+                    {{ grupo_form.num_apre_poten }}
+                    {% if grupo_form.num_apre_poten.errors %}
+                        <div class="alert alert-danger mt-2">
+                            {% for error in grupo_form.num_apre_poten.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo: Centro de formación -->
+                <div class="form-group">
+                    <label for="{{ grupo_form.centro.id_for_label }}">
+                        {{ grupo_form.centro.label }}
+                    </label>
+                    {{ grupo_form.centro }}
+                    {% if grupo_form.centro.errors %}
+                        <div class="alert alert-danger mt-2">
+                            {% for error in grupo_form.centro.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo: Institución educativa -->
+                <div class="form-group">
+                    <label for="{{ grupo_form.insti.id_for_label }}">
+                        {{ grupo_form.insti.label }}
+                    </label>
+                    {{ grupo_form.insti }}
+                    {% if grupo_form.insti.errors %}
+                        <div class="alert alert-danger mt-2">
+                            {% for error in grupo_form.insti.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo: Programa de formación -->
+                <div class="form-group">
+                    <label for="{{ grupo_form.progra.id_for_label }}">
+                        {{ grupo_form.progra.label }}
+                    </label>
+                    {{ grupo_form.progra }}
+                    {% if grupo_form.progra.errors %}
+                        <div class="alert alert-danger mt-2">
+                            {% for error in grupo_form.progra.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">Crear grupo</button>
+            </form>
+        </div>
+    </div>
+</main>
+<!-- <script>
+    $(document).ready(function() {
+        $('#id_departamento').change(function() {
+            const departamentoId = $(this).val();
+            if (departamentoId) {
+                // Cargar municipios
+                $.ajax({
+                    url: '/cargar-municipios/',
+                    data: {'departamento_id': departamentoId},
+                    success: function(data) {
+                        let options = '<option value="">Seleccione un municipio</option>';
+                        data.forEach(function(municipio) {
+                            options += `<option value="${municipio.id}">${municipio.nom_munici}</option>`;
+                        });
+                        $('#id_municipio').html(options);
+                    }
+                });
+
+                // Cargar centros
+                $.ajax({
+                    url: '/cargar-centros/',
+                    data: {'departamento_id': departamentoId},
+                    success: function(data) {
+                        let options = '<option value="">Seleccione un centro</option>';
+                        data.forEach(function(centro) {
+                            options += `<option value="${centro.id}">${centro.nom}</option>`;
+                        });
+                        $('#id_centro').html(options);
+                    }
+                });
+            } else {
+                $('#id_municipio').html('<option value="">Seleccione un municipio</option>');
+                $('#id_centro').html('<option value="">Seleccione un centro</option>');
+                $('#id_insti').html('<option value="">Seleccione una institución</option>');
+            }
+        });
+
+        $('#id_municipio').change(function() {
+            const municipioId = $(this).val();
+            if (municipioId) {
+                $.ajax({
+                    url: '/cargar-instituciones/',
+                    data: {'municipio_id': municipioId},
+                    success: function(data) {
+                        let options = '<option value="">Seleccione una institución</option>';
+                        data.forEach(function(insti) {
+                            options += `<option value="${insti.id}">${insti.nom}</option>`;
+                        });
+                        $('#id_insti').html(options);
+                    }
+                });
+            } else {
+                $('#id_insti').html('<option value="">Seleccione una institución</option>');
+            }
+        });
+    });
+</script> -->
+{% endblock %}

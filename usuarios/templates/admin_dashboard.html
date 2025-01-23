@@ -3,26 +3,27 @@
 {% block content %}
 <main class="container py-5">
     <section class="card card-body shadow-sm p-4">
-        <h2 class="text-center mb-4">Gestión de entidades</h2>
+        <h1 class="text-center display-5">Gestión de entidades</h1>
         
-        <p class="text-center mb-4">En esta sección, el administrador puede crear nuevos usuarios y gestionar los actores del sistema.</p>
-
+        <p class="text-center mb-4">En esta sección, el {{rol}} puede crear nuevos usuarios y gestionar los actores del sistema.</p>
+        
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            {% if rol == 'admin' %}
             <div class="col">
-                <a href="{% url 'fichas_adm' %}" class="btn">
-                <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/programasIcon.png' %}" class="card-img-top" alt="Instructores" >
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Fichas</h5>
-                        <p class="card-text">Administrar fichas.</p>
+                <a href="{% url 'fichas_adm' %}" class="btn" >
+                    <div class="card shadow-sm card-anim" style="height: 375px;">
+                        <img src="{% static 'images/programasIcon.png' %}" class="card-img-top p-4" alt="Instructores">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Fichas</h5>
+                            <p class="card-text">Administrar fichas.</p>
+                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
             </div>
             <div class="col">
                 <a href="{% url 'instructores' %}" class="btn">
-                <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/instructoricon2.png' %}" class="card-img-top" alt="Instructores" >
+                <div class="card shadow-sm card-anim" style="height: 375px;">
+                    <img src="{% static 'images/instructoricon2.png' %}" class="card-img-top p-4" alt="Instructores" >
                     <div class="card-body text-center">
                         <h5 class="card-title">Instructores</h5>
                         <p class="card-text">Administrar los instructores del sistema.</p>
@@ -32,18 +33,19 @@
             </div>
             <div class="col">
                 <a href="{% url 'aprendices' %}" class="btn">
-                <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/aprendizicon.png' %}" class="card-img-top" alt="Instructores" >
+                <div class="card shadow-sm card-anim" style="height: 375px;">
+                    <img src="{% static 'images/aprendizicon.png' %}" class="card-img-top p-4" alt="Instructores" >
                     <div class="card-body text-center">
                         <h5 class="card-title">Aprendices</h5>
                         <p class="card-text">Administrar los aprendices del sistema.</p>
                     </div>
                 </div>
             </a>
-        </div><div class="col">
+        </div>
+        <div class="col">
             <a href="{% url 'represantesLegales' %}" class="btn">
-            <div class="card shadow-sm h-100">
-                <img src="{% static 'images/RepresentanteLegalIcon.png' %}" class="card-img-top" alt="RepresentanteLegal" >
+            <div class="card shadow-sm card-anim" style="height: 375px;">
+                <img src="{% static 'images/familiaicon.png' %}" class="card-img-top p-4" alt="RepresentanteLegal" >
                 <div class="card-body text-center">
                     <h5 class="card-title">Representante legal</h5>
                     <p class="card-text">Administrar los representantes legales del sistema.</p>
@@ -52,30 +54,42 @@
         </a>
             </div><div class="col">
                 <a href="{% url 'administradores' %}" class="btn">
-                <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/adminicon2.png' %}" class="card-img-top" alt="administradores" >
+                <div class="card shadow-sm card-anim" style="height: 375px;">
+                    <img src="{% static 'images/adminicon2.png' %}" class="card-img-top p-4" alt="administradores" >
                     <div class="card-body text-center">
                         <h5 class="card-title">Administradores</h5>
                         <p class="card-text">Administrar los admins del sistema.</p>
                     </div>
                 </div>
             </a>
-            </div><div class="col">
+            </div>
+            <div class="col">
                 <a href="{% url 'lideres' %}" class="btn">
-                <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/leadericon.png' %}" class="card-img-top" alt="Lideres" >
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Control del sistema</h5>
-                        <p class="card-text">Administrar los controladores del sistema.</p>
+                    <div class="card shadow-sm card-anim" style="height: 375px;">
+                        <img src="{% static 'images/leadericon.png' %}" class="card-img-top p-4" alt="Lideres" >
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Equipo nacional</h5>
+                            <p class="card-text">Administrar el equipo nacional.</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-
+                </a>
+            </div>
+            <div class="col">
+                <a href="{% url 'cuentas' %}" class="btn">
+                    <div class="card shadow-sm card-anim" style="height: 375px;">
+                        <img src="{% static 'images/cuentasicon.png' %}" class="card-img-top p-4" alt="Cuentas" >
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Cuentas</h5>
+                            <p class="card-text">Administrar los perfiles de cuentas.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
             <!--- Nuevas entidades agregadas -->
-            </div><div class="col">
+            <div class="col">
                 <a href="{% url 'departamentos' %}" class="btn">
-                <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/departamentosIcon.png' %}" class="card-img-top" alt="Departamentos" >
+                <div class="card shadow-sm card-anim" style="height: 375px;">
+                    <img src="{% static 'images/departamentosIcon.png' %}" class="card-img-top p-4" alt="Departamentos" >
                     <div class="card-body text-center">
                         <h5 class="card-title">Departamentos</h5>
                         <p class="card-text">Administrar los departamentos del sistema.</p>
@@ -84,8 +98,8 @@
             </a>
             </div><div class="col">
                 <a href="{% url 'municipios' %}" class="btn">
-                <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/municipiosIcon.png' %}" class="card-img-top" alt="Municipios" >
+                <div class="card shadow-sm card-anim" style="height: 375px;">
+                    <img src="{% static 'images/municipiosIcon.png' %}" class="card-img-top p-4" alt="Municipios" >
                     <div class="card-body text-center">
                         <h5 class="card-title">Municipios</h5>
                         <p class="card-text">Administrar los municipios del sistema.</p>
@@ -94,8 +108,8 @@
             </a>
             </div><div class="col">
                 <a href="{% url 'instituciones' %}" class="btn">
-                <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/InstitucionesIcon.png' %}" class="card-img-top" alt="Instituciones" >
+                <div class="card shadow-sm card-anim" style="height: 375px;">
+                    <img src="{% static 'images/InstitucionesIcon.png' %}" class="card-img-top p-4" alt="Instituciones" >
                     <div class="card-body text-center">
                         <h5 class="card-title">Instituciones</h5>
                         <p class="card-text">Administrar las instituciones del sistema.</p>
@@ -104,45 +118,130 @@
             </a>
             </div><div class="col">
                 <a href="{% url 'centrosformacion' %}" class="btn">
-                <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/centroFormacionIcon.png' %}" class="card-img-top" alt="centro-formacion" >
+                <div class="card shadow-sm card-anim" style="height: 375px;">
+                    <img src="{% static 'images/centroFormacionIcon.png' %}" class="card-img-top p-4" alt="centro-formacion" >
                     <div class="card-body text-center">
                         <h5 class="card-title">Centros de formación</h5>
                         <p class="card-text">Administrar los Centros de formación del sistema.</p>
                     </div>
                 </div>
             </a>
-            </div><div class="col">
+            </div>
+            <div class="col">
                 <a href="{% url 'programas' %}" class="btn">
-                <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/programasIcon.png' %}" class="card-img-top" alt="Programas" >
+                <div class="card shadow-sm card-anim" style="height: 375px;">
+                    <img src="{% static 'images/programasIcon.png' %}" class="card-img-top p-4" alt="Programas" >
                     <div class="card-body text-center">
                         <h5 class="card-title">Programas</h5>
                         <p class="card-text">Administrar los programas del sistema.</p>
                     </div>
                 </div>
             </a>
-            </div><div class="col">
+            </div>
+            <div class="col">
                 <a href="{% url 'competencias' %}" class="btn">
-                <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/competenciaIcon.png' %}" class="card-img-top" alt="Competencias" >
+                <div class="card shadow-sm card-anim" style="height: 375px;">
+                    <img src="{% static 'images/competenciaIcon.png' %}" class="card-img-top p-4" alt="Competencias" >
                     <div class="card-body text-center">
                         <h5 class="card-title">Competencias</h5>
                         <p class="card-text">Administrar los competencias del sistema.</p>
                     </div>
                 </div>
             </a>
-            </div><div class="col">
+            </div>
+            <div class="col">
                 <a href="{% url 'raps' %}" class="btn">
-                <div class="card shadow-sm h-100">
-                    <img src="{% static 'images/rapsIcon.png' %}" class="card-img-top" alt="Raps" >
+                <div class="card shadow-sm card-anim" style="height: 375px;">
+                    <img src="{% static 'images/rapsIcon.png' %}" class="card-img-top p-4" alt="Raps" >
                     <div class="card-body text-center">
                         <h5 class="card-title">RAPS</h5>
                         <p class="card-text">Administrar los RAPS del sistema.</p>
                     </div>
                 </div>
             </a>
+            </div>
+            <div class="col">
+                <a href="{% url 'gestores' %}" class="btn">
+                <div class="card shadow-sm card-anim" style="height: 375px;">
+                    <img src="{% static 'images/gestoricon.png' %}" class="card-img-top p-4" alt="Gestores" >
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Gestores</h5>
+                        <p class="card-text">Administrar los gestores del sistema.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+            {% endif %}
+            {% if rol == 'gestor' %}
+            <div class="col">
+                <a href="{% url 'aprendices' %}" class="btn">
+                <div class="card shadow-sm card-anim" style="height: 375px;">
+                    <img src="{% static 'images/aprendizicon.png' %}" class="card-img-top p-4" alt="Instructores" >
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Aprendices</h5>
+                        <p class="card-text">Administrar los aprendices del sistema.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="{% url 'represantesLegales' %}" class="btn">
+            <div class="card shadow-sm card-anim" style="height: 375px;">
+                <img src="{% static 'images/familiaicon.png' %}" class="card-img-top p-4" alt="RepresentanteLegal" >
+                <div class="card-body text-center">
+                    <h5 class="card-title">Representante legal</h5>
+                    <p class="card-text">Administrar los representantes o acudientes del aprendiz.</p>
+                </div>
+            </div>
+        </a>
+            </div>
+        {% endif %}
+        {% if rol == 'lider' %}
+        <div class="col">
+            <a href="{% url 'gestores' %}" class="btn">
+            <div class="card shadow-sm card-anim" style="height: 375px;">
+                <img src="{% static 'images/gestoricon.png' %}" class="card-img-top p-4" alt="Gestores" >
+                <div class="card-body text-center">
+                    <h5 class="card-title">Gestores</h5>
+                    <p class="card-text">Administrar los gestores del sistema.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col">
+        <a href="{% url 'instituciones' %}" class="btn">
+        <div class="card shadow-sm card-anim" style="height: 375px;">
+            <img src="{% static 'images/InstitucionesIcon.png' %}" class="card-img-top p-4" alt="Instituciones" >
+            <div class="card-body text-center">
+                <h5 class="card-title">Instituciones</h5>
+                <p class="card-text">Administrar las instituciones del sistema.</p>
+            </div>
+        </div>
+    </a>
+    </div><div class="col">
+        <a href="{% url 'centrosformacion' %}" class="btn">
+        <div class="card shadow-sm card-anim" style="height: 375px;">
+            <img src="{% static 'images/centroFormacionIcon.png' %}" class="card-img-top p-4" alt="centro-formacion" >
+            <div class="card-body text-center">
+                <h5 class="card-title">Centros de formación</h5>
+                <p class="card-text">Administrar los Centros de formación del sistema.</p>
+            </div>
+        </div>
+    </a>
+    </div>
+    <div class="col">
+        <a href="{% url 'aprendices' %}" class="btn">
+        <div class="card shadow-sm card-anim" style="height: 375px;">
+            <img src="{% static 'images/aprendizicon.png' %}" class="card-img-top p-4" alt="Instructores" >
+            <div class="card-body text-center">
+                <h5 class="card-title">Aprendices</h5>
+                <p class="card-text">Administrar los aprendices del sistema.</p>
+            </div>
+                </div>
+            </a>
+        </div>
+        </div>
+        {% endif%}
     </section>
 </main>
-
 {% endblock %}

@@ -1,4 +1,5 @@
 {% load static %}
+{% load icons %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,6 +26,9 @@
     <!-- Select2 SCC -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
+    <!-- Select2 bootstrap theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
     <!-- Estilos Personalizados -->
     <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
     
@@ -46,33 +50,30 @@
     <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+    <!-- Agregar SweetAlert CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Scripts Personalizados -->
     <script defer src="{% static 'js/scripts.js' %}"></script>
     <script defer src="{% static 'js/tree.js' %}"></script>
+    <script defer src="{% static 'js/mensajes.js' %}"></script>
+    <script defer src="{% static 'js/session_monitor.js' %}"></script>
+
     
 </head>
-
 <body>
-    <style>
-        html, body {
-    height: 100%; /* Asegura que el html y el body ocupen toda la pantalla */
-    margin: 0; /* Elimina márgenes */
-    padding: 0; /* Elimina padding */
-}
-
-body.index-page {
-    background-image: url("{% static 'images/fonf.jpg' %}");
-    background-size: cover; /* Asegura que la imagen cubra todo el fondo */
-    background-position: center; /* Centra la imagen */
-}
-
-body {
-    background: none; 
-}
-    </style>
     <nav class="navbar navbar-expand-lg" data-bs-theme="dark">
         <div class="container">
             <a class="navbar-brand" href="/">OIT PMV</a>
+            <span class="text-white">
+                {% if user.is_authenticated %}
+                    {% if perfil.rol == 'lider' %}
+                        {{ perfil.nom }} - Equipo Nacional
+                    {% else %}
+                    {{ perfil.nom }} - {{perfil.rol}}
+                    {% endif %}
+                {% endif %}
+            </span>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -81,11 +82,14 @@ body {
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                         {% if perfil %}
+                        {% if perfil.rol != 'instructor' and 'aprendiz'%}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+                        </li>
+                        {% endif %}
+                        
                             {% if perfil.rol == 'admin' %}
                                 <!-- Contenido específico de admin -->
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
-                                </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Formación</a>
                                     <ul class="dropdown-menu">
@@ -104,9 +108,16 @@ body {
                                 <li class="nav-item">
                                     <a class="nav-link" href="{% url 'listar_fichas' %}">Formación</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'gestion_instructor' %}">Administración</a>
-                                </li>
+                                  <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                      Administracion
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                      <li><a class="dropdown-item" href="{% url 'ofertas_show' %}">Ofertas</a></li>
+                                      <li><a class="dropdown-item" href="#">Contratos</a></li>
+                                      <li><a class="dropdown-item" href="#">Pagos</a></li>
+                                    </ul>
+                                  </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{% url 'novedades' %}">Novedades</a>
                                 </li>
@@ -118,13 +129,24 @@ body {
                                 <li class="nav-item">
                                     <a class="nav-link" href="{% url 'novedades' %}">Novedades</a>
                                 </li>
+                            {% elif perfil.rol == 'gestor' %}
+                                <!-- Contenido específico de aprendiz -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'instituciones_gestor' %}">Instituciones</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'pre_matricula' %}">Matriculas</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'novedades' %}">Novedades</a>
+                                </li>
                             {% elif perfil.rol == 'lider' %}
                                 <!-- Contenido específico de líder -->
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'pre_matricula' %}">Pre matricula</a>
+                                    <a class="nav-link" href="{% url 'instituciones_gestor' %}">Instituciones</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/">Aprobaciones</a>
+                                    <a class="nav-link" href="{% url 'pre_matricula' %}">Pre matricula</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="/">Programa Curricular</a>
@@ -132,18 +154,30 @@ body {
                                 <li class="nav-item">
                                     <a class="nav-link" href="{% url 'novedades' %}">Novedades</a>
                                 </li>
-                            {% endif %}
+                            {% elif perfil.rol == 'cuentas' %}
+                                <!-- Contenido específico de líder -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'ofertas' %}">Ofertas</a>
+                                </li>
+                                {% endif %}
+
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link" href="/logout">Salir</a>
+                            <a class="nav-link" href="/perfil" data-toggle="tooltip" data-placement="bottom" title="Perfil">{% icon 'perfil' %}</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout" data-toggle="tooltip" data-placement="bottom" title="Salir">{% icon 'salir' %}</a>
+                        </li>
+                
+                        
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="/signup">Registrarse</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/signin">Login</a>
-                        <!-- </li>
+                        </li>
+                        <!-- 
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'tasks' %}">Tareas pendientes</a>
                         </li>
@@ -159,9 +193,9 @@ body {
             
         </div>
     </nav>
-
+    <div id="messages-container" data-messages='{% for message in messages %}{"icon": "{{ message.tags }}", "title": "{{ message|escapejs }}"},{% endfor %}'>
+    </div>
     {% block content %}
     {% endblock %}
 </body>
-
 </html>

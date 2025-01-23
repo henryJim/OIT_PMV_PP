@@ -3,46 +3,42 @@
 {% load icons %}
 
 {% block content %}
-<main class="container-fluid py-5">
+<main class="container py-5">
+    <section class="card card-body shadow-sm p-4">
     <div class="row">
         <div class="col-12">
-            <h1 class="text-center display-4 pb-4">Gestión de centros de formación</h1>
-
-            <!-- Botón de creación con margen -->
-            <div class="d-flex justify-content-end mb-3">
-                <a href="/centroformacion/crear/" class="btn btn-success btn-lg">
-                    <i class="bi bi-person-plus"></i> Crear centro de formación
-                </a>
+            <div class="d-flex justify-content-between align-items-center pb-4">
+                <h1 class="display-5">Gestión de centros de formación</h1>
+                <div>
+                    <a href="/centroformacion/crear/" class="btn btn-primary me-2" data-toggle="tooltip" data-placement="top" title="Crear centro">
+                        {% icon 'plus' %}
+                    </a>
+                </div>
             </div>
             <div class="table-responsive">
-                <table id="centrosformacion" class="table table-hover table-bordered align-middle">
-                    <thead class="table-primary text-center">
+                <table id="centrosformacion_table" class="table table-hover table-bordered align-middle">
+                    <thead class="table-secondary text-center">
                     <tr>
                         <th></th>
-                        <th>Acciones</th>
                         <th>Nombre</th>
-                        <th>Dirección</th>
+                        <th>Codigo</th>
                         <th>Departamento</th>
-                        <th>Municipio</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for centroformacion in centrosformacion %}
                     <tr data-id="{{ centroformacion.id }}">
-                        <td class="details-control">    <i class="bi bi-chevron-right"></i>
-                        </td>
                         <td>
-                        <a href="{% url 'detalle_centrosformacion' centroformacion.id  %}" class="btn btn-primary btn-sm ">
+                        <a href="{% url 'detalle_centrosformacion' centroformacion.id  %}" class="btn btn-primary btn-sm mb-1" data-toggle="tooltip" data-placement="top" title="Editar">
                             {% icon 'edit' %}
                         </a>
-                        <a href="{% url 'eliminar_centrosformacion' centroformacion.id  %}" class="btn btn-danger btn-sm ">
+                        <a href="{% url 'eliminar_centrosformacion' centroformacion.id  %}" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Eliminar">
                             {% icon 'delete' %}
                         </a>
                         </td>
                         <td>{{ centroformacion.nom  }}</td>
-                        <td>{{ centroformacion.dire }}</td>
+                        <td>{{ centroformacion.cod }}</td>
                         <td>{{ centroformacion.depa }}</td>
-                        <td>{{ centroformacion.muni }}</td>
                        
 
                     </tr>
@@ -52,5 +48,6 @@
         </div>
         </div>
     </div>
+    </section>
 </main>
 {% endblock %}

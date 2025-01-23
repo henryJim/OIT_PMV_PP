@@ -1,32 +1,124 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<main class="container">
+<main class="container py-5">
+    <section class="card card-body shadow-sm p-4">
     <div class="row">
-        <div class="col-md-4 offset-md-4 mt-5">
-            <form method="post" class="card card-body">
-                <h1 class="text-center">Crear cuenta</h1>
-                {{ error }}
+        <div class="col-12">
+            <form method="post">
+                <h1 class="text-center display-5">Crear cuenta</h1>
+                {% if error %}
+                <div class="alert alert-warning text-center mt-3">
+                    {{ error }}                
+                </div>
+                {% endif %}
                 {% csrf_token %}
-                
-                <div class="mb-3">
-                    <label for="username">Nombre de usuario:</label>
-                    <input type="text" name="username" id="username" class="form-control" placeholder="Escriba su nombre de usuario">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="username">Nombre de usuario:</label>
+                        <input type="text" name="username" id="username" class="form-control" 
+                               data-toggle="tooltip" data-placement="right" 
+                               title="El usuario es el nombre con el que ingresarás al sistema. Debe contener entre 6 y 30 caracteres, sin espacios, y puede incluir letras, números o guiones bajos (_).">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="correo">Correo:</label>
+                        <input type="email" name="correo" id="correo" class="form-control" 
+                               data-toggle="tooltip" data-placement="right" 
+                               title="Introduce un correo electrónico válido. Este será utilizado para notificaciones y recuperación de contraseña.">
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="password1">Contraseña:</label>
-                    <input type="password" name="password1" id="password1" class="form-control" placeholder="Escriba la contraseña">
+                <div class="row">    
+                    <div class="col-md-6">
+                        <label for="password1">Contraseña:</label>
+                        <input type="password" name="password1" id="password1" class="form-control" 
+                               data-toggle="tooltip" data-placement="right" 
+                               title="La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y un carácter especial.">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="password2">Repita la contraseña:</label>
+                        <input type="password" name="password2" id="password2" class="form-control" 
+                               data-toggle="tooltip" data-placement="right" 
+                               title="Repita la contraseña para confirmarla. Asegúrese de que ambas contraseñas coincidan.">
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="password2">Repita la contraseña:</label>
-                    <input type="password" name="password2" id="password2" class="form-control" placeholder="Confirme la contraseña">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" name="nombre" id="nombre" class="form-control" 
+                               data-toggle="tooltip" data-placement="right" 
+                               title="Introduce tu nombre completo.">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="apellido">Apellido:</label>
+                        <input type="text" name="apellido" id="apellido" class="form-control" 
+                               data-toggle="tooltip" data-placement="right" 
+                               title="Introduce tu apellido completo.">
+                    </div>
                 </div>
-
-                <button class="btn btn-primary">
-                    Registrarse 
-                </button>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="tipoi">Tipo identificación:</label>
+                        <select name="tipoi" id="tipoi" class="form-control" 
+                                data-toggle="tooltip" data-placement="right" 
+                                title="Selecciona el tipo de identificación que posees.">
+                            <option value="cc">Cédula de ciudadanía</option>
+                            <option value="ce">Cédula de extranjería</option>
+                            <option value="ti">Tarjeta de identidad</option>
+                            <option value="pp">Pasaporte</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="dni">Número de identificación:</label>
+                        <input type="number" min="0" name="dni" id="dni" class="form-control" 
+                               data-toggle="tooltip" data-placement="right" 
+                               title="Introduce el número de tu documento de identificación.">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="tele">Teléfono:</label>
+                        <input type="number" min="0" name="tele"  id="tele" class="form-control" 
+                               data-toggle="tooltip" data-placement="right" 
+                               title="Introduce tu número de teléfono sin espacios ni caracteres especiales.">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="dire">Dirección:</label>
+                        <input type="text" name="dire" id="dire" class="form-control" 
+                               data-toggle="tooltip" data-placement="right" 
+                               title="Introduce la dirección donde resides, incluyendo ciudad y código postal.">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="gene">Género:</label>
+                        <select name="gene" id="gene" class="form-control" 
+                                data-toggle="tooltip" data-placement="right" 
+                                title="Selecciona tu género.">
+                            <option value="H">Hombre</option>
+                            <option value="M">Mujer</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="fechanaci">Fecha de nacimiento:</label>
+                        <input type="date" name="fechanaci" id="fechanaci" class="form-control" 
+                               data-toggle="tooltip" data-placement="right" 
+                               title="Selecciona tu fecha de nacimiento. Asegúrate de que la fecha sea correcta.">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <button class="btn btn-primary mt-3">
+                            Registrarse 
+                        </button>
+                    </div>
+                </div>
             </form>
+            
+            <div class="alert alert-warning text-center mt-3">
+                
+                La inscripcion en el aplicativo esta orientada solo a los instructores interesados en participar en las convocatorias del proyecto SENATEC.
+            </div>
         </div>
-    </div>    
+    </div> 
 </main>
 {% endblock %}

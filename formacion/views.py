@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
-from .forms import CargarDocuPortafolioFichaForm, ActividadForm,RapsFichaForm, EncuApreForm, EncuentroForm, DocumentosForm, CronogramaForm, ProgramaForm, CompetenciaForm, RapsForm, FichaForm
-from commons.models import T_prematri_docu ,T_docu, T_acti_apre,T_raps_acti,T_perfil, T_DocumentFolderAprendiz, T_encu_apre, T_apre, T_raps_ficha, T_acti_ficha, T_ficha, T_crono, T_progra, T_fase_ficha ,T_instru, T_acti_docu, T_perfil, T_compe, T_raps, T_DocumentFolder
+from .forms import CascadaMunicipioInstitucionForm, CargarDocuPortafolioFichaForm, ActividadForm,RapsFichaForm, EncuApreForm, EncuentroForm, DocumentosForm, CronogramaForm, ProgramaForm, CompetenciaForm, RapsForm, FichaForm
+from commons.models import T_centro_forma, T_prematri_docu ,T_docu, T_munici, T_insti_edu, T_acti_apre,T_raps_acti,T_perfil, T_DocumentFolderAprendiz, T_encu_apre, T_apre, T_raps_ficha, T_acti_ficha, T_ficha, T_crono, T_progra, T_fase_ficha ,T_instru, T_acti_docu, T_perfil, T_compe, T_raps, T_DocumentFolder
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -11,62 +11,79 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 # Create your views here.
 
 def crear_ficha(request):
     if request.method == 'POST':
         ficha_form = FichaForm(request.POST)
-        if ficha_form.is_valid():
-            new_ficha = ficha_form.save(commit=False)
-            new_ficha.esta = "Pre matricula"
-            new_ficha.num_apre_pendi_regi = new_ficha.num_apre_proce
-            new_ficha.num_apre_forma = "0"
-            ficha = ficha_form.save()
-            
-            # Crear las fases asociadas a la ficha
-            fases = [
-                'Analisis',
-                'Planeacion',
-                'Ejecucion',
-                'Evaluacion',
-            ]
+        cascadaform = CascadaMunicipioInstitucionForm(request.POST)
 
-            for fase in fases:
-                if fase=='Analisis':
-                    fecha_inia=ficha.fecha_aper
-                    vige1 = 'Si'
-                else:
-                    fecha_inia= None
-                    vige1 = 'No'
-                T_fase_ficha.objects.create(
-                    fase=fase,
-                    ficha=ficha,
-                    fecha_ini = fecha_inia, 
-                    instru=ficha.instru,  # Asignar el instructor de la ficha
-                    vige=vige1
-                )
+        if ficha_form.is_valid() and cascadaform.is_valid():
+            try:
+                centro = cascadaform.cleaned_data.get('centro')
+                institucion = cascadaform.cleaned_data.get('insti')
+                print("Paso 2")
+                print(centro)
+                print(institucion)
 
-            programa = ficha.progra
+                # # Crear la ficha
+                # new_ficha = ficha_form.save(commit=False)
+                # new_ficha.esta = "prematricula"
+                # new_ficha.num_apre_pendi_regi = new_ficha.num_apre_proce
+                # new_ficha.num_apre_forma = "0"
+                
+                # ficha = ficha_form.save()
 
-            competencias = T_compe.objects.filter(progra=programa)
+                # # Crear las fases asociadas a la ficha
+                # fases = ['Analisis', 'Planeacion', 'Ejecucion', 'Evaluacion']
+                # for fase in fases:
+                #     if fase == 'Analisis':
+                #         fecha_inia = ficha.fecha_aper
+                #         vige1 = 'Si'
+                #     else:
+                #         fecha_inia = None
+                #         vige1 = 'No'
+                #     T_fase_ficha.objects.create(
+                #         fase=fase,
+                #         ficha=ficha,
+                #         fecha_ini=fecha_inia,
+                #         instru=ficha.instru,
+                #         vige=vige1
+                #     )
 
-            raps = T_raps.objects.filter(compe__in=competencias)
+                # # Crear competencias y raps asociadas a la ficha
+                # programa = ficha.progra
+                # competencias = T_compe.objects.filter(progra=programa)
+                # raps = T_raps.objects.filter(compe__in=competencias)
+                # for rap in raps:
+                #     T_raps_ficha.objects.create(ficha=ficha, rap=rap)
 
-            for rap in raps:
-                T_raps_ficha.objects.create(ficha=ficha, rap=rap)
+                # # Llamar a la función para crear estructura de carpetas asociada a la ficha
+                # crear_datos_prueba(ficha.id)
 
-            # Llamamos a la función para crear la estructura de carpetas asociada a la ficha
-            crear_datos_prueba(ficha.id)
-
-            return redirect('fichas_adm')
+                # # Redirigir con un mensaje de éxito
+                # messages.success(request, 'Ficha creada exitosamente.')
+                return redirect('fichas_adm')
+            except Exception as e:
+                messages.error(request, f'Ocurrió un error al crear la ficha: {str(e)}')
+        else:
+            # Mostrar errores específicos del formulario en los mensajes
+            errores = ficha_form.errors.as_data()
+            for campo, errores_campo in errores.items():
+                for error in errores_campo:
+                    mensaje_error = error.message
+                    messages.error(request, f"Error en el campo '{campo}': {mensaje_error}")
     else:
         ficha_form = FichaForm()
-
-        
+        cascadaform = CascadaMunicipioInstitucionForm()
     return render(request, 'crear_ficha.html', {
-        'ficha_form': ficha_form
-        })
+        'ficha_form': ficha_form,
+        'cascadaform': cascadaform
+    })
+
+
 
 def listar_fichas_adm(request):
     fichas = T_ficha.objects.all()
@@ -569,33 +586,20 @@ def listar_estudiantes(request, ficha_id):
     ]
     return JsonResponse(data, safe=False)
 
-def cargar_documento_prematricula(request, documento_id):
-    documento = T_prematri_docu.objects.filter(id=documento_id, apren__perfil__user=request.user).first()
+# Vista para cargar los municipios según el departamento
+def get_municipios(request, departamento_id):
+    municipio_qs = T_munici.objects.filter(nom_departa_id=departamento_id)
+    municipios = list(municipio_qs.values('id', 'nom_munici'))
+    return JsonResponse(municipios, safe=False)
 
-    if not documento:
-        # Redirige si el documento no pertenece al aprendiz logueado
-        return HttpResponseRedirect(reverse('panel_aprendiz'))
+# Vista para cargar las instituciones según el municipio
+def get_instituciones(request, municipio_id):
+    instituciones_qs = T_insti_edu.objects.filter(muni_id=municipio_id)
+    instituciones = list(instituciones_qs.values('id', 'nom'))
+    return JsonResponse(instituciones, safe=False)
 
-    if request.method == 'POST' and 'archivo' in request.FILES:
-        archivo = request.FILES['archivo']
-        ruta = default_storage.save(f'documentos/aprendices/prematricula/{documento.apren.perfil.nom}{documento.apren.perfil.apelli}{documento.apren.perfil.dni}/{archivo.name}', archivo)
-        ruta_guardada = default_storage.save(ruta, archivo)
-
-         # Crear un registro en T_docu
-        t_docu = T_docu.objects.create(
-            nom=archivo.name,
-            tipo= archivo.name.split('.')[-1],
-            tama = str(archivo.size // 1024) + " KB",
-            archi=ruta_guardada,
-            priva='No',
-            esta='Activo'
-        )
-
-        documento.esta = "Cargado"
-        documento.docu = t_docu
-        documento.fecha_carga = datetime.now()
-        documento.usr_carga = request.user
-        documento.save()
-
-        return HttpResponseRedirect(reverse('panel_aprendiz'))
-    return HttpResponseRedirect(reverse('panel_aprendiz'))
+# Vista para cargar los municipios según el departamento
+def get_centros(request, departamento_id):
+    centro_qs = T_centro_forma.objects.filter(depa_id=departamento_id)
+    centros = list(centro_qs.values('id', 'nom'))
+    return JsonResponse(centros, safe=False)
