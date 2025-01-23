@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{%load icons %}
+{% load static %}
+
+{% block content %}
+<main class="container py-5">
+    <section class="card card-body shadow-sm p-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center pb-4">
+                    <h1 class="display-5">Detalle de Postulación</h1>
+                    <div>
+                    <a href="" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Siguiente fase">
+                        {% icon 'confirm' %}
+                    </a>
+                    <a href="" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Rechazar perfil">
+                        {% icon 'x' %}
+                    </a>
+                </div>
+                </div>
+            
+            <!-- Detalle de la Postulación -->
+            <div class="card shadow mb-4">
+                <h5 class="card-header">Postulación: {{ postulacion.ofe.nom }}</h5>
+                <div class="card-body">
+                    <p><strong>ID Postulación:</strong> {{ postulacion.id }}</p>
+                    <p><strong>Nombre del Instructor:</strong> {{ postulacion.instru.perfil.nom }} {{postulacion.instru.perfil.apelli}}</p>
+                    <p><strong>Email del Instructor:</strong> {{ postulacion.instru.perfil.user.email }}</p>
+                    <p><strong>Telefono:</strong> {{ postulacion.instru.perfil.tele }}</p>
+                    <p><strong>Fecha de Postulación:</strong> {{ postulacion.fecha_apli }}</p>
+                    <p><strong>Estado:</strong> {{ postulacion.esta|title }}</p>
+                </div>
+            </div>
+            <!-- Documentos Asociados -->
+            <h2>Documentos del Instructor</h2>
+            <hr>
+            <!-- Hoja de Vida -->
+            <div class="mb-4">
+                <h3 class="text-secondary">Hoja de Vida</h3>
+                <ul class="list-group">
+                    {% for doc in documentos %}
+                        {% if doc.tipo == 'hv' %}
+                            <li class="list-group-item">
+                                <a href="{{ doc.docu.archi.url }}" target="_blank">{{ doc.docu.nom }}</a>
+                                <span class="text-muted float-end">{{ doc.fecha_carga }}</span>
+                            </li>
+                        {% endif %}
+                    {% empty %}
+                        <li class="list-group-item">No hay hojas de vida disponibles.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <!-- Documentos Laborales -->
+            <div class="mb-4">
+                <h3 class="text-secondary">Documentos Laborales</h3>
+                <ul class="list-group">
+                    {% for doc in documentos %}
+                        {% if doc.tipo == 'laboral' %}
+                            <li class="list-group-item">
+                                <a href="{{ doc.docu.archi.url }}" target="_blank">{{ doc.docu.nom }}</a>
+                                <span class="text-muted float-end">{{ doc.fecha_carga }}</span>
+                            </li>
+                        {% endif %}
+                    {% empty %}
+                        <li class="list-group-item">No hay documentos laborales disponibles.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Documentos Académicos -->
+            <div class="mb-4">
+                <h3 class="text-secondary">Documentos Académicos</h3>
+                <ul class="list-group">
+                    {% for doc in documentos %}
+                        {% if doc.tipo == 'academico' %}
+                            <li class="list-group-item">
+                                <a href="{{ doc.docu.archi.url }}" target="_blank">{{ doc.docu.nom }}</a>
+                                <span class="text-muted float-end">{{ doc.fecha_carga }}</span>
+                            </li>
+                        {% endif %}
+                    {% empty %}
+                        <li class="list-group-item">No hay documentos académicos disponibles.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

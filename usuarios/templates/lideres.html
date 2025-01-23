@@ -3,23 +3,23 @@
 {% load icons %}
 
 {% block content %}
-<main class="container-fluid py-5">
+<main class="container py-5">
+    <section class="card card-body shadow-sm p-4">
     <div class="row">
         <div class="col-12">
-            <h1 class="text-center display-4 pb-4">Gestión de Lideres</h1>
-
-            <!-- Botón de creación con margen -->
-            <div class="d-flex justify-content-end mb-3">
-                <a href="/lideres/crear/" class="btn btn-success btn-lg">
-                    <i class="bi bi-person-plus"></i> Crear Lider
-                </a>
+            <div class="d-flex justify-content-between align-items-center pb-4">
+                <h1 class="display-5">Gestión de Equipo Nacional</h1>
+                <div>
+                    <a href="/lideres/crear/" class="btn btn-primary me-2" data-toggle="tooltip" data-placement="top" title="Crear aprendiz">
+                        {% icon 'plus' %}
+                    </a>
+                </div>
             </div>
             <div class="table-responsive">
                 <table id="lideres" class="table table-hover table-bordered align-middle">
-                    <thead class="table-primary text-center">
+                    <thead class="table-secondary text-center">
                     <tr>
                         <th></th>
-                        <th>Acciones</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
                         <th>Telefono</th>
@@ -33,13 +33,11 @@
                 <tbody>
                     {% for lider in lideres %}
                     <tr data-id="{{ lider.id }}">
-                        <td class="details-control">    <i class="bi bi-chevron-right"></i>
-                        </td>
                         <td>
-                        <a href="{% url 'detalle_lider' lider.id %}" class="btn btn-primary btn-sm ">
+                        <a href="{% url 'detalle_lider' lider.id %}" class="btn btn-primary btn-sm mb-1" data-toggle="tooltip" data-placement="top" title="Editar">
                             {% icon 'edit' %}
                         </a>
-                        <a href="{% url 'eliminar_lider' lider.id %}" class="btn btn-danger btn-sm ">
+                        <a href="{% url 'eliminar_lider' lider.id %}" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Eliminar">
                             {% icon 'delete' %}
                         </a>
                         </td>
@@ -59,5 +57,6 @@
         </div>
         </div>
     </div>
+    </section>
 </main>
 {% endblock %}

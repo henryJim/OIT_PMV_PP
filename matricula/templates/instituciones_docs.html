@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load icons %}
+{% load custom_filters %}
+
+{% block content %}
+<main class="container py-5">
+    <section class="card card-body shadow-sm p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4>Documentación de la institucion: {{ institucion.nom }}. {{ institucion.muni.nom_departa.nom_departa }}, {{ institucion.muni.nom_munici }}</h4>
+                        <p>Aquí deberá cargar los documentos relacionados con la institucion.</p>
+                    </div>
+                    <div>
+                        <h4 id="document-counter">{{ total_documentos }}/4</h4>
+                    </div>
+                </div>
+                
+                <div class="row g-4">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre del Documento</th>
+                                <th>Estado</th>
+                                <th>Archivo</th>
+                                {% if rol == 'gestor' %}
+                                    <th>Cargar</th>
+                                {% elif rol == 'lider' %}
+                                <th>Aprobacion</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for documento in documentos %}
+                            <tr>
+                                <td>{{ documento.nom }}</td>
+                                <td>
+                                    {% if documento.vali == '0' %}
+                                    Pendiente
+                                    {% else %}
+                                    Aprobado
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if documento.docu.archi %}
+                                        <a href="{{ documento.docu.archi.url }}" target="_blank" class="btn" class="btn" data-toggle="tooltip" data-placement="top" title="Ver archivo">
+                                            {% icon 'search' %}
+                                        </a>
+                                        {% if rol == 'gestor' %}
+                                            {% if documento.vali == "0" %}
+                                                <a href="{% url 'eliminar_documento_pre_insti' documento.docu.id %}" class="btn" data-toggle="tooltip" data-placement="top" title="Eliminar archivo">
+                                                    {% icon 'delete' %}
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% else %}
+                                        No cargado
+                                    {% endif %}
+                                </td>
+                                {% if rol == 'gestor' %}
+                                <td>
+                                    {% if documento.esta == "Pendiente" %}
+                                    <form method="post" action="{% url 'cargar_documentos_institucion' documento.id institucion.id %}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="file" name="archivo" class="form-control mb-2" required>
+                                        <button type="submit" class="btn btn-primary">Cargar</button>
+                                    </form>
+                                    {% else %}
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-success">✔ Cargado</span>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                {% endif %}
+                                {% if rol == 'lider' %}
+                                <td>
+                                    {% if documento.docu.archi %}
+                                        {% if documento.vali == '0' %}
+                                            <a href="{% url 'confirmar_documento_insti' documento.id institucion.id %}" class="btn btn-success btn-sm">Aprobar</a>
+                                        {% else %}
+                                            <button type="button" class="btn btn-success btn-sm" disabled>Aprobado</button> 
+                                        {% endif %}
+
+                                    {% endif %}
+                                </td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>                    
+                </div>
+    </section>
+</main>
+{% endblock %}

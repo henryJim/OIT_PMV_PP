@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-o3vx#lxvn$28bmkd(gv5b%%@m^*zw74_a&msu5#s+ux9!z3_cm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -44,18 +44,33 @@ INSTALLED_APPS = [
     'gestion_instructores',
     'commons',
     'mptt',
-    'matricula'
+    'matricula',
+    'rest_framework',
+    'dal',
+    'dal_select2',
+    'administracion',
+    'channels',
+    'whitenoise.runserver_nostatic'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'usuarios.middleware.ExpiredSessionMiddleware',
 ]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',  # Nombre único para la caché
+    }
+}
 
 ROOT_URLCONF = 'IOTPMV.urls'
 
@@ -66,6 +81,17 @@ SESSION_COOKIE_AGE = 1200
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 SESSION_SAVE_EVERY_REQUEST = True
+
+ASGI_APPLICATION = 'IOTPMV.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],  # Asegúrate de que Redis esté en ejecución en este host y puerto
+        },
+    },
+}
 
 TEMPLATES = [
     {
@@ -90,6 +116,18 @@ DJANGO_ICONS = {
         "edit": {"name": "bi bi-pencil"},
         "plus": {"name": "bi bi-plus-lg"},
         "delete": {"name": "bi bi-trash"},
+        "detalle": {"name": "bi bi-box-arrow-up-right"},
+        "confirmar": {"name": "bi bi-check-square"},
+        "asignarapre": {"name": "bi bi-person-fill-up"},
+        "archivo": {"name": "bi bi-file-earmark-spreadsheet"},
+        "download": {"name": "bi bi-box-arrow-down"},
+        "search": {"name": "bi bi-search"},
+        "password": {"name": "bi bi-asterisk"},
+        "salir": {"name": "bi bi-box-arrow-right"},
+        "perfil": {"name": "bi bi-person-bounding-box"},
+        "upload": {"name": "bi bi-upload"},
+        "x": {"name": "bi bi-x"},
+        "confirm": {"name": "bi bi-check2"},
     },
 }
 
@@ -105,7 +143,7 @@ DATABASES = {
         'NAME': 'oit_senatic',
         'USER': 'oit_app',
         'PASSWORD': 'N7t5kecjWs55FT1',
-        'HOST': 'localhost',
+        'HOST': '192.168.208.1',
         'PORT': '3306',
     }
 }
@@ -173,3 +211,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'andrelipe897@gmail.com'
 EMAIL_HOST_PASSWORD = 'tadg xqga lxsn jxtq'
 DEFAULT_FROM_EMAIL = 'andrelipe897@gmail.com'  # El correo desde el cual se enviarán los mensajes
+
+# Formatos de fecha aceptados
+DATE_INPUT_FORMATS = ['%d/%m/%Y', '%Y-%m-%d']

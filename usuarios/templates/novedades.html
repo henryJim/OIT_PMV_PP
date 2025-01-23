@@ -7,19 +7,19 @@
     <section class="card card-body shadow-sm p-4">
         <div class="row">
             <div class="col-12">
-                <h1 class="text-center display-4 pb-4">Gestión de novedades</h1>
-    
-                <!-- Botón de creación con margen -->
-                <div class="d-flex justify-content-end mb-3">
-                    <a href="/novedades/crear" class="btn btn-success btn-lg">
-                        <i class="bi bi-person-plus"></i> Crear Novedad
-                    </a>
+                <div class="d-flex justify-content-between align-items-center pb-4">
+                    <h1 class="display-5">Gestión de novedades</h1>
+                    <div>
+                        <a href="/novedades/crear" class="btn btn-primary me-2" data-toggle="tooltip" data-placement="top" title="Crear novedad">
+                            {% icon 'plus' %}
+                        </a>
+                    </div>
                 </div>
                 <div class="table-responsive">
                     <table id="novedades" class="table table-hover table-bordered align-middle">
-                        <thead class="table-primary text-center">
+                        <thead class="table-secondary text-center">
                         <tr>
-                            <th>Acciones</th>
+                            <th></th>
                             <th>Nombre</th>
                             <th>Decripcion</th>
                             <th>Estado</th>
@@ -30,7 +30,7 @@
                     <tbody>
                         {% for novedad in novedades %}
                         <tr data-id="{{ novedad.id }}">
-                            <td class="text-center"><a href="/" class="btn btn-primary btn-sm">
+                            <td class="text-center"><a href="/" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalle">
                                 {% icon 'plus' %}
         
                             </a></td>
