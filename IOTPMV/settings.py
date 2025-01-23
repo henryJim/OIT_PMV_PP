@@ -140,7 +140,7 @@ WSGI_APPLICATION = 'IOTPMV.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'defaultdb',
+        'NAME': 'oit_senatic',
         'USER': 'doadmin',
         'PASSWORD': 'AVNS_sgk6XSrgBgH4qaRM48u',
         'HOST': 'dbaas-db-5425618-do-user-18872567-0.e.db.ondigitalocean.com',
