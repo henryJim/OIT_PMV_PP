@@ -189,7 +189,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = '/root/OIT_PMV_PP/static/'  # Ruta a los archivos estáticos
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'assets'),
 ]
 
 # Carpeta para almacenar archivos subidos
