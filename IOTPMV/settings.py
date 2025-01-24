@@ -186,6 +186,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/root/OIT_PMV_PP/static/'  # Ruta a los archivos estáticos
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
@@ -193,7 +194,7 @@ STATICFILES_DIRS = [
 
 # Carpeta para almacenar archivos subidos
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = '/root/OIT_PMV_PP/media/'  # Ruta a los archivos multimedia
 
 LOGIN_URL = '/signin/'
 
