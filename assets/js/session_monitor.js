@@ -22,7 +22,7 @@ let sessionExpired = false;
 
 function createSocket() {
     console.log("Creando WebSocket...");
-    socket = new WebSocket('ws://127.0.0.1:8001/ws/session_expiration/');
+    socket = new WebSocket('ws://164.90.138.17:8001/ws/session_expiration/');
 
     socket.onopen = function(event) {
         console.log('WebSocket está abierto, podemos enviar mensajes.');
