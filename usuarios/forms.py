@@ -70,12 +70,13 @@ class DocumentoLaboralForm(forms.ModelForm):
 class PerfilForm(forms.ModelForm):
     class Meta:
         model = T_perfil
-        exclude = ['user', 'rol', 'mail']  # Excluir los campos que no serán editables directamente
+        exclude = ['user', 'rol']  # Excluir los campos que no serán editables directamente
         widgets = {
-            'nom': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}),
-            'apelli': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apellido'}),
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'apelli': forms.TextInput(attrs={'class': 'form-control'}),
+            'mail': forms.TextInput(attrs={'class': 'form-control'}),
             'tipo_dni': forms.Select(attrs={'class': 'form-select'}),
-            'dni': forms.NumberInput(attrs={'class': 'form-control'}),
+            'dni': forms.TextInput(attrs={'class': 'form-control'}),
             'tele': forms.NumberInput(attrs={'class': 'form-control'}),
             'dire': forms.TextInput(attrs={'class': 'form-control'}),
             'gene': forms.Select(attrs={'class': 'form-select'}),
@@ -84,6 +85,7 @@ class PerfilForm(forms.ModelForm):
         labels = {
             'nom': 'Nombres',
             'apelli': 'Apellidos',
+            'mail': 'Correo electronico',
             'tipo_dni': 'Tipo de documento',
             'dni': 'Número de documento',
             'tele': 'Teléfono',
@@ -192,9 +194,10 @@ class AprendizForm(forms.ModelForm):
 class RepresanteLegalForm(forms.ModelForm):
     class Meta:
         model = T_repre_legal
-        fields = ['nom', 'tele', 'dire', 'mail', 'paren', 'ciu', 'depa']
+        fields = ['nom','dni', 'tele', 'dire', 'mail', 'paren', 'ciu', 'depa']
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'dni': forms.TextInput(attrs={'class': 'form-control'}),
             'tele': forms.TextInput(attrs={'class': 'form-control'}),
             'dire': forms.TextInput(attrs={'class': 'form-control'}),
             'mail': forms.TextInput(attrs={'class': 'form-control'}),
@@ -204,6 +207,7 @@ class RepresanteLegalForm(forms.ModelForm):
         }
         labels = {
             'nom': 'Nombre',
+            'dni': 'Numero de identificacion',
             'tele': 'Telefono',
             'dire': 'Direccion',
             'mail': 'Correo',

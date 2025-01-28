@@ -37,29 +37,29 @@
     </section>
 </main>
 <script>
-    $(document).ready(function () {
-        $('#instituciones').DataTable({
-            processing: true,  // Muestra un indicador de carga
-            serverSide: true,  // Activa el modo de procesamiento en servidor
-            ajax: {
-                url: 'http://127.0.0.1:8000/api/data/', // Endpoint donde se enviará la solicitud
-                type: 'GET',
-            },
-            columns: [
-                { data: 'nom' },
-                { data: 'dire' },
-                { data: "municipio_nombre", title: "Municipio" },
-                { data: "departamento_nombre", title: "Departamento" },
-                { data: 'secto' },
-                { data: 'esta' },
-                { data: 'dane' },
-                { data: 'gene' },
-                { data: 'zona' },
-            ],
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json', // Traducción al español
-            }
-        });
+$(document).ready(function () {
+    $('#instituciones').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: 'http://127.0.0.1:8000/api/data/',
+            type: 'GET',
+        },
+        columns: [
+            { data: 'nom', orderable: true, title: 'Nombre' },
+            { data: 'dire', orderable: true, title: 'Dirección' },
+            { data: 'municipio_nombre', orderable: true, title: 'Municipio' },
+            { data: 'departamento_nombre', orderable: true, title: 'Departamento' },
+            { data: 'secto', orderable: true, title: 'Sector' },
+            { data: 'esta', orderable: true, title: 'Esta' },
+            { data: 'dane', orderable: true, title: 'DANE' },
+            { data: 'gene', orderable: true, title: 'Género' },
+            { data: 'zona', orderable: true, title: 'Zona' },
+        ],
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+        },
     });
+});
     </script>
 {% endblock %}

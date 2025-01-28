@@ -86,6 +86,7 @@
                         {% if grupo.esta == 'En radicacion' %}
                         <a class="btn btn-danger float-end" href="{% url 'descargar_documentos_grupo_zip' grupo.id %}" data-toggle="tooltip" data-placement="top" title="Descargar documentos grupo">{% icon 'download' %}</a>
                         {% endif %}
+                        <a class="btn btn-danger float-end" href="{% url 'descargar_documentos_grupo' grupo.id 'Carta Intención' %}" data-toggle="tooltip" data-placement="top" title="Descargar documentos agrupados">{% icon 'download' %}</a>
                     </div>
                 </div>
                 
@@ -143,10 +144,10 @@
                                                 </a>
                                                 {% if grupo.esta == 'Pre matricula' or grupo.esta == 'Validacion matriculas' %}
                                                 {% if documento.vali == '0' and rol == 'gestor' %}
-                                                <a href="{% url 'eliminar_documento_pre' documento.docu.id %}" class="btn" data-toggle="tooltip" data-placement="top" title="Eliminar archivo">
+                                                <a data-url="{% url 'eliminar_documento_pre' documento.docu.id %}" class="btn delete-btn" data-toggle="tooltip" data-placement="top" title="Eliminar archivo">
                                                     {% icon 'delete' %}
                                                 </a>
-                                               {% endif %}
+                                                {% endif %}
                                                 {% endif %}
                                             {% else %}
                                                 No cargado
@@ -227,6 +228,34 @@
         tabs.forEach(tab => {
             tab.addEventListener("click", function () {
                 localStorage.setItem("activeTab", `#${this.id}`);
+            });
+        });
+    });
+
+
+        // Script para eliminacion de documentos!
+        document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach(function (button) {
+            button.addEventListener("click", function (event) {
+                event.preventDefault(); // Evita la acción predeterminada del botón
+
+                const url = this.dataset.url;
+
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: "No podrás deshacer esta acción.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirige a la URL de eliminación
+                        window.location.href = url;
+                    }
+                });
             });
         });
     });

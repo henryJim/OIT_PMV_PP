@@ -194,8 +194,20 @@ urlpatterns = [
     path('confirmar_documento/<int:documento_id>/<int:grupo_id>/', matricula_views.confirmar_documento, name='confirmar_documento'),
     path('confirmar_documento_insti/<int:documento_id>/<int:institucion_id>/', matricula_views.confirmar_documento_insti, name='confirmar_documento_insti'),
 
+    path('grupos/<int:grupo_id>/descargar_documentos/<str:documento_tipo>/', matricula_views.descargar_documentos_grupo, name='descargar_documentos_grupo',),
+    # Endpoints matricula:
+    # API instituciones educativas
     path('api/data/', usuarios_views.T_insti_edu_APIView.as_view(), name='t_insti_edu_api'),
     
+    # API llenado de filtros
+    path('api/municipios/', matricula_views.obtener_opciones_municipios, name='api_municipios'),
+    path('api/estados/', matricula_views.obtener_opciones_estados, name='api_estados'),
+    path('api/sectores/', matricula_views.obtener_opciones_sectores, name='api_sectores'),
+
+    # API filtrado de instituciones asignadas
+
+    path('api/filtrar-instituciones/', matricula_views.filtrar_instituciones, name='api_filtrar_instituciones'),
+
     # path('ruta-a-obtener-municipios/<int:departamento_id>/', formacion_views.get_municipios, name='get_municipios'),
     # path('ruta-a-obtener-instituciones/<int:municipio_id>/', formacion_views.get_instituciones, name='get_instituciones'),
     # path('ruta-a-obtener-centros/<int:departamento_id>/', formacion_views.get_centros, name='get_centros'),
@@ -219,5 +231,4 @@ urlpatterns = [
 ]       
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

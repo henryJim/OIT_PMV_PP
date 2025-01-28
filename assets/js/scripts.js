@@ -1,12 +1,7 @@
 $(document).ready(function () {
     new DataTable('#tasks');
     
-    new DataTable('#instituciones_gestor', {
-        language: {
-            url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
-            deferRender: true
-        }
-    });
+
     new DataTable('#competencias_table', {
         language: {
             url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',

@@ -47,6 +47,7 @@
                         {% if grupo.grupo.esta == 'Pre matricula' %}
                             <a href="{% url 'asignar_aprendices' grupo.grupo.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" title="Asignar aprendices">{% icon 'asignarapre' %}</a>
                         {% elif grupo.grupo.esta == 'Validacion matriculas' %}
+                            <a href="{% url 'asignar_aprendices' grupo.grupo.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" title="Asignar aprendices">{% icon 'asignarapre' %}</a>
                             <a href="{% url 'ver_docs_prematricula' grupo.grupo.id %}" class="btn btn-warning btn-sm" data-toggle="tooltip" title="ver detalle">{% icon 'detalle' %}</a>
                             {% if rol == 'lider' %}
                             <a href="{% url 'confirmar_documentacion' grupo.grupo.id %}" class="btn btn-success btn-sm" data-toggle="tooltip" title="Confirmar documentacion">{% icon 'confirmar' %}</a>

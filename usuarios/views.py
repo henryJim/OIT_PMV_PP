@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from commons.models import T_instru,T_cuentas, T_apre,T_docu_labo, T_gestor_depa, T_gestor,T_docu, T_perfil, T_admin, T_lider, T_nove, T_repre_legal, T_munici, T_departa, T_insti_edu, T_centro_forma
+from commons.models import T_instru,T_cuentas, T_gestor_insti_edu, T_apre,T_docu_labo, T_gestor_depa, T_gestor,T_docu, T_perfil, T_admin, T_lider, T_nove, T_repre_legal, T_munici, T_departa, T_insti_edu, T_centro_forma
 from .forms import InstructorForm, PerfilEForm, CustomPasswordChangeForm, DocumentoLaboralForm, GestorForm, PerfilEditForm, GestorDepaForm, CargarAprendicesMasivoForm, UserFormCreate, UserFormEdit, PerfilForm, NovedadForm, AdministradoresForm, AprendizForm, LiderForm, RepresanteLegalForm, DepartamentoForm, MunicipioForm, InstitucionForm, CentroFormacionForm
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
@@ -626,7 +626,7 @@ def eliminar_representante_legal(request, repreLegal_id):
         'represante_legal': representante_legal,
     })
 
- ### APRENDICES ###
+### APRENDICES ###
 
 @login_required
 def aprendices(request):
@@ -639,49 +639,107 @@ def aprendices(request):
     })
 
 @login_required
-def crear_aprendices(request):  # Funcion para crear aprendiz
+def crear_aprendices(request):  # Función para crear aprendiz
     if request.method == 'GET':
-
-        user_form = UserFormCreate()
         perfil_form = PerfilForm()
-        aprendiz_form = AprendizForm()
-
+        representante_form = RepresanteLegalForm()
         return render(request, 'aprendiz_crear.html', {
-            'user_form': user_form,
             'perfil_form': perfil_form,
-            'aprendiz_form': aprendiz_form
+            'representante_form': representante_form
         })
-    else:
-        try:
-            user_form = UserFormCreate(request.POST)
-            perfil_form = PerfilForm(request.POST)
-            aprendiz_form = AprendizForm(request.POST)
-            if user_form.is_valid() and perfil_form.is_valid() and aprendiz_form.is_valid():
-                # Creacion del usuario
-                new_user = user_form.save(commit=False)
-                new_user.set_password(user_form.cleaned_data['password'])
-                new_user.save()
 
-                # creacion del perfil
+    elif request.method == 'POST':
+        perfil_form = PerfilForm(request.POST)
+        representante_form = RepresanteLegalForm(request.POST)
+
+        if perfil_form.is_valid() and representante_form.is_valid():
+            try:
+                # Validar la fecha de nacimiento, edad debe ser mayor a 14
+                fecha_nacimiento = perfil_form.cleaned_data['fecha_naci']
+                if fecha_nacimiento:
+                    edad = (datetime.now().date() - fecha_nacimiento).days // 365
+                    if edad < 14:
+                        raise ValueError("El aprendiz debe tener al menos 14 años para registrarse.")
+                else:
+                    raise ValueError("La fecha de nacimiento es obligatoria.")
+
+                # Generar username único
+                nombre = perfil_form.cleaned_data['nom']
+                apellido = perfil_form.cleaned_data['apelli']
+                base_username = (nombre[:3] + apellido[:3]).lower()
+                username = base_username
+                i = 1
+                while User.objects.filter(username=username).exists():
+                    username = f"{base_username}{i}"
+                    i += 1
+
+                contraseña = generar_contraseña()
+
+                # Creación del usuario
+                new_user = User.objects.create_user(
+                    username=username,
+                    password=contraseña,
+                    email=perfil_form.cleaned_data['mail']
+                )
+
+                # Creación del perfil
                 new_perfil = perfil_form.save(commit=False)
                 new_perfil.user = new_user
                 new_perfil.rol = 'aprendiz'
                 new_perfil.mail = new_user.email
                 new_perfil.save()
 
-                # creacion del aprendiz
-                new_aprendiz = aprendiz_form.save(commit=False)
-                new_aprendiz.perfil = new_perfil
-                new_aprendiz.save()
+                # Asociar o crear el representante legal
+                nombre_repre = representante_form.cleaned_data['nom']
+                telefono_repre = representante_form.cleaned_data['tele']
+                new_repre_legal = T_repre_legal.objects.filter(
+                    nom=nombre_repre,
+                    tele=telefono_repre
+                ).first()
+
+                if not new_repre_legal:
+                    new_repre_legal = representante_form.save()
+
+                # Creación del aprendiz
+                T_apre.objects.create(
+                    cod="z",
+                    esta="Activo",
+                    perfil=new_perfil,
+                    repre_legal=new_repre_legal
+                )
+
+                # Enviar correo de bienvenida
+                asunto = "Bienvenido a la plataforma"
+                mensaje = (
+                    f"Hola {nombre} {apellido},\n\n"
+                    f"Su cuenta ha sido creada con éxito. A continuación se encuentran sus credenciales:\n\n"
+                    f"Usuario: {username}\nContraseña: {contraseña}\n\n"
+                    f"Recuerde cambiar su contraseña después de iniciar sesión."
+                )
+                send_mail(
+                    asunto,
+                    mensaje,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [new_user.email],
+                    fail_silently=False,
+                )
+
                 return redirect('aprendices')
 
-        except ValueError as e:
-            return render(request, 'aprendiz_crear.html', {
-                'user_form': user_form,
-                'perfil_form': perfil_form,
-                'aprendiz_form': aprendiz_form,
-                'error': f'Ocurrió un error: {str(e)}'
-            })
+            except ValueError as e:
+                return render(request, 'aprendiz_crear.html', {
+                    'perfil_form': perfil_form,
+                    'representante_form': representante_form,
+                    'error': f'Ocurrió un error: {str(e)}'
+                })
+        print(perfil_form.errors)
+        print(request.POST)
+        # Si los formularios no son válidos
+        return render(request, 'aprendiz_crear.html', {
+            'perfil_form': perfil_form,
+            'representante_form': representante_form,
+            'error': 'Por favor, corrige los errores en el formulario.'
+        })
 
 @login_required
 def detalle_aprendices(request, aprendiz_id):  # Funcion para editar aprendiz
@@ -1302,7 +1360,7 @@ def obtener_municipios(request):
 
 # Función para generar contraseña aleatoria
 def generar_contraseña(length=8):
-    caracteres = string.ascii_letters + string.digits + string.punctuation
+    caracteres = string.ascii_letters + string.digits
     return ''.join(random.choice(caracteres) for _ in range(length))
 
 @login_required
@@ -1505,10 +1563,36 @@ class T_insti_edu_APIView(APIView):
         start = int(request.GET.get('start', 0))
         length = int(request.GET.get('length', 10))
         search_value = request.GET.get('search[value]', '')
-        
-        # Consulta inicial
-        queryset = T_insti_edu.objects.all()
 
+        # Ordenamiento
+        order_column_index = request.GET.get('order[0][column]', 0) # Indice de la columna
+        order_dir = request.GET.get('order[0][dir]', 'asc') # Direccion de ordenamiento asc o desc
+
+        # Definicion de columnas correspondientes en el frontend
+        columns = [
+            'nom',                      # Nombre
+            'dire',                     # Direccion
+            'muni__nom_munici',        # Municipio
+            'muni__nom_departa__nom_departa',  # Departamento
+            'secto',                   # Sector
+            'esta',                    # Estado
+            'dane',                    # Código DANE
+            'gene',                    # Género
+            'zona'                     # Zona
+        ]
+
+        # Mapeo del indice al nombre de la columna
+        try:
+            order_column = columns[int(order_column_index)]
+        except (IndexError, ValueError):
+            order_column = 'nom' #Orden por defecto en caso de error
+
+        # Ordenamiento de la queryset
+        if order_dir == 'desc':
+            queryset = T_insti_edu.objects.order_by(f'-{order_column}')
+        else:
+            queryset = T_insti_edu.objects.order_by(order_column)
+        
         # Aplicar búsqueda si existe un término
         if search_value:
             queryset = queryset.filter(
@@ -1523,8 +1607,8 @@ class T_insti_edu_APIView(APIView):
                 Q(zona__icontains=search_value)
             )
 
-        # Total de registros
-        total = queryset.count()
+        # Total de registros antes del filtrado
+        total = T_insti_edu.objects.count()
 
         # Total de registros después del filtro
         total_filtered = queryset.count()
@@ -1539,7 +1623,7 @@ class T_insti_edu_APIView(APIView):
         return Response({
             'draw': draw,
             'recordsTotal': total,
-            'recordsFiltered': total,  # Ajusta si aplicas filtros
+            'recordsFiltered': total_filtered,  # Ajusta si aplicas filtros
             'data': serializer.data,
         })
 
@@ -1665,15 +1749,46 @@ def gestor_detalle(request, gestor_id):
         gestor_depa_form = GestorDepaForm(request.POST)
 
         if perfil_form.is_valid() and gestor_depa_form.is_valid():
-            perfil_form.save()
 
             # Actualizar departamentos asociados
-            nuevos_departamentos = gestor_depa_form.cleaned_data['departamentos']
+            nuevos_departamentos = set(
+                gestor_depa_form.cleaned_data['departamentos'].values_list('id', flat=True)
+            )
+            actuales_departamentos = set(
+                T_gestor_depa.objects.filter(gestor=gestor).values_list('depa__id', flat=True)
+            )
+
+            # Identificar departamentos que se intentan eliminar
+            departamentos_a_eliminar = actuales_departamentos - nuevos_departamentos
+            print(nuevos_departamentos)
+            print(actuales_departamentos)
+            print(departamentos_a_eliminar)
+            # verificar si alguno de los deparatmentos a eliminar tiene instituciones asignadas
+            departamentos_con_instituciones = T_gestor_insti_edu.objects.filter(
+                gestor = gestor,
+                insti__muni__nom_departa__id__in= departamentos_a_eliminar
+            ).exists()
+
+            if departamentos_con_instituciones:
+                messages.error(
+                    request,
+                    "No se puede actualizar. Uno o mas departamentos que intenta eliminar tiene instituciones asiganadas"
+                )
+                return render(request, 'gestor_detalle.html', {
+                    'gestor': gestor,
+                    'perfil_form': perfil_form,
+                    'gestor_depa_form': gestor_depa_form,
+                })
+
+            # Si no hay problemas, guarda el perfin
+            perfil_form.save()
+            
             T_gestor_depa.objects.filter(gestor=gestor).delete()  # Elimina los existentes
             for depa in nuevos_departamentos:
+                departamento = T_departa.objects.get(id=depa)
                 T_gestor_depa.objects.create(
                     gestor=gestor, 
-                    depa=depa, 
+                    depa=departamento, 
                     fecha_crea = datetime.now(),
                     usuario_crea = request.user
                 )

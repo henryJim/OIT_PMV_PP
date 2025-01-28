@@ -47,6 +47,7 @@ class T_repre_legal(models.Model):
         db_table = 't_repre_legal'
 
     nom = models.CharField(max_length=200)
+    dni = models.CharField(max_length=200)
     tele = models.CharField(max_length=200)
     dire = models.CharField(max_length=200)
     mail = models.CharField(max_length=200)
@@ -205,6 +206,7 @@ class T_insti_edu(models.Model):
     coordi = models.CharField(max_length=100, blank=True, null=True)
     coordi_tele = models.CharField(max_length=100, blank=True, null=True)
     coordi_mail = models.CharField(max_length=100, blank=True, null=True)
+    esta_docu = models.CharField(max_length=100, blank=True, null=True)
     def __str__(self):
         return f"{self.nom}"
     
