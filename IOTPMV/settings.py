@@ -198,7 +198,7 @@ STATICFILES_DIRS = [
 
 # Carpeta para almacenar archivos subidos
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '/root/OIT_PMV_PP/media/'  # Ruta a los archivos multimedia
+MEDIA_ROOT = '/var/www/iotpmv/media/'  # Ruta a los archivos multimedia
 
 LOGIN_URL = '/signin/'
 
