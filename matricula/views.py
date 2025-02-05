@@ -1,7 +1,7 @@
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.safestring import mark_safe
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotAllowed
 from dal import autocomplete
 from django.views import generic
 from django.shortcuts import get_object_or_404, redirect, render
@@ -15,6 +15,7 @@ from datetime import datetime
 from django.contrib import messages
 from django.db import transaction
 from django.db import models
+from django.contrib.auth.models import User
 import zipfile
 from PyPDF2 import PdfMerger
 import io
@@ -313,7 +314,8 @@ def instituciones_gestor(request):
         # Filtra las instituciones asignadas al gestor actual
     if perfil.rol == 'gestor':  # Formulario de asignación manual
         gestor = T_gestor.objects.get(perfil = perfil)
-        instituciones = T_gestor_insti_edu.objects.filter(usuario_asigna=perfil.user)
+        instituciones = T_gestor_insti_edu.objects.filter(gestor=gestor)
+        print(instituciones)
     if perfil.rol == 'lider':
         instituciones = T_gestor_insti_edu.objects.all()
     total_instituciones = T_insti_edu.objects.count()
@@ -363,10 +365,16 @@ def filtrar_instituciones(request):
     municipio = request.GET.getlist('municipio', [])
     estado = request.GET.getlist('estado', [])
     sector = request.GET.getlist('sector', [])
-    print(municipio)
-    print(estado)
-    print(sector)
-    instituciones = T_gestor_insti_edu.objects.all()
+
+    # Obtén el perfil del usuario autenticado
+    perfil = getattr(request.user, 't_perfil', None)
+        # Filtra las instituciones asignadas al gestor actual
+    if perfil.rol == 'gestor':  # Formulario de asignación manual
+        gestor = T_gestor.objects.get(perfil = perfil)
+        instituciones = T_gestor_insti_edu.objects.filter(gestor=gestor)
+        print(instituciones)
+    if perfil.rol == 'lider':
+        instituciones = T_gestor_insti_edu.objects.all()
 
     if municipio:
         instituciones = instituciones.filter(insti__muni__nom_munici__in=municipio)
@@ -377,6 +385,7 @@ def filtrar_instituciones(request):
 
     resultados = [
         {
+            'id': i.id,
             'nombre': i.insti.nom,
             'direccion': i.insti.dire,
             'municipio': i.insti.muni.nom_munici,
@@ -393,6 +402,32 @@ def filtrar_instituciones(request):
     ]
     return JsonResponse(resultados, safe=False)
 
+def eliminar_institucion_gestor(request, id):
+    if request.method == 'DELETE':
+        try:
+            institucion_gest = T_gestor_insti_edu.objects.get(id=id)
+            id_institucion = institucion_gest.insti.id
+
+            # Verificar si hay registros en T_grupo relacionados con la institución
+            grupos_asociados = T_grupo.objects.filter(insti_id=id_institucion).exists()
+
+            if grupos_asociados:
+                return JsonResponse({
+                    'error': 'No se puede eliminar la institución porque tiene grupos asociados.'
+                }, status=400)
+
+            # Eliminar documentos asociados en T_insti_docu
+            T_insti_docu.objects.filter(insti_id=id_institucion).delete()
+
+            # Eliminar la institución gestora
+            institucion_gest.delete()
+
+            return JsonResponse({'mensaje': 'Institución y documentos asociados eliminados correctamente.'}, status=200)
+
+        except T_gestor_insti_edu.DoesNotExist:
+            return JsonResponse({'error': 'Institución no encontrada.'}, status=404)
+    else:
+        return HttpResponseNotAllowed(['DELETE'])
 
 def cargar_documento_prematricula(request, documento_id, aprendiz_id, grupo_id):
 
@@ -545,6 +580,59 @@ def crear_grupo(request):
                 'grupo_form': grupo_form,
                 'error': f'Ocurrió un error inesperado: {str(e)}'
             })
+
+def eliminar_grupos(request, id):
+    if request.method == 'DELETE':
+        try:
+            grupo = T_grupo.objects.get(id=id)
+
+            # Verificar si hay aprendices asignados al grupo
+            aprendices = T_apre.objects.filter(grupo_id=grupo.id)
+
+            # Verificar si algún aprendiz tiene documentos validados (vali = 1)
+            documentos_validados = T_prematri_docu.objects.filter(apren__in=aprendices, vali=1).exists()
+
+            if documentos_validados:
+                return JsonResponse({
+                    'error': 'No se puede eliminar el grupo porque existen documentos validados para aprendices asignados.'
+                }, status=400)
+
+            # Usar una transacción para asegurar la integridad de la base de datos
+            with transaction.atomic():
+                # Eliminar los registros de t_prematri_docu para los aprendices relacionados
+                T_prematri_docu.objects.filter(apren__in=aprendices).delete()
+
+                # Eliminar la relación de los aprendices con el grupo (dejar el campo vacío)
+                aprendices.update(grupo=None)
+
+                # Finalmente, eliminar el grupo
+                grupo.delete()
+
+            return JsonResponse({'mensaje': 'Grupo y documentos asociados eliminados correctamente.'}, status=200)
+
+        except T_grupo.DoesNotExist:
+            return JsonResponse({'error': 'Grupo no encontrado.'}, status=404)
+    else:
+        return HttpResponseNotAllowed(['DELETE'])
+    
+def eliminar_relacion_aprendiz_grupos(request, id):
+    if request.method == 'DELETE':
+        try:
+            aprendiz = T_apre.objects.get(id=id)
+
+            # Eliminar todos los registros en t_prematri_docu relacionados al aprendiz
+            T_prematri_docu.objects.filter(apren=aprendiz).delete()
+
+            # Desvincular el aprendiz del grupo
+            aprendiz.grupo = None
+            aprendiz.save()
+
+            return JsonResponse({'mensaje': 'Aprendiz y documentos asociados eliminados correctamente.'}, status=200)
+
+        except T_apre.DoesNotExist:
+            return JsonResponse({'error': 'Aprendiz no encontrado.'}, status=404)
+    else:
+        return HttpResponseNotAllowed(['DELETE'])
 
 
 def asignar_institucion_gestor(request):

@@ -78,81 +78,157 @@
                 </table>
             </div>
         </section>
+        <div id="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only"></span>
+            </div>
+        </div>
         
-</main>
-<script>
-    $(document).ready(function () {
-        // Inicializa DataTable
-        const table = $('#instituciones_gestor').DataTable({
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
-            },
-            deferRender: true,
-        });
-
-        // Función para cargar opciones dinámicas en Select2
-        function cargarOpciones(url, elemento, placeholder) {
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                $(elemento).select2({
-                    data: data.map(item => ({ id: item, text: item })), // Convierte los datos a formato Select2
-                    placeholder: placeholder, // Placeholder dinámico
-                    allowClear: true,
+        </main>
+        
+        <script>
+            $(document).ready(function () {
+                // Mostrar el spinner antes de cargar los datos
+                $("#loading").show();
+        
+                // Inicializa DataTable
+                const table = $('#instituciones_gestor').DataTable({
+                    language: {
+                        url: 'https://cdn.datatables.net/plug-ins/2.1.8/i18n/es-ES.json',
+                    },
+                    deferRender: true,
                 });
-            })
-            .catch(error => console.error(`Error al cargar opciones para ${elemento}:`, error));
-        }
-
-        // Cargar opciones dinámicas para los Select2 con placeholders personalizados
-        cargarOpciones('/api/municipios/', '#municipios', 'Seleccione un municipio');
-        cargarOpciones('/api/estados/', '#estados', 'Seleccione un estado');
-        cargarOpciones('/api/sectores/', '#sectores', 'Seleccione un sector');
-
-        // Función para actualizar la tabla con los datos filtrados
-        function actualizarTabla(data) {
-            table.clear(); // Limpia la tabla
-
-            data.forEach(item => {
-                table.row.add([
-                    item.nombre,
-                    item.direccion,
-                    item.municipio,
-                    item.departamento,
-                    item.sector,
-                    item.estado,
-                    item.dane,
-                    item.genero,
-                    item.zona || 'No asignado',
-                    item.estado_docu,
-                    `<a class="btn btn-warning btn-sm" title="Ver detalle" href="${item.detalle_url}" data-toggle="tooltip" data-placement="top">{% icon 'detalle' %}</a>`
-                ]);
+        
+                // Función para cargar opciones dinámicas en Select2 con animación de carga
+                function cargarOpciones(url, elemento, placeholder) {
+                    return fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            $(elemento).select2({
+                                data: data.map(item => ({ id: item, text: item })), // Convierte los datos a formato Select2
+                                placeholder: placeholder, // Placeholder dinámico
+                                allowClear: true,
+                            });
+                        })
+                        .catch(error => console.error(`Error al cargar opciones para ${elemento}:`, error));
+                }
+        
+                // Cargar opciones dinámicas para los Select2 con placeholders personalizados
+                const promesasSelect2 = [
+                    cargarOpciones('/api/municipios/', '#municipios', 'Seleccione un municipio'),
+                    cargarOpciones('/api/estados/', '#estados', 'Seleccione un estado'),
+                    cargarOpciones('/api/sectores/', '#sectores', 'Seleccione un sector')
+                ];
+        
+                // Función para actualizar la tabla con los datos filtrados
+                function actualizarTabla(data) {
+                    table.clear(); // Limpia la tabla
+        
+                    data.forEach(item => {
+                        table.row.add([
+                            item.nombre,
+                            item.direccion,
+                            item.municipio,
+                            item.departamento,
+                            item.sector,
+                            item.estado,
+                            item.dane,
+                            item.genero === 'mi' ? 'Mixto' : item.zona === 'ma' ? 'Masculino': item.zona === 'fe' ? 'Femenino' : 'No asignado',
+                            item.zona === 'u' ? 'Urbana' : item.zona === 'r' ? 'Rural' : 'No asignado',
+                            item.estado_docu,
+                            `<a class="btn btn-warning btn-sm" title="Ver detalle" href="${item.detalle_url}" data-bs-toggle="tooltip" data-bs-placement="top">
+                                {% icon 'detalle' %}
+                            </a>
+                            <button class="btn btn-danger btn-sm ms-1 delete-btn" data-id="${item.id}" title="Eliminar" data-bs-toggle="tooltip" data-bs-placement="top">
+                                {% icon 'delete' %}
+                            </button>`
+                        ]);
+                    });
+        
+                    table.draw(); // Refresca la tabla con los nuevos datos
+                    $('[data-toggle="tooltip"]').tooltip(); // Reinicializa tooltips
+                }
+        
+                // Petición inicial para cargar todas las instituciones con animación de carga
+                const promesaTabla = fetch('/api/filtrar-instituciones/')
+                    .then(response => response.json())
+                    .then(data => actualizarTabla(data))
+                    .catch(error => console.error('Error al cargar datos iniciales:', error));
+        
+                // Cuando todas las peticiones (Select2 y DataTable) terminen, ocultar el loader
+                Promise.all([...promesasSelect2, promesaTabla]).finally(() => {
+                    $("#loading").fadeOut();
+                });
+        
+                // Manejar cambios en los filtros de Select2
+                $('#municipios, #estados, #sectores').on('select2:select select2:unselect', function () {
+                    $("#loading").show(); // Mostrar loader al filtrar
+        
+                    const formData = new FormData(document.getElementById('filtros-form'));
+                    const params = new URLSearchParams(formData).toString();
+        
+                    console.log('Parámetros enviados:', params);
+        
+                    // Realiza la petición al servidor para obtener los datos filtrados
+                    fetch(`/api/filtrar-instituciones/?${params}`)
+                        .then(response => response.json())
+                        .then(data => actualizarTabla(data))
+                        .catch(error => console.error('Error al filtrar los datos:', error))
+                        .finally(() => $("#loading").fadeOut()); // Ocultar el loader cuando termine
+                });
             });
 
-            table.draw(); // Refresca la tabla con los nuevos datos
-            $('[data-toggle="tooltip"]').tooltip(); // Reinicializa tooltips
-        }
+            // Evento para eliminar relacion de institucion
+            $(document).on('click', '.delete-btn', function () {
+                const id = $(this).data('id');
+                const row = $(this).parents('tr'); // Guardamos la fila para eliminarla después si es necesario
 
-        // Petición inicial para cargar todas las instituciones
-        fetch('/api/filtrar-instituciones/')
-        .then(response => response.json())
-        .then(data => actualizarTabla(data))
-        .catch(error => console.error('Error al cargar datos iniciales:', error));
+                // Confirmación antes de eliminar
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: 'Esta acción no se puede deshacer.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Si el usuario confirma, proceder con la eliminación
+                        fetch(`/api/institucion_gestor/eliminar/${id}/`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}' // CSRF Token de Django
+                            }
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                row.remove(); // Elimina la fila de la tabla
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Eliminado',
+                                    text: 'La institución ha sido eliminada correctamente.',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                return response.json().then(data => {
+                                    throw new Error(data.error || 'Error al eliminar el registro.');
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: error.message
+                            });
+                        });
+                    }
+                });
+            });
 
-
-        // Manejar cambios en los filtros de Select2
-        $('#municipios, #estados, #sectores').on('select2:select select2:unselect', function () {
-            const formData = new FormData(document.getElementById('filtros-form'));
-            const params = new URLSearchParams(formData).toString();
-
-            console.log('Parámetros enviados:', params);
-
-            // Realiza la petición al servidor para obtener los datos filtrados
-            fetch(`/api/filtrar-instituciones/?${params}`)
-                .then(response => response.json())
-                .then(data => actualizarTabla(data))
-                .catch(error => console.error('Error al filtrar los datos:', error));
-        });
-    });
-</script>
+        </script>
+        
 {% endblock %}
