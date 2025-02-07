@@ -136,6 +136,9 @@ urlpatterns = [
     path('instituciones/<int:institucion_id>/eliminar/', usuarios_views.eliminar_instituciones,name='eliminar_institucion'),
     path('institucion/editar/<int:id>/', usuarios_views.editar_institucion, name='editar_institucion'),
 
+    path('cargar-documentos-multiples/<int:institucion_id>/', matricula_views.cargar_documentos_institucion_multiples, name='cargar_documentos_institucion_multiples'),
+
+
     # Rol  De Centros De Formacion
     path('centroformacion/', usuarios_views.centrosformacion,name='centrosformacion'),
     path('centroformacion/crear/', usuarios_views.crear_centrosformacion,name='crear_centrosformacion'),

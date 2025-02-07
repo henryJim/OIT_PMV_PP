@@ -1,4 +1,5 @@
 import json
+import logging
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotAllowed
@@ -396,6 +397,7 @@ def filtrar_instituciones(request):
             'genero': i.insti.gene,
             'zona': i.insti.zona,
             'estado_docu': i.insti.esta_docu,
+            'gestor': i.gestor.perfil.nom+" "+i.gestor.perfil.apelli,
             'detalle_url': reverse('instituciones_docs', args=[i.insti.id])  # Genera la URL
         }
         for i in instituciones
@@ -816,6 +818,95 @@ def cargar_documento_institucion(request, documento_id, institucion_id):
     return render(request, 'grupos_prematricula.html', {
         })
 
+# Configurar logs para depuración
+logger = logging.getLogger(__name__)
+
+def cargar_documentos_institucion_multiples(request, institucion_id):
+    if request.method == "POST":
+        TAMANO_MAXIMO = 3 * 1024 * 1024  # 3 MB
+        TIPOS_PERMITIDOS = ['pdf']  # Extensiones permitidas
+        archivos_subidos = 0
+        errores = []
+
+        logger.info("Recibiendo solicitud de carga múltiple...")
+
+        if not request.FILES:
+            logger.warning("No se recibieron archivos en la petición.")
+            return JsonResponse({"error": "No se enviaron archivos."}, status=400)
+
+        for key, archivo in request.FILES.items():
+            logger.info(f"Procesando archivo: {archivo.name}")
+
+            if key.startswith("archivo_"):
+                documento_id = key.split("_")[1]
+                documento = T_insti_docu.objects.filter(id=documento_id, insti_id=institucion_id).first()
+
+                if not documento:
+                    errores.append(f"Documento con ID {documento_id} no encontrado.")
+                    logger.warning(f"Documento {documento_id} no encontrado.")
+                    continue
+
+                extension = archivo.name.split('.')[-1].lower()
+
+                if extension not in TIPOS_PERMITIDOS:
+                    errores.append(f"El archivo {archivo.name} tiene una extensión no permitida: {extension}")
+                    continue
+
+                if archivo.size > TAMANO_MAXIMO:
+                    errores.append(f"El archivo {archivo.name} excede el tamaño máximo de {TAMANO_MAXIMO // (1024 * 1024)} MB.")
+                    continue
+
+                # Construir la ruta de almacenamiento
+                ruta = f'documentos/instituciones/{documento.insti.nom}/{archivo.name}'
+
+                # Verificar si el archivo ya existe y renombrarlo
+                contador = 1
+                nombre_base, extension_archivo = os.path.splitext(archivo.name)
+                while default_storage.exists(ruta):
+                    ruta = f'documentos/instituciones/{documento.insti.nom}/{nombre_base}_{contador}{extension_archivo}'
+                    contador += 1
+
+                ruta_guardada = default_storage.save(ruta, archivo)
+                logger.info(f"Archivo {archivo.name} guardado en {ruta_guardada}")
+
+                # Crear el registro en T_docu
+                t_docu = T_docu.objects.create(
+                    nom=archivo.name,
+                    tipo=extension,
+                    tama=f"{archivo.size // 1024} KB",
+                    archi=ruta_guardada,
+                    priva='No',
+                    esta='Activo'
+                )
+
+                # Asignar el documento a la entidad
+                documento.esta = "Cargado"
+                documento.docu = t_docu
+                documento.fecha_carga = datetime.now()
+                documento.usr_carga = request.user
+                documento.save()
+                archivos_subidos += 1
+
+        # Verificar si todos los documentos de la institución están en estado "Cargado"
+        documentos_institucion = T_insti_docu.objects.filter(insti_id=institucion_id)
+        if all(doc.esta == "Cargado" for doc in documentos_institucion):
+            institucion = documentos_institucion.first().insti
+            institucion.esta_docu = "Completo"
+            institucion.save()
+            logger.info(f"Todos los documentos de la institución {institucion.nom} han sido cargados. Estado actualizado a 'Completo'.")
+
+        response = {
+            "message": f"{archivos_subidos} archivos cargados correctamente.",
+            "errors": errores,
+            "archivos_cargados": archivos_subidos,  # Número de archivos exitosos
+        }
+
+        logger.info(f"Respuesta JSON: {response}")
+        return JsonResponse(response)
+
+    return JsonResponse({"error": "Método no permitido"}, status=405)
+
+
 @login_required
 def eliminar_documento_pre_insti(request, documento_id):
     # Obtener el documento
@@ -843,4 +934,5 @@ def eliminar_documento_pre_insti(request, documento_id):
             institucion.save()
 
     # Redirigir después de eliminar el documento
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+    return redirect(request.META.get('HTTP_REFERER', '/')) 
+

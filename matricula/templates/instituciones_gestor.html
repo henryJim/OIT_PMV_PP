@@ -65,12 +65,13 @@
                             <th class="text-center">Direccion</th>
                             <th class="text-center">Municipio</th>
                             <th class="text-center">Departamento</th>
-                            <th class="text-center">Sector</th>
                             <th class="text-center">Estado</th>
                             <th class="text-center">Dane</th>
-                            <th class="text-center">Genero</th>
                             <th class="text-center">Zona</th>
                             <th class="text-center">Estado D</th>
+                            {% if perfil.rol == 'lider' %}
+                            <th class="text-center">Gestor asignado</th>
+                            {% endif %}
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -123,26 +124,35 @@
                 // Función para actualizar la tabla con los datos filtrados
                 function actualizarTabla(data) {
                     table.clear(); // Limpia la tabla
-        
+                    var rolUsuario = "{{ perfil.rol }}";
                     data.forEach(item => {
-                        table.row.add([
+                        let fila = [
                             item.nombre,
-                            item.direccion,
                             item.municipio,
                             item.departamento,
                             item.sector,
                             item.estado,
                             item.dane,
-                            item.genero === 'mi' ? 'Mixto' : item.zona === 'ma' ? 'Masculino': item.zona === 'fe' ? 'Femenino' : 'No asignado',
+                            //item.genero === 'mi' ? 'Mixto' : item.zona === 'ma' ? 'Masculino': item.zona === 'fe' ? 'Femenino' : 'No asignado',
                             item.zona === 'u' ? 'Urbana' : item.zona === 'r' ? 'Rural' : 'No asignado',
-                            item.estado_docu,
-                            `<a class="btn btn-warning btn-sm" title="Ver detalle" href="${item.detalle_url}" data-bs-toggle="tooltip" data-bs-placement="top">
+                            item.estado_docu
+                        ];
+
+                        if (rolUsuario === 'lider'){
+                            fila.push(item.gestor)
+                        }
+
+                        // Agregar botones de acción
+                        fila.push(`
+                            <a class="btn btn-warning btn-sm" title="Ver detalle" href="${item.detalle_url}" data-bs-toggle="tooltip" data-bs-placement="top">
                                 {% icon 'detalle' %}
                             </a>
                             <button class="btn btn-danger btn-sm ms-1 delete-btn" data-id="${item.id}" title="Eliminar" data-bs-toggle="tooltip" data-bs-placement="top">
                                 {% icon 'delete' %}
-                            </button>`
-                        ]);
+                            </button>
+                        `);
+
+                        table.row.add(fila)
                     });
         
                     table.draw(); // Refresca la tabla con los nuevos datos

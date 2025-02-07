@@ -29,17 +29,13 @@
                                 {% endif %}
                             </tr>
                         </thead>
+                        <form id="upload-form" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}                        
                         <tbody>
                             {% for documento in documentos %}
                             <tr>
                                 <td>{{ documento.nom }}</td>
-                                <td>
-                                    {% if documento.vali == '0' %}
-                                    Pendiente
-                                    {% else %}
-                                    Aprobado
-                                    {% endif %}
-                                </td>
+                                <td>{% if documento.vali == '0' %} Pendiente {% else %} Aprobado {% endif %}</td>
                                 <td>
                                     {% if documento.docu.archi %}
                                         <a href="{{ documento.docu.archi.url }}" target="_blank" class="btn" class="btn" data-toggle="tooltip" data-placement="top" title="Ver archivo">
@@ -59,11 +55,7 @@
                                 {% if rol == 'gestor' %}
                                 <td>
                                     {% if documento.esta == "Pendiente" %}
-                                    <form method="post" action="{% url 'cargar_documentos_institucion' documento.id institucion.id %}" enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                        <input type="file" name="archivo" class="form-control mb-2" required>
-                                        <button type="submit" class="btn btn-primary">Cargar</button>
-                                    </form>
+                                        <input type="file" name="archivo_{{ documento.id }}" class="form-control file-input mb-2" data-doc-id="{{ documento.id }}"" required>
                                     {% else %}
                                         <div class="d-flex justify-content-between align-items-center">
                                             <span class="text-success">✔ Cargado</span>
@@ -87,35 +79,113 @@
                             {% endfor %}
                         </tbody>
                     </table>                    
+                    <button type="button" id="upload-btn" class="btn btn-primary mt-3">Cargar documentos</button>
+                </form>
                 </div>
     </section>
 </main>
 <script>
-            // Script para eliminacion de documentos!
-            document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".delete-btn").forEach(function (button) {
-            button.addEventListener("click", function (event) {
-                event.preventDefault(); // Evita la acción predeterminada del botón
+// Script para eliminacion de documentos!
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".delete-btn").forEach(function (button) {
+        button.addEventListener("click", function (event) {
+            event.preventDefault(); // Evita la acción predeterminada del botón
 
-                const url = this.dataset.url;
+            const url = this.dataset.url;
 
-                Swal.fire({
-                    title: "¿Estás seguro?",
-                    text: "No podrás deshacer esta acción.",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Sí, eliminar",
-                    cancelButtonText: "Cancelar"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Redirige a la URL de eliminación
-                        window.location.href = url;
-                    }
-                });
+            Swal.fire({
+                title: "¿Estás seguro?",
+                text: "No podrás deshacer esta acción.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirige a la URL de eliminación
+                    window.location.href = url;
+                }
             });
         });
     });
+});
+
+$(document).ready(function(){
+    $("#upload-btn").click(function(){
+        var formData = new FormData();
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        $(".file-input").each(function () {
+            var fileInput = $(this)[0];
+            if (fileInput.files.length > 0) {
+                formData.append($(this).attr("name"), fileInput.files[0]);
+            }
+        });
+
+        $.ajax({
+            url: "{% url 'cargar_documentos_institucion_multiples' institucion.id %}",
+            type: "POST", 
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                let archivosCargados = response.archivos_cargados; // Número de archivos cargados
+                let errores = response.errors; // Lista de errores
+
+                if (archivosCargados > 0 && errores.length > 0) {
+                    // Caso: Algunos archivos subidos, otros fallaron (Carga parcial)
+                    let errorText = errores.map(err => `• ${err}`).join("<br>");
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Carga parcial",
+                        html: `<b>${archivosCargados} archivos cargados correctamente.</b><br><br><b>Errores:</b><br>${errorText}`,
+                        confirmButtonText: "Entendido"
+                    }).then(() => {
+                        location.reload();
+                    });
+
+                } else if (archivosCargados > 0) {
+                    // Caso: Todos los archivos fueron subidos correctamente
+                    Swal.fire({
+                        icon: "success",
+                        title: "Carga exitosa",
+                        text: `${archivosCargados} archivos cargados correctamente.`,
+                        confirmButtonText: "Aceptar"
+                    }).then(() => {
+                        location.reload();
+                    });
+
+                } else {
+                    // Caso: Ningún archivo se subió, todos fallaron
+                    let errorText = errores.map(err => `• ${err}`).join("<br>");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error en la carga",
+                        html: `<b>No se cargó ningún archivo.</b><br><br><b>Errores:</b><br>${errorText}`,
+                        confirmButtonText: "Cerrar"
+                    });
+                }
+            },
+            error: function(xhr) {
+                let errorMsg = "Error al cargar los archivos.";
+                
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMsg = xhr.responseJSON.error;
+                }
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: errorMsg,
+                    confirmButtonText: "Cerrar"
+                });
+            }
+        });
+    });
+});
+
+
 </script>
 {% endblock %}
