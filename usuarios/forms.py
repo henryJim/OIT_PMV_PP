@@ -308,7 +308,7 @@ class InstitucionForm(forms.ModelForm):
     )
     class Meta:
         model = T_insti_edu
-        fields = ['depa', 'nom', 'dire', 'secto', 'muni', 'coordi', 'coordi_mail', 'coordi_tele', 'esta', 'insti_mail', 'dane', 'recto', 'recto_tel',  'gene', 'grados', 'jorna', 'num_sedes', 'zona', 'vigen', 'cale']
+        fields = ['depa', 'nom', 'dire', 'secto', 'muni', 'coordi', 'coordi_mail', 'coordi_tele', 'esta', 'insti_mail', 'dane', 'recto', 'recto_tel',  'gene', 'grados', 'jorna', 'num_sedes', 'zona', 'cale']
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control'}),
             'dire': forms.TextInput(attrs={'class': 'form-control'}),
