@@ -55,7 +55,7 @@ def asignar_aprendices(request, grupo_id=None):
     if request.method == 'POST':
         documentos_matricula = [
             'Documento de Identidad del aprendiz',
-            'Registro civil'
+            'Registro civil',
             'Certificado de Afiliación de salud',
             'Formato de Tratamiento de Datos del Menor de Edad',
             'Compromiso del Aprendiz',
